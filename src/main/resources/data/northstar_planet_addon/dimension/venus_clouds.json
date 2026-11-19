@@ -1,0 +1,17 @@
+{
+    "generator":  {
+                      "biome_source":  {
+                                           "biomes":  [
+                                                          "northstar_planet_addon:cloud_archipelago",
+                                                          "northstar_planet_addon:acid_flats",
+                                                          "northstar_planet_addon:metal_frost_highlands",
+                                                          "northstar_planet_addon:fungal_forest",
+                                                          "northstar_planet_addon:lava_tube_galleries"
+                                                      ],
+                                           "type":  "northstar_planet_addon:venus"
+                                       },
+                      "type":  "minecraft:noise",
+                      "settings":  "northstar_planet_addon:venus_clouds"
+                  },
+    "type":  "northstar_planet_addon:venus_clouds"
+}

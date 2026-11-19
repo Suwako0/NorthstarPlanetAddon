@@ -1,0 +1,18 @@
+{
+    "key":  {
+                "#":  {
+                          "item":  "northstar_planet_addon:tungsten_plate"
+                      }
+            },
+    "category":  "equipment",
+    "pattern":  [
+                    "###",
+                    "# #",
+                    "# #"
+                ],
+    "result":  {
+                   "id":  "northstar_planet_addon:tungsten_leggings",
+                   "count":  1
+               },
+    "type":  "minecraft:crafting_shaped"
+}

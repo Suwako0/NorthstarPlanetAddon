@@ -1,0 +1,6 @@
+{
+    "textures":  {
+                     "layer0":  "northstar_planet_addon:item/ballistic_calibrator"
+                 },
+    "parent":  "minecraft:item/generated"
+}

@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:block",
+  "random_sequence": "northstar_planet_addon:blocks/acid_vegetable_crop",
+  "pools": [
+    {
+      "rolls": 1.0,
+      "bonus_rolls": 0.0,
+      "conditions": [ { "condition": "minecraft:survives_explosion" } ],
+      "entries": [
+        { "type": "minecraft:item", "name": "northstar_planet_addon:acid_vegetable",
+          "functions": [ { "function": "minecraft:set_count", "count": { "type": "minecraft:uniform", "min": 2, "max": 2 } } ] },
+        { "type": "minecraft:item", "name": "northstar_planet_addon:acid_vegetable_seeds" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+{
+    "textures":  {
+                     "all":  "northstar_planet_addon:block/cloud_stone"
+                 },
+    "parent":  "minecraft:block/cube_all"
+}

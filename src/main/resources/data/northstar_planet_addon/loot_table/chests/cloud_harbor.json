@@ -1,0 +1,81 @@
+{
+    "pools":  [
+                  {
+                      "entries":  [
+                                      {
+                                          "functions":  [
+                                                            {
+                                                                "function":  "minecraft:set_count",
+                                                                "count":  {
+                                                                              "min":  1,
+                                                                              "type":  "minecraft:uniform",
+                                                                              "max":  3
+                                                                          }
+                                                            }
+                                                        ],
+                                          "weight":  20,
+                                          "name":  "northstar_planet_addon:acid_proof_alloy_plate",
+                                          "type":  "minecraft:item"
+                                      },
+                                      {
+                                          "functions":  [
+                                                            {
+                                                                "function":  "minecraft:set_count",
+                                                                "count":  {
+                                                                              "min":  1,
+                                                                              "type":  "minecraft:uniform",
+                                                                              "max":  2
+                                                                          }
+                                                            }
+                                                        ],
+                                          "weight":  10,
+                                          "name":  "northstar_planet_addon:pre_civilization_alloy",
+                                          "type":  "minecraft:item"
+                                      },
+                                      {
+                                          "functions":  [
+                                                            {
+                                                                "function":  "minecraft:set_count",
+                                                                "count":  {
+                                                                              "min":  1,
+                                                                              "type":  "minecraft:uniform",
+                                                                              "max":  2
+                                                                          }
+                                                            }
+                                                        ],
+                                          "weight":  15,
+                                          "name":  "northstar_planet_addon:cloud_sail_membrane",
+                                          "type":  "minecraft:item"
+                                      },
+                                      {
+                                          "weight":  8,
+                                          "name":  "northstar_planet_addon:cloud_map_fragment",
+                                          "type":  "minecraft:item"
+                                      },
+                                      {
+                                          "weight":  5,
+                                          "name":  "northstar_planet_addon:ballistic_calibrator",
+                                          "type":  "minecraft:item"
+                                      },
+                                      {
+                                          "functions":  [
+                                                            {
+                                                                "function":  "minecraft:set_count",
+                                                                "count":  {
+                                                                              "min":  2,
+                                                                              "type":  "minecraft:uniform",
+                                                                              "max":  4
+                                                                          }
+                                                            }
+                                                        ],
+                                          "weight":  25,
+                                          "name":  "minecraft:bread",
+                                          "type":  "minecraft:item"
+                                      }
+                                  ],
+                      "rolls":  3
+                  }
+              ],
+    "type":  "minecraft:chest",
+    "random_sequence":  "northstar_planet_addon:chests/cloud_harbor"
+}

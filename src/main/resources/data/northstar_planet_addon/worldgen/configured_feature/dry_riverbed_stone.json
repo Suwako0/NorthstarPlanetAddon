@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:disk",
+  "config": {
+    "state_provider": {
+      "fallback": {
+        "type": "minecraft:simple_state_provider",
+        "state": {
+          "Name": "northstar:mercury_stone"
+        }
+      },
+      "rules": []
+    },
+    "target": {
+      "type": "minecraft:matching_blocks",
+      "blocks": [
+        "northstar_planet_addon:mercury_sand"
+      ]
+    },
+    "radius": {
+      "type": "minecraft:uniform",
+      "min_inclusive": 2,
+      "max_inclusive": 5
+    },
+    "half_height": 1
+  }
+}

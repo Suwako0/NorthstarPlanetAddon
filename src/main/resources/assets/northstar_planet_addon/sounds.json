@@ -1,0 +1,66 @@
+{
+  "lunar_deer_hit1": {
+    "sounds": [
+      "northstar_planet_addon:lunar_deer_hit1"
+    ]
+  },
+  "lunar_deer_hit2": {
+    "sounds": [
+      "northstar_planet_addon:lunar_deer_hit2"
+    ]
+  },
+  "lunar_deer_hit3": {
+    "sounds": [
+      "northstar_planet_addon:lunar_deer_hit3"
+    ]
+  },
+  "lunar_deer_die": {
+    "sounds": [
+      "northstar_planet_addon:lunar_deer_die"
+    ]
+  },
+  "moonduel": {
+    "sounds": [
+      {
+        "name": "northstar_planet_addon:moonduel",
+        "stream": true
+      }
+    ]
+  },
+  "moonlight": {
+    "sounds": [
+      {
+        "name": "northstar_planet_addon:moonlight",
+        "stream": true
+      }
+    ]
+  },
+"solar_storm_warning": {
+    "sounds": [
+      "northstar:martian_duststorm_above"
+    ],
+    "subtitle": "subtitles.northstar_planet_addon.solar_storm_warning"
+  },
+  "solar_storm_wind": {
+    "sounds": [
+      "northstar:martian_duststorm_above"
+    ],
+    "subtitle": "subtitles.northstar_planet_addon.solar_storm_wind"
+  },
+  "meteor_falling": {
+    "sounds": [
+      "northstar:laser_burn1",
+      "northstar:laser_burn2",
+      "northstar:laser_burn3"
+    ],
+    "subtitle": "subtitles.northstar_planet_addon.meteor_falling"
+  },
+  "meteor_impact": {
+    "sounds": [
+      "northstar:rocket_blast_1",
+      "northstar:rocket_blast_3",
+      "northstar:rocket_blast_5"
+    ],
+    "subtitle": "subtitles.northstar_planet_addon.meteor_impact"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:scattered_ore",
+  "config": {
+    "size": 1,
+    "discard_chance_on_air_exposure": 1.0,
+    "targets": [
+      {
+        "target": {
+          "predicate_type": "minecraft:tag_match",
+          "tag": "northstar:mercury_stone_replaceable"
+        },
+        "state": {
+          "Name": "minecraft:ancient_debris"
+        }
+      }
+    ]
+  }
+}

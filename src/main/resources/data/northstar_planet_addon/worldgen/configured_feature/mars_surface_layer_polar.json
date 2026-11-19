@@ -1,0 +1,10 @@
+{
+  "type": "northstar_planet_addon:mars_surface_layer",
+  "config": {
+    "top": { "Name": "northstar_planet_addon:mars_ice" },
+    "filler": { "Name": "northstar:mars_soil" },
+    "accent": { "Name": "northstar_planet_addon:dry_ice" },
+    "filler_depth": 3,
+    "accent_chance": 0.45
+  }
+}

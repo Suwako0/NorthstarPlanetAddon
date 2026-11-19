@@ -1,0 +1,19 @@
+{
+    "ingredients":  [
+                        {
+                            "item":  "northstar_planet_addon:acid_sac"
+                        },
+                        {
+                            "item":  "northstar_planet_addon:tungsten_plate"
+                        },
+                        {
+                            "item":  "northstar_planet_addon:acid_proof_alloy_plate"
+                        }
+                    ],
+    "category":  "misc",
+    "result":  {
+                   "id":  "northstar_planet_addon:acid_coating",
+                   "count":  1
+               },
+    "type":  "minecraft:crafting_shapeless"
+}

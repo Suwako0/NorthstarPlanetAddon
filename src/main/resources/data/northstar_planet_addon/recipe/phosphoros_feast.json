@@ -1,0 +1,24 @@
+{
+    "ingredients":  [
+                        {
+                            "item":  "northstar_planet_addon:pressure_stew"
+                        },
+                        {
+                            "item":  "northstar_planet_addon:acid_vegetable"
+                        },
+                        {
+                            "item":  "northstar_planet_addon:frostberry_smoothie"
+                        },
+                        {
+                            "item":  "northstar_planet_addon:thunder_honey_drink"
+                        }
+                    ],
+    "bar":  8,
+    "time":  400,
+    "type":  "northstar_planet_addon:high_pressure",
+    "temperature":  1200,
+    "result":  {
+                   "id":  "northstar_planet_addon:phosphoros_feast",
+                   "count":  1
+               }
+}

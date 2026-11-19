@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "top": "northstar_planet_addon:block/dreamsleep_grass_top",
+    "bottom": "northstar_planet_addon:block/moon_soil",
+    "side": "northstar_planet_addon:block/dreamsleep_grass_side"
+  }
+}

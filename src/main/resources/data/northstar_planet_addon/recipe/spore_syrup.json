@@ -1,0 +1,16 @@
+{
+    "ingredients":  [
+                        {
+                            "item":  "northstar_planet_addon:cloud_algae_jelly"
+                        },
+                        {
+                            "item":  "minecraft:brown_mushroom"
+                        }
+                    ],
+    "category":  "misc",
+    "result":  {
+                   "id":  "northstar_planet_addon:spore_syrup",
+                   "count":  2
+               },
+    "type":  "minecraft:crafting_shapeless"
+}

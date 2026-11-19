@@ -1,0 +1,27 @@
+{
+    "feature":  "northstar_planet_addon:acid_pump_station",
+    "placement":  [
+                      {
+                          "type":  "minecraft:rarity_filter",
+                          "chance":  90
+                      },
+                      {
+                          "type":  "minecraft:in_square"
+                      },
+                      {
+                          "height":  {
+                                         "min_inclusive":  {
+                                                               "absolute":  190
+                                                           },
+                                         "type":  "minecraft:uniform",
+                                         "max_inclusive":  {
+                                                               "absolute":  270
+                                                           }
+                                     },
+                          "type":  "minecraft:height_range"
+                      },
+                      {
+                          "type":  "minecraft:biome"
+                      }
+                  ]
+}

@@ -1,0 +1,76 @@
+{
+    "pools":  [
+                  {
+                      "entries":  [
+                                      {
+                                          "functions":  [
+                                                            {
+                                                                "function":  "minecraft:set_count",
+                                                                "count":  {
+                                                                              "min":  1,
+                                                                              "type":  "minecraft:uniform",
+                                                                              "max":  3
+                                                                          }
+                                                            }
+                                                        ],
+                                          "weight":  20,
+                                          "name":  "northstar_planet_addon:acid_proof_alloy_plate",
+                                          "type":  "minecraft:item"
+                                      },
+                                      {
+                                          "functions":  [
+                                                            {
+                                                                "function":  "minecraft:set_count",
+                                                                "count":  {
+                                                                              "min":  1,
+                                                                              "type":  "minecraft:uniform",
+                                                                              "max":  2
+                                                                          }
+                                                            }
+                                                        ],
+                                          "weight":  18,
+                                          "name":  "northstar_planet_addon:lava_gland",
+                                          "type":  "minecraft:item"
+                                      },
+                                      {
+                                          "weight":  12,
+                                          "name":  "northstar_planet_addon:core_shard",
+                                          "type":  "minecraft:item"
+                                      },
+                                      {
+                                          "functions":  [
+                                                            {
+                                                                "function":  "minecraft:set_count",
+                                                                "count":  {
+                                                                              "min":  2,
+                                                                              "type":  "minecraft:uniform",
+                                                                              "max":  5
+                                                                          }
+                                                            }
+                                                        ],
+                                          "weight":  20,
+                                          "name":  "northstar_planet_addon:sulfur_crystal",
+                                          "type":  "minecraft:item"
+                                      },
+                                      {
+                                          "functions":  [
+                                                            {
+                                                                "function":  "minecraft:set_count",
+                                                                "count":  {
+                                                                              "min":  2,
+                                                                              "type":  "minecraft:uniform",
+                                                                              "max":  4
+                                                                          }
+                                                            }
+                                                        ],
+                                          "weight":  20,
+                                          "name":  "minecraft:bread",
+                                          "type":  "minecraft:item"
+                                      }
+                                  ],
+                      "rolls":  3
+                  }
+              ],
+    "type":  "minecraft:chest",
+    "random_sequence":  "northstar_planet_addon:chests/lava_tube_city"
+}

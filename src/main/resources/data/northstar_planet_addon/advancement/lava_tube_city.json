@@ -1,0 +1,42 @@
+{
+    "criteria":  {
+                     "loc":  {
+                                 "trigger":  "minecraft:location",
+                                 "conditions":  {
+                                                    "player":  [
+                                                                   {
+                                                                       "condition":  "minecraft:entity_properties",
+                                                                       "entity":  "this",
+                                                                       "predicate":  {
+                                                                                         "location":  {
+                                                                                                          "dimension":  "northstar_planet_addon:venus_clouds",
+                                                                                                          "position":  {
+                                                                                                                           "y":  {
+                                                                                                                                     "min":  185,
+                                                                                                                                     "max":  245
+                                                                                                                                 }
+                                                                                                                       }
+                                                                                                      }
+                                                                                     }
+                                                                   }
+                                                               ]
+                                                }
+                             }
+                 },
+    "parent":  "northstar_planet_addon:root",
+    "display":  {
+                    "description":  {
+                                        "translate":  "advancement.northstar_planet_addon.lava_tube_city.description"
+                                    },
+                    "show_toast":  true,
+                    "icon":  {
+                                 "id":  "northstar_planet_addon:sulfur_crystal_block",
+                                 "count":  1
+                             },
+                    "announce_to_chat":  true,
+                    "title":  {
+                                  "translate":  "advancement.northstar_planet_addon.lava_tube_city.title"
+                              },
+                    "frame":  "goal"
+                }
+}

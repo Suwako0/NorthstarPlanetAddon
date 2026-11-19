@@ -1,0 +1,17 @@
+{
+    "key":  {
+                "#":  {
+                          "item":  "northstar_planet_addon:cloud_sail_membrane"
+                      }
+            },
+    "category":  "equipment",
+    "pattern":  [
+                    "# #",
+                    "# #"
+                ],
+    "result":  {
+                   "id":  "northstar_planet_addon:cloud_walker_boots",
+                   "count":  1
+               },
+    "type":  "minecraft:crafting_shaped"
+}

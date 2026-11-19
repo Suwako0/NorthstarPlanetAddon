@@ -1,0 +1,27 @@
+{
+    "feature":  "northstar_planet_addon:crashed_airship",
+    "placement":  [
+                      {
+                          "type":  "minecraft:rarity_filter",
+                          "chance":  110
+                      },
+                      {
+                          "type":  "minecraft:in_square"
+                      },
+                      {
+                          "height":  {
+                                         "min_inclusive":  {
+                                                               "absolute":  210
+                                                           },
+                                         "type":  "minecraft:uniform",
+                                         "max_inclusive":  {
+                                                               "absolute":  290
+                                                           }
+                                     },
+                          "type":  "minecraft:height_range"
+                      },
+                      {
+                          "type":  "minecraft:biome"
+                      }
+                  ]
+}

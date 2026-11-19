@@ -1,0 +1,30 @@
+{
+    "criteria":  {
+                     "inv":  {
+                                 "trigger":  "minecraft:inventory_changed",
+                                 "conditions":  {
+                                                    "items":  [
+                                                                  {
+                                                                      "items":  "northstar_planet_addon:phosphoros_core"
+                                                                  }
+                                                              ]
+                                                }
+                             }
+                 },
+    "parent":  "northstar_planet_addon:root",
+    "display":  {
+                    "description":  {
+                                        "translate":  "advancement.northstar_planet_addon.phosphoros.description"
+                                    },
+                    "show_toast":  true,
+                    "icon":  {
+                                 "id":  "northstar_planet_addon:phosphoros_core",
+                                 "count":  1
+                             },
+                    "announce_to_chat":  true,
+                    "title":  {
+                                  "translate":  "advancement.northstar_planet_addon.phosphoros.title"
+                              },
+                    "frame":  "challenge"
+                }
+}

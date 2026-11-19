@@ -1,0 +1,19 @@
+{
+    "ingredients":  [
+                        {
+                            "item":  "northstar_planet_addon:core_shard"
+                        },
+                        {
+                            "item":  "northstar_planet_addon:tungsten_plate"
+                        },
+                        {
+                            "item":  "minecraft:ice"
+                        }
+                    ],
+    "category":  "misc",
+    "result":  {
+                   "id":  "northstar_planet_addon:heat_sink",
+                   "count":  1
+               },
+    "type":  "minecraft:crafting_shapeless"
+}

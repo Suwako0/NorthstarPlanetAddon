@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "minVersion": "0.8.5",
+  "compatibilityLevel": "JAVA_21",
+  "package": "com.suwako.northstarplanetaddon.mercury.mixin",
+  "mixins": [
+    "BiomeSourceMixin",
+    "MultiNoiseBiomeSourceMixin",
+    "PlayerExhaustionMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

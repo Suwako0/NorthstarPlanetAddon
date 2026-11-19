@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "SSS",
+    "SPS",
+    "SSS"
+  ],
+  "key": {
+    "S": {
+      "item": "northstar_planet_addon:moon_shell"
+    },
+    "P": {
+      "item": "northstar_planet_addon:broken_night_pearl"
+    }
+  },
+  "result": {
+    "id": "northstar_planet_addon:moon_pearl",
+    "count": 1
+  }
+}

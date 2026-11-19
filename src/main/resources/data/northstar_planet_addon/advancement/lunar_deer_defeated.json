@@ -1,0 +1,27 @@
+{
+  "display": {
+    "icon": {
+      "id": "northstar_planet_addon:moon_deer_antler"
+    },
+    "title": {
+      "translate": "advancement.northstar_planet_addon.lunar_deer_defeated.title"
+    },
+    "description": {
+      "translate": "advancement.northstar_planet_addon.lunar_deer_defeated.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "defeat_lunar_deer": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "entity": {
+          "type": "northstar_planet_addon:lunar_deer"
+        }
+      }
+    }
+  }
+}

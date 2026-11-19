@@ -1,0 +1,41 @@
+{
+    "criteria":  {
+                     "loc":  {
+                                 "trigger":  "minecraft:location",
+                                 "conditions":  {
+                                                    "player":  [
+                                                                   {
+                                                                       "condition":  "minecraft:entity_properties",
+                                                                       "entity":  "this",
+                                                                       "predicate":  {
+                                                                                         "location":  {
+                                                                                                          "dimension":  "northstar:venus",
+                                                                                                          "position":  {
+                                                                                                                           "y":  {
+                                                                                                                                     "min":  180
+                                                                                                                                 }
+                                                                                                                       }
+                                                                                                      }
+                                                                                     }
+                                                                   }
+                                                               ]
+                                                }
+                             }
+                 },
+    "parent":  "northstar_planet_addon:root",
+    "display":  {
+                    "description":  {
+                                        "translate":  "advancement.northstar_planet_addon.frost_highlands.description"
+                                    },
+                    "show_toast":  true,
+                    "icon":  {
+                                 "id":  "northstar_planet_addon:frost_scale",
+                                 "count":  1
+                             },
+                    "announce_to_chat":  true,
+                    "title":  {
+                                  "translate":  "advancement.northstar_planet_addon.frost_highlands.title"
+                              },
+                    "frame":  "goal"
+                }
+}

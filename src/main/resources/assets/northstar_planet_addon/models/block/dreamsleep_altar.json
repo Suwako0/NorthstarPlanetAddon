@@ -1,0 +1,104 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "textures": {
+    "particle": "northstar_planet_addon:block/dreamsleep_altar_side",
+    "side": "northstar_planet_addon:block/dreamsleep_altar_side",
+    "top": "northstar_planet_addon:block/dreamsleep_altar_top",
+    "core": "northstar_planet_addon:block/dreamsleep_altar_core"
+  },
+  "elements": [
+    {
+      "comment": "plinth",
+      "from": [0, 0, 0],
+      "to": [16, 3, 16],
+      "faces": {
+        "down": { "texture": "#side", "cullface": "down" },
+        "up": { "texture": "#side" },
+        "north": { "texture": "#side", "cullface": "north" },
+        "east": { "texture": "#side", "cullface": "east" },
+        "south": { "texture": "#side", "cullface": "south" },
+        "west": { "texture": "#side", "cullface": "west" }
+      }
+    },
+    {
+      "comment": "post north west",
+      "from": [1, 3, 1],
+      "to": [4, 13, 4],
+      "faces": {
+        "down": { "texture": "#side" },
+        "up": { "texture": "#side" },
+        "north": { "texture": "#side" },
+        "east": { "texture": "#side" },
+        "south": { "texture": "#side" },
+        "west": { "texture": "#side" }
+      }
+    },
+    {
+      "comment": "post north east",
+      "from": [12, 3, 1],
+      "to": [15, 13, 4],
+      "faces": {
+        "down": { "texture": "#side" },
+        "up": { "texture": "#side" },
+        "north": { "texture": "#side" },
+        "east": { "texture": "#side" },
+        "south": { "texture": "#side" },
+        "west": { "texture": "#side" }
+      }
+    },
+    {
+      "comment": "post south west",
+      "from": [1, 3, 12],
+      "to": [4, 13, 15],
+      "faces": {
+        "down": { "texture": "#side" },
+        "up": { "texture": "#side" },
+        "north": { "texture": "#side" },
+        "east": { "texture": "#side" },
+        "south": { "texture": "#side" },
+        "west": { "texture": "#side" }
+      }
+    },
+    {
+      "comment": "post south east",
+      "from": [12, 3, 12],
+      "to": [15, 13, 15],
+      "faces": {
+        "down": { "texture": "#side" },
+        "up": { "texture": "#side" },
+        "north": { "texture": "#side" },
+        "east": { "texture": "#side" },
+        "south": { "texture": "#side" },
+        "west": { "texture": "#side" }
+      }
+    },
+    {
+      "comment": "cap, carved crescent on top",
+      "from": [0, 13, 0],
+      "to": [16, 16, 16],
+      "faces": {
+        "down": { "texture": "#side" },
+        "up": { "texture": "#top", "cullface": "up" },
+        "north": { "texture": "#side", "cullface": "north" },
+        "east": { "texture": "#side", "cullface": "east" },
+        "south": { "texture": "#side", "cullface": "south" },
+        "west": { "texture": "#side", "cullface": "west" }
+      }
+    },
+    {
+      "comment": "moon pearl core, suspended inside the shrine",
+      "from": [6, 6, 6],
+      "to": [10, 11, 10],
+      "shade": false,
+      "faces": {
+        "down": { "texture": "#core", "uv": [0, 0, 16, 16] },
+        "up": { "texture": "#core", "uv": [0, 0, 16, 16] },
+        "north": { "texture": "#core", "uv": [0, 0, 16, 16] },
+        "east": { "texture": "#core", "uv": [0, 0, 16, 16] },
+        "south": { "texture": "#core", "uv": [0, 0, 16, 16] },
+        "west": { "texture": "#core", "uv": [0, 0, 16, 16] }
+      }
+    }
+  ]
+}

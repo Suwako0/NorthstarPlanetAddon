@@ -1,0 +1,109 @@
+{
+    "carvers":  {
+                    "air":  [
+                                "minecraft:cave",
+                                "minecraft:cave_extra_underground"
+                            ]
+                },
+    "downfall":  0.4,
+    "effects":  {
+                    "fog_color":  16767935,
+                    "sky_color":  14331548,
+                    "water_color":  4159204,
+                    "water_fog_color":  329011
+                },
+    "features":  [
+                     [
+                         "northstar:mars_crater"
+                     ],
+                     [
+                         "minecraft:lake_lava_underground"
+                     ],
+                     [
+
+                     ],
+                     [
+                         "northstar:mars_worm_nest"
+                     ],
+                     [
+                         "northstar_planet_addon:lava_crater",
+                         "northstar_planet_addon:ice_crater"
+                     ],
+                     [
+
+                     ],
+                     [
+                         "northstar_planet_addon:raw_martian_iron_vein",
+                         "northstar:mars_blob_andesite",
+                         "northstar:mars_blob_granite",
+                         "northstar:mars_blob_basalt",
+                         "northstar:mars_blob_crimsite",
+                         "northstar:mars_blob_mars_soil",
+                         "northstar:mars_blob_volcanic_ash",
+                         "northstar:mars_blob_gravel",
+                         "northstar:mars_ore_titanium",
+                         "northstar:mars_ore_copper_large",
+                         "northstar:mars_ore_copper",
+                         "northstar:mars_ore_zinc",
+                         "northstar:mars_ore_iron_large",
+                         "northstar:mars_ore_iron",
+                         "northstar:mars_ore_iron_small",
+                         "northstar:mars_ore_diamond",
+                         "northstar:mars_ore_gold",
+                         "northstar:mars_ore_quartz",
+                         "northstar:mars_ore_redstone"
+                     ],
+                     [
+                         "northstar:big_dumb_rock",
+                         "northstar:mars_rock",
+                         "northstar:mars_dunes_rock"
+                     ],
+                     [
+
+                     ],
+                     [
+                         "northstar_planet_addon:raw_martian_iron_boulder",
+                         "northstar:mars_roots"
+                     ],
+                     [
+                         "northstar_planet_addon:mars_surface_layer_rusty"
+                     ]
+                 ],
+    "has_precipitation":  false,
+    "spawn_costs":  {
+
+                    },
+    "spawners":  {
+                     "ambient":  [
+
+                                 ],
+                     "axolotls":  [
+
+                                  ],
+                     "creature":  [
+
+                                  ],
+                     "misc":  [
+
+                              ],
+                     "monster":  [
+                                     {
+                                         "type":  "northstar_planet_addon:demon_moth",
+                                         "maxCount":  2,
+                                         "minCount":  1,
+                                         "weight":  12
+                                     }
+                                 ],
+                     "underground_water_creature":  [
+
+                                                    ],
+                     "water_ambient":  [
+
+                                       ],
+                     "water_creature":  [
+
+                                        ]
+                 },
+    "temperature":  0.8,
+    "temperature_modifier":  "frozen"
+}

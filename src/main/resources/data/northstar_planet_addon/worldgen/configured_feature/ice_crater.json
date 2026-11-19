@@ -1,0 +1,9 @@
+{
+  "type": "northstar_planet_addon:crater",
+  "config": {
+    "radius": 16, "depth": 12, "rim_height": 5, "core_radius": 16,
+    "lava_block": { "Name": "northstar_planet_addon:mars_ice" },
+    "ice_block": { "Name": "northstar_planet_addon:mars_ice" },
+    "fill_block": { "Name": "northstar:mars_stone" }
+  }
+}

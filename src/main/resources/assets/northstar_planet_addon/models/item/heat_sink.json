@@ -1,0 +1,6 @@
+{
+    "textures":  {
+                     "layer0":  "northstar_planet_addon:item/heat_sink"
+                 },
+    "parent":  "minecraft:item/generated"
+}

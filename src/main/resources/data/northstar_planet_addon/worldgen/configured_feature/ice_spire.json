@@ -1,0 +1,11 @@
+{
+  "type": "northstar_planet_addon:spire",
+  "config": {
+    "state": {
+      "Name": "northstar_planet_addon:dry_ice"
+    },
+    "min_height": 5,
+    "max_height": 14,
+    "base_radius": 0
+  }
+}

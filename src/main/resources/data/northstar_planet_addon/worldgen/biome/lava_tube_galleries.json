@@ -1,0 +1,89 @@
+{
+    "effects":  {
+                    "fog_color":  7350770,
+                    "sky_color":  4999488,
+                    "water_fog_color":  329011,
+                    "water_color":  4159204,
+                    "mood_sound":  {
+                                       "offset":  2,
+                                       "tick_delay":  6000,
+                                       "sound":  "minecraft:ambient.cave",
+                                       "block_search_extent":  8
+                                   }
+                },
+    "downfall":  0.5,
+    "features":  [
+                     [
+
+                     ],
+                     [
+
+                     ],
+                     [
+
+                     ],
+                     [
+
+                     ],
+                     [
+
+                     ],
+                     [
+
+                     ],
+                     [
+
+                     ],
+                     [
+
+                     ],
+                     [
+
+                     ],
+                     [
+
+                     ],
+                     [
+
+                     ]
+                 ],
+    "has_precipitation":  false,
+    "carvers":  {
+
+                },
+    "spawn_costs":  {
+
+                    },
+    "spawners":  {
+                     "underground_water_creature":  [
+
+                                                    ],
+                     "monster":  [
+                                     {
+                                         "maxCount":  2,
+                                         "weight":  8,
+                                         "minCount":  1,
+                                         "type":  "northstar_planet_addon:lava_worm"
+                                     }
+                                 ],
+                     "water_ambient":  [
+
+                                       ],
+                     "creature":  [
+
+                                  ],
+                     "water_creature":  [
+
+                                        ],
+                     "ambient":  [
+
+                                 ],
+                     "axolotls":  [
+
+                                  ],
+                     "misc":  [
+
+                              ]
+                 },
+    "temperature":  1.9
+}

@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:stonecutting",
+  "count": 1,
+  "ingredient": {
+    "tag": "northstar_planet_addon:moonlight_logs"
+  },
+  "result": {
+    "id": "northstar_planet_addon:moonlight_planks"
+  }
+}

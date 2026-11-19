@@ -1,0 +1,16 @@
+{
+    "pools":  [
+                  {
+                      "entries":  [
+                                      {
+                                          "weight":  1,
+                                          "name":  "northstar_planet_addon:ballistic_calibrator",
+                                          "type":  "minecraft:item"
+                                      }
+                                  ],
+                      "rolls":  1
+                  }
+              ],
+    "type":  "minecraft:chest",
+    "random_sequence":  "northstar_planet_addon:chests/observation_tower_calibrator"
+}

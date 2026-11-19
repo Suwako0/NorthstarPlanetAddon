@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "northstar_planet_addon:demon_moth_wing_membrane"
+    },
+    {
+      "item": "northstar_planet_addon:demon_moth_wing_membrane"
+    },
+    {
+      "item": "northstar:martian_steel_sheet"
+    }
+  ],
+  "result": {
+    "count": 2,
+    "id": "northstar_planet_addon:anti_corrosion_coating"
+  }
+}

@@ -1,0 +1,6 @@
+{
+    "textures":  {
+                     "layer0":  "northstar_planet_addon:item/frost_scale"
+                 },
+    "parent":  "minecraft:item/generated"
+}

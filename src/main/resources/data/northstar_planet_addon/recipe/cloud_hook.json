@@ -1,0 +1,37 @@
+{
+    "ingredients":  [
+                        {
+                            "item":  "northstar_planet_addon:tungsten_plate"
+                        },
+                        {
+                            "item":  "northstar_planet_addon:tungsten_plate"
+                        },
+                        {
+                            "item":  "northstar_planet_addon:tungsten_plate"
+                        },
+                        {
+                            "item":  "northstar_planet_addon:cloud_sail_membrane"
+                        },
+                        {
+                            "item":  "northstar_planet_addon:cloud_sail_membrane"
+                        },
+                        {
+                            "item":  "minecraft:string"
+                        },
+                        {
+                            "item":  "minecraft:string"
+                        },
+                        {
+                            "item":  "minecraft:string"
+                        },
+                        {
+                            "item":  "minecraft:string"
+                        }
+                    ],
+    "category":  "equipment",
+    "result":  {
+                   "id":  "northstar_planet_addon:cloud_hook",
+                   "count":  1
+               },
+    "type":  "minecraft:crafting_shapeless"
+}

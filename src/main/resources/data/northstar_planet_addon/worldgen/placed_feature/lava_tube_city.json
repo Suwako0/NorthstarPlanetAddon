@@ -1,0 +1,27 @@
+{
+    "feature":  "northstar_planet_addon:lava_tube_city",
+    "placement":  [
+                      {
+                          "type":  "minecraft:rarity_filter",
+                          "chance":  500
+                      },
+                      {
+                          "type":  "minecraft:in_square"
+                      },
+                      {
+                          "height":  {
+                                         "min_inclusive":  {
+                                                               "absolute":  190
+                                                           },
+                                         "type":  "minecraft:uniform",
+                                         "max_inclusive":  {
+                                                               "absolute":  240
+                                                           }
+                                     },
+                          "type":  "minecraft:height_range"
+                      },
+                      {
+                          "type":  "minecraft:biome"
+                      }
+                  ]
+}

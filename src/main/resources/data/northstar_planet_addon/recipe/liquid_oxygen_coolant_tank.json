@@ -1,0 +1,18 @@
+{
+  "type": "create:filling",
+  "ingredients": [
+    {
+      "item": "northstar_planet_addon:coolant_tank"
+    },
+    {
+      "type": "neoforge:single",
+      "amount": 1000,
+      "fluid": "northstar:liquid_oxygen"
+    }
+  ],
+  "results": [
+    {
+      "id": "northstar_planet_addon:liquid_oxygen_coolant_tank"
+    }
+  ]
+}

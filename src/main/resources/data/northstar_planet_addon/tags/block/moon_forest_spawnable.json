@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "northstar_planet_addon:dreamsleep_grass",
+    "northstar_planet_addon:moon_soil",
+    "northstar:moon_stone",
+    "northstar:moon_sand"
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "type": "northstar_planet_addon:mars_surface_layer",
+  "config": {
+    "top": { "Name": "northstar:mars_sand" },
+    "filler": { "Name": "northstar:mars_gravel" },
+    "accent": { "Name": "northstar_planet_addon:red_ironstone" },
+    "filler_depth": 3,
+    "accent_chance": 0.3
+  }
+}

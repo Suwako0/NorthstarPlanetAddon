@@ -1,0 +1,7 @@
+{
+    "pools":  [
+
+              ],
+    "type":  "minecraft:block",
+    "random_sequence":  "northstar_planet_addon:blocks/sulfuric_acid"
+}

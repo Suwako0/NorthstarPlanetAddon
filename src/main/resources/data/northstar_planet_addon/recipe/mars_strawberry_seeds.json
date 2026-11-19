@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "northstar_planet_addon:mars_strawberry"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "northstar_planet_addon:mars_strawberry_seeds"
+  }
+}

@@ -1,0 +1,19 @@
+{
+    "ingredients":  [
+                        {
+                            "item":  "northstar_planet_addon:frost_scale"
+                        },
+                        {
+                            "item":  "minecraft:snowball"
+                        },
+                        {
+                            "item":  "minecraft:sweet_berries"
+                        }
+                    ],
+    "category":  "misc",
+    "result":  {
+                   "id":  "northstar_planet_addon:frostberry_smoothie",
+                   "count":  1
+               },
+    "type":  "minecraft:crafting_shapeless"
+}

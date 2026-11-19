@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "group": "sunfish_jam",
+  "ingredients": [
+    {
+      "item": "northstar_planet_addon:sunfish_slice"
+    },
+    {
+      "item": "minecraft:glow_berries"
+    },
+    {
+      "item": "minecraft:glow_berries"
+    }
+  ],
+  "result": {
+    "id": "northstar_planet_addon:sunfish_jam",
+    "count": 1
+  }
+}

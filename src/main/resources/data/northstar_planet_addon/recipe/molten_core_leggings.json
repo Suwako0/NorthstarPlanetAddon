@@ -1,0 +1,25 @@
+{
+  "type": "create:mechanical_crafting",
+  "accept_mirrored": false,
+  "category": "misc",
+  "key": {
+    "S": {
+      "item": "northstar:martian_steel_ingot"
+    },
+    "H": {
+      "item": "northstar_planet_addon:star_core_heart"
+    }
+  },
+  "pattern": [
+    "SSSSS",
+    "SHHHS",
+    "SS SS",
+    "SS SS",
+    "SS SS"
+  ],
+  "result": {
+    "count": 1,
+    "id": "northstar_planet_addon:molten_core_leggings"
+  },
+  "show_notification": true
+}

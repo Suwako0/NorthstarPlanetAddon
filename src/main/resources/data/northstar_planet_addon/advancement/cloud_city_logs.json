@@ -1,0 +1,33 @@
+{
+    "criteria":  {
+                     "inv":  {
+                                 "trigger":  "minecraft:inventory_changed",
+                                 "conditions":  {
+                                                    "items":  [
+                                                                  {
+                                                                      "items":  "northstar_planet_addon:cloud_map_fragment",
+                                                                      "count":  {
+                                                                                    "min":  24
+                                                                                }
+                                                                  }
+                                                              ]
+                                                }
+                             }
+                 },
+    "parent":  "northstar_planet_addon:root",
+    "display":  {
+                    "description":  {
+                                        "translate":  "advancement.northstar_planet_addon.cloud_city_logs.description"
+                                    },
+                    "show_toast":  true,
+                    "icon":  {
+                                 "id":  "northstar_planet_addon:cloud_map_fragment",
+                                 "count":  1
+                             },
+                    "announce_to_chat":  true,
+                    "title":  {
+                                  "translate":  "advancement.northstar_planet_addon.cloud_city_logs.title"
+                              },
+                    "frame":  "challenge"
+                }
+}

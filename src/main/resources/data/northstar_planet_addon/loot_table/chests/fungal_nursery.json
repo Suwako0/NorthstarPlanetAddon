@@ -1,0 +1,41 @@
+{
+    "pools":  [
+                  {
+                      "entries":  [
+                                      {
+                                          "functions":  [
+                                                            {
+                                                                "function":  "minecraft:set_count",
+                                                                "count":  {
+                                                                              "min":  2,
+                                                                              "type":  "minecraft:uniform",
+                                                                              "max":  4
+                                                                          }
+                                                            }
+                                                        ],
+                                          "weight":  25,
+                                          "name":  "northstar_planet_addon:fungus_fiber",
+                                          "type":  "minecraft:item"
+                                      },
+                                      {
+                                          "weight":  20,
+                                          "name":  "northstar_planet_addon:spore_syrup",
+                                          "type":  "minecraft:item"
+                                      },
+                                      {
+                                          "weight":  20,
+                                          "name":  "northstar_planet_addon:roasted_giant_fungus",
+                                          "type":  "minecraft:item"
+                                      },
+                                      {
+                                          "weight":  8,
+                                          "name":  "northstar_planet_addon:fungus_shears",
+                                          "type":  "minecraft:item"
+                                      }
+                                  ],
+                      "rolls":  2
+                  }
+              ],
+    "type":  "minecraft:chest",
+    "random_sequence":  "northstar_planet_addon:chests/fungal_nursery"
+}

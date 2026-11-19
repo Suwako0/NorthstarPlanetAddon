@@ -1,0 +1,6 @@
+{
+    "textures":  {
+                     "layer0":  "northstar_planet_addon:item/tungsten_leggings"
+                 },
+    "parent":  "minecraft:item/generated"
+}

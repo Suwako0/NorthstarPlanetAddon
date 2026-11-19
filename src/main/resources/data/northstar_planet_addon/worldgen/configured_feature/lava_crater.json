@@ -1,0 +1,9 @@
+{
+  "type": "northstar_planet_addon:crater",
+  "config": {
+    "radius": 16, "depth": 12, "rim_height": 5, "core_radius": 0,
+    "lava_block": { "Name": "minecraft:lava" },
+    "ice_block": { "Name": "minecraft:magma_block" },
+    "fill_block": { "Name": "northstar:volcanic_rock" }
+  }
+}

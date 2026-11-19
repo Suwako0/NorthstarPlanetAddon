@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "axis=y": { "model": "northstar_planet_addon:block/stripped_moonlight_log" },
+    "axis=z": { "model": "northstar_planet_addon:block/stripped_moonlight_log_horizontal", "x": 90 },
+    "axis=x": { "model": "northstar_planet_addon:block/stripped_moonlight_log_horizontal", "x": 90, "y": 90 }
+  }
+}

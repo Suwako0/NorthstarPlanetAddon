@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/crop",
+  "textures": {
+    "crop": "northstar_planet_addon:block/mars_strawberry_crop_stage4"
+  }
+}

@@ -1,0 +1,51 @@
+{
+    "pools":  [
+                  {
+                      "entries":  [
+                                      {
+                                          "weight":  15,
+                                          "name":  "northstar_planet_addon:acid_proof_alloy_plate",
+                                          "type":  "minecraft:item"
+                                      },
+                                      {
+                                          "functions":  [
+                                                            {
+                                                                "function":  "minecraft:set_count",
+                                                                "count":  {
+                                                                              "min":  2,
+                                                                              "type":  "minecraft:uniform",
+                                                                              "max":  5
+                                                                          }
+                                                            }
+                                                        ],
+                                          "weight":  25,
+                                          "name":  "northstar_planet_addon:tungsten_plate",
+                                          "type":  "minecraft:item"
+                                      },
+                                      {
+                                          "functions":  [
+                                                            {
+                                                                "function":  "minecraft:set_count",
+                                                                "count":  {
+                                                                              "min":  1,
+                                                                              "type":  "minecraft:uniform",
+                                                                              "max":  3
+                                                                          }
+                                                            }
+                                                        ],
+                                          "weight":  20,
+                                          "name":  "northstar_planet_addon:sulfur_crystal",
+                                          "type":  "minecraft:item"
+                                      },
+                                      {
+                                          "weight":  15,
+                                          "name":  "northstar_planet_addon:acid_sac",
+                                          "type":  "minecraft:item"
+                                      }
+                                  ],
+                      "rolls":  3
+                  }
+              ],
+    "type":  "minecraft:chest",
+    "random_sequence":  "northstar_planet_addon:chests/acid_pump_station"
+}

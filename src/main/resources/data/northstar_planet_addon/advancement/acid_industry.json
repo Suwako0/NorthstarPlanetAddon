@@ -1,0 +1,33 @@
+{
+    "criteria":  {
+                     "inv":  {
+                                 "trigger":  "minecraft:inventory_changed",
+                                 "conditions":  {
+                                                    "items":  [
+                                                                  {
+                                                                      "items":  "northstar_planet_addon:acid_proof_alloy_plate",
+                                                                      "count":  {
+                                                                                    "min":  4
+                                                                                }
+                                                                  }
+                                                              ]
+                                                }
+                             }
+                 },
+    "parent":  "northstar_planet_addon:root",
+    "display":  {
+                    "description":  {
+                                        "translate":  "advancement.northstar_planet_addon.acid_industry.description"
+                                    },
+                    "show_toast":  true,
+                    "icon":  {
+                                 "id":  "northstar_planet_addon:acid_proof_alloy_plate",
+                                 "count":  1
+                             },
+                    "announce_to_chat":  true,
+                    "title":  {
+                                  "translate":  "advancement.northstar_planet_addon.acid_industry.title"
+                              },
+                    "frame":  "goal"
+                }
+}

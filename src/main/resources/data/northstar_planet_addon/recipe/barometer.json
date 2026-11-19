@@ -1,0 +1,22 @@
+{
+    "ingredients":  [
+                        {
+                            "item":  "northstar_planet_addon:tungsten_plate"
+                        },
+                        {
+                            "item":  "northstar_planet_addon:tungsten_plate"
+                        },
+                        {
+                            "item":  "northstar_planet_addon:sulfur_crystal"
+                        },
+                        {
+                            "item":  "minecraft:gold_ingot"
+                        }
+                    ],
+    "category":  "equipment",
+    "result":  {
+                   "id":  "northstar_planet_addon:barometer",
+                   "count":  1
+               },
+    "type":  "minecraft:crafting_shapeless"
+}

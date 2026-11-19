@@ -1,0 +1,51 @@
+{
+    "pools":  [
+                  {
+                      "entries":  [
+                                      {
+                                          "weight":  8,
+                                          "name":  "northstar_planet_addon:barometer",
+                                          "type":  "minecraft:item"
+                                      },
+                                      {
+                                          "weight":  6,
+                                          "name":  "northstar_planet_addon:pressure_valve",
+                                          "type":  "minecraft:item"
+                                      },
+                                      {
+                                          "functions":  [
+                                                            {
+                                                                "function":  "minecraft:set_count",
+                                                                "count":  {
+                                                                              "min":  2,
+                                                                              "type":  "minecraft:uniform",
+                                                                              "max":  6
+                                                                          }
+                                                            }
+                                                        ],
+                                          "weight":  25,
+                                          "name":  "northstar_planet_addon:tungsten_plate",
+                                          "type":  "minecraft:item"
+                                      },
+                                      {
+                                          "functions":  [
+                                                            {
+                                                                "function":  "minecraft:set_count",
+                                                                "count":  {
+                                                                              "min":  2,
+                                                                              "type":  "minecraft:uniform",
+                                                                              "max":  4
+                                                                          }
+                                                            }
+                                                        ],
+                                          "weight":  25,
+                                          "name":  "minecraft:bread",
+                                          "type":  "minecraft:item"
+                                      }
+                                  ],
+                      "rolls":  3
+                  }
+              ],
+    "type":  "minecraft:chest",
+    "random_sequence":  "northstar_planet_addon:chests/observation_tower"
+}

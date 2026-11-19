@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "A": {
+      "item": "northstar_planet_addon:anti_corrosion_coating"
+    },
+    "C": {
+      "item": "minecraft:bucket"
+    },
+    "S": {
+      "item": "northstar:martian_steel_sheet"
+    }
+  },
+  "pattern": [
+    "SAS",
+    "ACA",
+    "SAS"
+  ],
+  "result": {
+    "count": 1,
+    "id": "northstar_planet_addon:portable_cooler"
+  }
+}

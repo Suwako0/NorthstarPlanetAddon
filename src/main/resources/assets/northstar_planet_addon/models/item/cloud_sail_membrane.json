@@ -1,0 +1,6 @@
+{
+    "textures":  {
+                     "layer0":  "northstar_planet_addon:item/cloud_sail_membrane"
+                 },
+    "parent":  "minecraft:item/generated"
+}

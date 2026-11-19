@@ -1,0 +1,25 @@
+{
+    "ingredients":  [
+                        {
+                            "item":  "northstar_planet_addon:core_shard"
+                        },
+                        {
+                            "item":  "northstar_planet_addon:core_shard"
+                        },
+                        {
+                            "item":  "northstar_planet_addon:core_shard"
+                        },
+                        {
+                            "item":  "northstar_planet_addon:cloud_map_fragment"
+                        },
+                        {
+                            "item":  "northstar_planet_addon:sulfur_crystal"
+                        }
+                    ],
+    "category":  "misc",
+    "result":  {
+                   "id":  "northstar_planet_addon:sulfur_heart",
+                   "count":  1
+               },
+    "type":  "minecraft:crafting_shapeless"
+}

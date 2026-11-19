@@ -1,0 +1,23 @@
+{
+  "type": "create:mechanical_crafting",
+  "accept_mirrored": false,
+  "category": "misc",
+  "key": {
+    "S": {
+      "item": "northstar:martian_steel_ingot"
+    },
+    "I": {
+      "item": "northstar_planet_addon:mars_ice"
+    }
+  },
+  "pattern": [
+    "SSS",
+    "SIS",
+    "SSS"
+  ],
+  "result": {
+    "count": 1,
+    "id": "northstar_planet_addon:ares_altar_casing"
+  },
+  "show_notification": true
+}

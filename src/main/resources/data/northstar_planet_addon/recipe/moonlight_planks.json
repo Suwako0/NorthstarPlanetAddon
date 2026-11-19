@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "building",
+  "group": "planks",
+  "ingredients": [
+    {
+      "tag": "northstar_planet_addon:moonlight_logs"
+    }
+  ],
+  "result": {
+    "id": "northstar_planet_addon:moonlight_planks",
+    "count": 4
+  }
+}

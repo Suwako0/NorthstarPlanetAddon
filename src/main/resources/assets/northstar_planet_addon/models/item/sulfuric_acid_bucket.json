@@ -1,0 +1,6 @@
+{
+    "textures":  {
+                     "layer0":  "northstar_planet_addon:item/sulfuric_acid_bucket"
+                 },
+    "parent":  "minecraft:item/generated"
+}

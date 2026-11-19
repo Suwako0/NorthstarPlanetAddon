@@ -1,0 +1,37 @@
+{
+  "type": "northstar_planet_addon:hot_spring_lake",
+  "config": {
+    "fluid": {
+      "type": "minecraft:simple_state_provider",
+      "state": {
+        "Name": "northstar_planet_addon:hot_spring"
+      }
+    },
+    "barrier": {
+      "type": "minecraft:noise_threshold_provider",
+      "seed": 2025,
+      "noise": {
+        "firstOctave": 0,
+        "amplitudes": [
+          1.0
+        ]
+      },
+      "scale": 1.0,
+      "threshold": -0.25,
+      "high_chance": 0.07,
+      "default_state": {
+        "Name": "northstar:moon_stone"
+      },
+      "low_states": [
+        {
+          "Name": "northstar:moon_sand"
+        }
+      ],
+      "high_states": [
+        {
+          "Name": "northstar:moon_stone_lamp"
+        }
+      ]
+    }
+  }
+}

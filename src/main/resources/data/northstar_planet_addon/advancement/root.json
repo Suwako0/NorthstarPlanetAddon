@@ -1,0 +1,30 @@
+{
+    "criteria":  {
+                     "tungsten":  {
+                                      "trigger":  "minecraft:inventory_changed",
+                                      "conditions":  {
+                                                         "items":  [
+                                                                       {
+                                                                           "items":  "northstar_planet_addon:tungsten_ingot"
+                                                                       }
+                                                                   ]
+                                                     }
+                                  }
+                 },
+    "display":  {
+                    "description":  {
+                                        "translate":  "advancement.northstar_planet_addon.root.description"
+                                    },
+                    "background":  "minecraft:textures/block/gilded_blackstone.png",
+                    "show_toast":  true,
+                    "icon":  {
+                                 "id":  "northstar_planet_addon:tungsten_ingot",
+                                 "count":  1
+                             },
+                    "announce_to_chat":  true,
+                    "title":  {
+                                  "translate":  "advancement.northstar_planet_addon.root.title"
+                              },
+                    "frame":  "task"
+                }
+}

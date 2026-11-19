@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "minVersion": "0.8.5",
+  "compatibilityLevel": "JAVA_21",
+  "package": "com.suwako.northstarplanetaddon.moon.mixin",
+  "mixins": [
+    "BiomeSourceMixin",
+    "MultiNoiseBiomeSourceMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

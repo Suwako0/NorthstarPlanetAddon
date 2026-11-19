@@ -1,0 +1,27 @@
+{
+    "feature":  "northstar_planet_addon:cloud_island",
+    "placement":  [
+                      {
+                          "count":  4,
+                          "type":  "minecraft:count"
+                      },
+                      {
+                          "type":  "minecraft:in_square"
+                      },
+                      {
+                          "height":  {
+                                         "min_inclusive":  {
+                                                               "absolute":  180
+                                                           },
+                                         "type":  "minecraft:uniform",
+                                         "max_inclusive":  {
+                                                               "absolute":  300
+                                                           }
+                                     },
+                          "type":  "minecraft:height_range"
+                      },
+                      {
+                          "type":  "minecraft:biome"
+                      }
+                  ]
+}

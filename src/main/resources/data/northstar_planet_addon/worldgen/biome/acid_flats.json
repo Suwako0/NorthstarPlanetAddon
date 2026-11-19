@@ -1,0 +1,95 @@
+{
+    "effects":  {
+                    "fog_color":  15132390,
+                    "sky_color":  15249483,
+                    "water_fog_color":  329011,
+                    "water_color":  4159204
+                },
+    "downfall":  0,
+    "features":  [
+                     [
+
+                     ],
+                     [
+
+                     ],
+                     [
+
+                     ],
+                     [
+
+                     ],
+                     [
+
+                     ],
+                     [
+
+                     ],
+                     [
+
+                     ],
+                     [
+
+                     ],
+                     [
+
+                     ],
+                     [
+                         "northstar_planet_addon:cloud_island",
+                         "northstar_planet_addon:cloud_harbor",
+                         "northstar_planet_addon:acid_pump_station",
+                         "northstar_planet_addon:observation_tower",
+                         "northstar_planet_addon:fungal_nursery",
+                         "northstar_planet_addon:crashed_airship",
+                         "northstar_planet_addon:phosphoros_altar",
+                         "northstar_planet_addon:lava_tube_city"
+                     ],
+                     [
+
+                     ]
+                 ],
+    "has_precipitation":  false,
+    "carvers":  {
+
+                },
+    "spawn_costs":  {
+
+                    },
+    "spawners":  {
+                     "underground_water_creature":  [
+
+                                                    ],
+                     "monster":  [
+                                     {
+                                         "maxCount":  2,
+                                         "weight":  20,
+                                         "minCount":  1,
+                                         "type":  "northstar_planet_addon:acid_jelly"
+                                     }
+                                 ],
+                     "water_ambient":  [
+
+                                       ],
+                     "creature":  [
+                                      {
+                                          "maxCount":  2,
+                                          "weight":  8,
+                                          "minCount":  1,
+                                          "type":  "northstar_planet_addon:cloud_ray"
+                                      }
+                                  ],
+                     "water_creature":  [
+
+                                        ],
+                     "ambient":  [
+
+                                 ],
+                     "axolotls":  [
+
+                                  ],
+                     "misc":  [
+
+                              ]
+                 },
+    "temperature":  1
+}

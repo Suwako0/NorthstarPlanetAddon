@@ -1,0 +1,90 @@
+{
+  "temperature": 0.7,
+  "downfall": 0.4,
+  "has_precipitation": false,
+  "effects": {
+    "sky_color": 0,
+    "fog_color": 0,
+    "water_color": 4159204,
+    "water_fog_color": 329011
+  },
+  "carvers": {
+    "air": [
+      "minecraft:cave_extra_underground",
+      "minecraft:cave"
+    ]
+  },
+  "features": [
+    [
+      "northstar:moon_crater"
+    ],
+    [
+      "northstar:rare_lava_lake"
+    ],
+    [
+      "northstar_planet_addon:moon_forest_soil",
+      "northstar_planet_addon:moon_forest_grass"
+    ],
+    [],
+    [],
+    [],
+    [
+      "northstar:moon_ore_titanium",
+      "northstar:moon_ore_copper",
+      "northstar:moon_ore_diamond",
+      "northstar:moon_ore_gold",
+      "northstar:moon_ore_iron",
+      "northstar:moon_ore_iron_large",
+      "northstar:moon_ore_lapis",
+      "northstar:moon_ore_redstone",
+      "northstar:moon_ore_zinc",
+      "northstar:moon_ore_glowstone",
+      "northstar:moon_blob_andesite",
+      "northstar:moon_blob_asurine",
+      "northstar:moon_blob_basalt",
+      "northstar:moon_blob_blackstone"
+    ],
+    [
+      "northstar:moon_lunar_sapphire_geode",
+      "northstar:frost_sparse"
+    ],
+    [],
+    [
+      "northstar_planet_addon:moon_forest_short_grass",
+      "northstar_planet_addon:moonlight_tree",
+      "northstar_planet_addon:moon_bloom_patch"
+    ],
+    []
+  ],
+  "spawn_costs": {},
+  "spawners": {
+    "ambient": [],
+    "axolotls": [],
+    "creature": [
+      {
+        "type": "northstar_planet_addon:moon_rabbit",
+        "weight": 20,
+        "minCount": 2,
+        "maxCount": 4
+      },
+      {
+        "type": "northstar_planet_addon:moon_shell_crab",
+        "weight": 12,
+        "minCount": 1,
+        "maxCount": 3
+      }
+    ],
+    "misc": [],
+    "monster": [
+      {
+        "type": "northstar:moon_lunargrade",
+        "weight": 8,
+        "minCount": 1,
+        "maxCount": 2
+      }
+    ],
+    "underground_water_creature": [],
+    "water_ambient": [],
+    "water_creature": []
+  }
+}

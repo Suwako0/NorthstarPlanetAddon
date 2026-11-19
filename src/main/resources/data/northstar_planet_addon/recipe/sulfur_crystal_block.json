@@ -1,0 +1,18 @@
+{
+    "key":  {
+                "#":  {
+                          "item":  "northstar_planet_addon:sulfur_crystal"
+                      }
+            },
+    "category":  "building",
+    "pattern":  [
+                    "###",
+                    "###",
+                    "###"
+                ],
+    "result":  {
+                   "id":  "northstar_planet_addon:sulfur_crystal_block",
+                   "count":  1
+               },
+    "type":  "minecraft:crafting_shaped"
+}

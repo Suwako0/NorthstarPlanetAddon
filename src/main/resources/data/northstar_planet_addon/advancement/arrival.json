@@ -1,0 +1,26 @@
+{
+    "criteria":  {
+                     "dim":  {
+                                 "trigger":  "minecraft:changed_dimension",
+                                 "conditions":  {
+                                                    "to":  "northstar:venus"
+                                                }
+                             }
+                 },
+    "parent":  "northstar_planet_addon:root",
+    "display":  {
+                    "description":  {
+                                        "translate":  "advancement.northstar_planet_addon.arrival.description"
+                                    },
+                    "show_toast":  true,
+                    "icon":  {
+                                 "id":  "northstar_planet_addon:tungsten_ingot",
+                                 "count":  1
+                             },
+                    "announce_to_chat":  true,
+                    "title":  {
+                                  "translate":  "advancement.northstar_planet_addon.arrival.title"
+                              },
+                    "frame":  "task"
+                }
+}

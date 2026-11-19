@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "northstar_planet_addon:block/moon_soil"
+  }
+}

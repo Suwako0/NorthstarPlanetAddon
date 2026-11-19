@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "G": {
+      "item": "minecraft:glass"
+    },
+    "M": {
+      "item": "northstar_planet_addon:demon_moth_wing_membrane"
+    },
+    "T": {
+      "item": "northstar:titanium_sheet"
+    }
+  },
+  "pattern": [
+    " G ",
+    "MGM",
+    " T "
+  ],
+  "result": {
+    "count": 1,
+    "id": "northstar_planet_addon:sandstorm_goggles"
+  }
+}

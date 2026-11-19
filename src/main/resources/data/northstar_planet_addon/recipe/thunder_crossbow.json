@@ -1,0 +1,31 @@
+{
+    "ingredients":  [
+                        {
+                            "item":  "northstar_planet_addon:thunder_feather"
+                        },
+                        {
+                            "item":  "northstar_planet_addon:thunder_feather"
+                        },
+                        {
+                            "item":  "northstar_planet_addon:thunder_feather"
+                        },
+                        {
+                            "item":  "northstar_planet_addon:tungsten_plate"
+                        },
+                        {
+                            "item":  "northstar_planet_addon:tungsten_plate"
+                        },
+                        {
+                            "item":  "northstar_planet_addon:static_sac"
+                        },
+                        {
+                            "item":  "minecraft:crossbow"
+                        }
+                    ],
+    "category":  "equipment",
+    "result":  {
+                   "id":  "northstar_planet_addon:thunder_crossbow",
+                   "count":  1
+               },
+    "type":  "minecraft:crafting_shapeless"
+}

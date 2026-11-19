@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "northstar_planet_addon:moonlight_log",
+    "northstar_planet_addon:moonlight_wood",
+    "northstar_planet_addon:stripped_moonlight_log",
+    "northstar_planet_addon:stripped_moonlight_wood"
+  ]
+}

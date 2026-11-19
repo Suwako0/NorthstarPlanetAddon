@@ -1,0 +1,36 @@
+{
+    "pools":  [
+                  {
+                      "entries":  [
+                                      {
+                                          "weight":  15,
+                                          "name":  "northstar_planet_addon:phosphoros_core",
+                                          "type":  "minecraft:item"
+                                      },
+                                      {
+                                          "functions":  [
+                                                            {
+                                                                "function":  "minecraft:set_count",
+                                                                "count":  {
+                                                                              "min":  2,
+                                                                              "type":  "minecraft:uniform",
+                                                                              "max":  4
+                                                                          }
+                                                            }
+                                                        ],
+                                          "weight":  25,
+                                          "name":  "northstar_planet_addon:pre_civilization_alloy",
+                                          "type":  "minecraft:item"
+                                      },
+                                      {
+                                          "weight":  10,
+                                          "name":  "northstar_planet_addon:aphrodite_tear",
+                                          "type":  "minecraft:item"
+                                      }
+                                  ],
+                      "rolls":  2
+                  }
+              ],
+    "type":  "minecraft:chest",
+    "random_sequence":  "northstar_planet_addon:chests/phosphoros_altar"
+}

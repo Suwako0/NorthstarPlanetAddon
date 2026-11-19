@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "S": {
+      "item": "northstar:martian_steel_sheet"
+    },
+    "G": {
+      "item": "minecraft:glass"
+    }
+  },
+  "pattern": [
+    "SGS",
+    "G G",
+    "SGS"
+  ],
+  "result": {
+    "count": 4,
+    "id": "northstar_planet_addon:coolant_tank"
+  }
+}

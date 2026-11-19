@@ -1,0 +1,6 @@
+{
+    "textures":  {
+                     "all":  "northstar_planet_addon:block/sulfur_crystal_block"
+                 },
+    "parent":  "minecraft:block/cube_all"
+}

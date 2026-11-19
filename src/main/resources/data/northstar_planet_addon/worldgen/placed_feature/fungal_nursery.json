@@ -1,0 +1,27 @@
+{
+    "feature":  "northstar_planet_addon:fungal_nursery",
+    "placement":  [
+                      {
+                          "type":  "minecraft:rarity_filter",
+                          "chance":  100
+                      },
+                      {
+                          "type":  "minecraft:in_square"
+                      },
+                      {
+                          "height":  {
+                                         "min_inclusive":  {
+                                                               "absolute":  200
+                                                           },
+                                         "type":  "minecraft:uniform",
+                                         "max_inclusive":  {
+                                                               "absolute":  270
+                                                           }
+                                     },
+                          "type":  "minecraft:height_range"
+                      },
+                      {
+                          "type":  "minecraft:biome"
+                      }
+                  ]
+}

@@ -1,0 +1,78 @@
+# 北极星星球附属 / Northstar Planet Addon —— NeoForge 21.1.x（Minecraft 1.21.1）模组元数据。
+# 花括号占位符由 build.gradle 的 processResources 展开（值来自 gradle.properties）。
+# 本文件里不要写其它「美元号 + 花括号」写法：Groovy 模板会把它当表达式求值导致构建失败。
+modLoader="javafml"
+loaderVersion="[1,)"
+license="${mod_license}"
+
+[[mods]]
+modId="${mod_id}"
+version="${mod_version}"
+displayName="${mod_name}"
+authors="${mod_authors}"
+description="${mod_description}"
+
+# 本模组只有一个 Mixin 配置，里面登记了月球与水星模块的 5 个 Mixin。
+# 开发运行（ModDev 从类目录加载）靠这一段登记；成品 jar 另外走 manifest 的 MixinConfigs。
+[[mixins]]
+config="northstar_planet_addon.moon.mixins.json"
+
+[[mixins]]
+config="northstar_planet_addon.mercury.mixins.json"
+
+[[dependencies.${mod_id}]]
+modId="neoforge"
+type="required"
+versionRange="${neo_version_range}"
+ordering="AFTER"
+side="BOTH"
+
+[[dependencies.${mod_id}]]
+modId="minecraft"
+type="required"
+versionRange="${minecraft_version_range}"
+ordering="AFTER"
+side="BOTH"
+
+# 北极星重制版：四个星球模块的目标维度、方块与群系都来自它。
+[[dependencies.${mod_id}]]
+modId="northstar"
+type="required"
+versionRange="${northstar_version_range}"
+ordering="AFTER"
+side="BOTH"
+
+# Create：火星模块的机械腐蚀玩法与金星模块的气动 / 动力机器需要它
+# （北极星本身也强制依赖 Create 6）。
+[[dependencies.${mod_id}]]
+modId="create"
+type="required"
+versionRange="${create_version_range}"
+ordering="AFTER"
+side="BOTH"
+
+# GeckoLib：火星的恶魔蛾与阿瑞斯的 geo / animation 数据由它加载
+# （北极星本身也强制依赖 GeckoLib）。
+[[dependencies.${mod_id}]]
+modId="geckolib"
+type="required"
+versionRange="${geckolib_version_range}"
+ordering="AFTER"
+side="BOTH"
+
+# Curios：金星模块的模块槽位。缺失时弹道校准器退化为背包内生效。
+[[dependencies.${mod_id}]]
+modId="curios"
+type="optional"
+versionRange="*"
+ordering="AFTER"
+side="BOTH"
+
+# TaCZ：金星模块只通过伤害类型标签识别弹道，软依赖即可。
+# 版本范围必须是 "*"：TaCZ 自己的版本号形如 1.1.8-hotfix-r6，不是 MC 的 1.21。
+[[dependencies.${mod_id}]]
+modId="tacz"
+type="optional"
+versionRange="*"
+ordering="AFTER"
+side="BOTH"

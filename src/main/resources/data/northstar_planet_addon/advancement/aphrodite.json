@@ -1,0 +1,34 @@
+{
+    "criteria":  {
+                     "kill":  {
+                                  "trigger":  "minecraft:player_killed_entity",
+                                  "conditions":  {
+                                                     "entity":  [
+                                                                    {
+                                                                        "condition":  "minecraft:entity_properties",
+                                                                        "entity":  "this",
+                                                                        "predicate":  {
+                                                                                          "type":  "northstar_planet_addon:aphrodite"
+                                                                                      }
+                                                                    }
+                                                                ]
+                                                 }
+                              }
+                 },
+    "parent":  "northstar_planet_addon:root",
+    "display":  {
+                    "description":  {
+                                        "translate":  "advancement.northstar_planet_addon.aphrodite.description"
+                                    },
+                    "show_toast":  true,
+                    "icon":  {
+                                 "id":  "northstar_planet_addon:phosphoros_core",
+                                 "count":  1
+                             },
+                    "announce_to_chat":  true,
+                    "title":  {
+                                  "translate":  "advancement.northstar_planet_addon.aphrodite.title"
+                              },
+                    "frame":  "challenge"
+                }
+}

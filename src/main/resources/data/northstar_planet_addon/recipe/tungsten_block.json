@@ -1,0 +1,18 @@
+{
+    "key":  {
+                "#":  {
+                          "item":  "northstar_planet_addon:tungsten_ingot"
+                      }
+            },
+    "category":  "building",
+    "pattern":  [
+                    "###",
+                    "###",
+                    "###"
+                ],
+    "result":  {
+                   "id":  "northstar_planet_addon:tungsten_block",
+                   "count":  1
+               },
+    "type":  "minecraft:crafting_shaped"
+}

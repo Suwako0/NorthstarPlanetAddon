@@ -1,0 +1,27 @@
+{
+    "feature":  "northstar_planet_addon:phosphoros_altar",
+    "placement":  [
+                      {
+                          "type":  "minecraft:rarity_filter",
+                          "chance":  400
+                      },
+                      {
+                          "type":  "minecraft:in_square"
+                      },
+                      {
+                          "height":  {
+                                         "min_inclusive":  {
+                                                               "absolute":  270
+                                                           },
+                                         "type":  "minecraft:uniform",
+                                         "max_inclusive":  {
+                                                               "absolute":  300
+                                                           }
+                                     },
+                          "type":  "minecraft:height_range"
+                      },
+                      {
+                          "type":  "minecraft:biome"
+                      }
+                  ]
+}

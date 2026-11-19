@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "northstar_planet_addon:star_core"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "northstar_planet_addon:blocks/star_core"
+}

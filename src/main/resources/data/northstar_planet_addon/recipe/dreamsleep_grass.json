@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "building",
+  "ingredients": [
+    {
+      "item": "northstar_planet_addon:moon_soil"
+    },
+    {
+      "item": "northstar_planet_addon:moon_bloom"
+    }
+  ],
+  "result": {
+    "id": "northstar_planet_addon:dreamsleep_grass",
+    "count": 1
+  }
+}

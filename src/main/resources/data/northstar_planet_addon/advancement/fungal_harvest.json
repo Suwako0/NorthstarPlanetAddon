@@ -1,0 +1,30 @@
+{
+    "criteria":  {
+                     "inv":  {
+                                 "trigger":  "minecraft:inventory_changed",
+                                 "conditions":  {
+                                                    "items":  [
+                                                                  {
+                                                                      "items":  "northstar_planet_addon:fungus_fiber"
+                                                                  }
+                                                              ]
+                                                }
+                             }
+                 },
+    "parent":  "northstar_planet_addon:root",
+    "display":  {
+                    "description":  {
+                                        "translate":  "advancement.northstar_planet_addon.fungal_harvest.description"
+                                    },
+                    "show_toast":  true,
+                    "icon":  {
+                                 "id":  "northstar_planet_addon:fungus_fiber",
+                                 "count":  1
+                             },
+                    "announce_to_chat":  true,
+                    "title":  {
+                                  "translate":  "advancement.northstar_planet_addon.fungal_harvest.title"
+                              },
+                    "frame":  "task"
+                }
+}

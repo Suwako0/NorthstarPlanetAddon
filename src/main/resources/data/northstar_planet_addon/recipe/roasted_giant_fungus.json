@@ -1,0 +1,13 @@
+{
+    "cookingtime":  200,
+    "experience":  0.35,
+    "ingredient":  {
+                       "item":  "minecraft:red_mushroom"
+                   },
+    "type":  "minecraft:smelting",
+    "category":  "misc",
+    "result":  {
+                   "id":  "northstar_planet_addon:roasted_giant_fungus",
+                   "count":  1
+               }
+}

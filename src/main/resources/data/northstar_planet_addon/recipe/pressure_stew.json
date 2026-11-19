@@ -1,0 +1,24 @@
+{
+    "ingredients":  [
+                        {
+                            "item":  "minecraft:cooked_beef"
+                        },
+                        {
+                            "item":  "northstar_planet_addon:roasted_giant_fungus"
+                        },
+                        {
+                            "item":  "northstar_planet_addon:cloud_algae_jelly"
+                        },
+                        {
+                            "item":  "northstar_planet_addon:acid_sac"
+                        }
+                    ],
+    "bar":  8,
+    "time":  200,
+    "type":  "northstar_planet_addon:high_pressure",
+    "temperature":  300,
+    "result":  {
+                   "id":  "northstar_planet_addon:pressure_stew",
+                   "count":  1
+               }
+}

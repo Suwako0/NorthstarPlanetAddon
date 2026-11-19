@@ -1,0 +1,18 @@
+{
+  "type": "neoforge:add_spawns",
+  "biomes": "#northstar:mercury_biomes",
+  "spawners": [
+    {
+      "type": "northstar_planet_addon:sunfish",
+      "weight": 12,
+      "minCount": 1,
+      "maxCount": 3
+    },
+    {
+      "type": "northstar_planet_addon:blazing_sunfish",
+      "weight": 2,
+      "minCount": 1,
+      "maxCount": 1
+    }
+  ]
+}

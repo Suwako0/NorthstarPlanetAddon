@@ -1,0 +1,11 @@
+{
+  "type": "northstar_planet_addon:spire",
+  "config": {
+    "state": {
+      "Name": "northstar:volcanic_rock"
+    },
+    "min_height": 6,
+    "max_height": 18,
+    "base_radius": 1
+  }
+}

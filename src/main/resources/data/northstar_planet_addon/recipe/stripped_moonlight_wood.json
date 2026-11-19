@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "group": "bark",
+  "key": {
+    "#": {
+      "item": "northstar_planet_addon:stripped_moonlight_log"
+    }
+  },
+  "pattern": [
+    "##",
+    "##"
+  ],
+  "result": {
+    "id": "northstar_planet_addon:stripped_moonlight_wood",
+    "count": 3
+  }
+}

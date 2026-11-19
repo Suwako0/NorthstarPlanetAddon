@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "SS",
+    "AP",
+    " P"
+  ],
+  "key": {
+    "A": {
+      "item": "northstar_planet_addon:moon_deer_antler"
+    },
+    "S": {
+      "item": "northstar_planet_addon:moon_shell"
+    },
+    "P": {
+      "item": "northstar_planet_addon:moonlight_planks"
+    }
+  },
+  "result": {
+    "id": "northstar_planet_addon:moon_deer_axe",
+    "count": 1
+  }
+}

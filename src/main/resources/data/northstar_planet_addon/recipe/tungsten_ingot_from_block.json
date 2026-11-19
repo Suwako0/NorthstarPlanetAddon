@@ -1,0 +1,13 @@
+{
+    "ingredients":  [
+                        {
+                            "item":  "northstar_planet_addon:tungsten_block"
+                        }
+                    ],
+    "category":  "misc",
+    "result":  {
+                   "id":  "northstar_planet_addon:tungsten_ingot",
+                   "count":  9
+               },
+    "type":  "minecraft:crafting_shapeless"
+}
