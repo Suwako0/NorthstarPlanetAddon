@@ -1,8 +1,7 @@
 # 北极星星球附属 / Northstar Planet Addon
 
-给 **Create: Northstar Redux（北极星，modid `northstar`）** 的**月球 / 水星 / 火星 / 金星**四个星球扩展。
-本工程把原先各自独立的四个附属模组（月球、水星、火星、金星「Create: Phosphoros」）**合并成一个模组**：
-一个 jar、一个模组条目、一份依赖声明，四个星球的内容与玩法全部保留。
+给 **Create: Northstar Redux（北极星，modid `northstar`）** 提供 **月球 / 水星 / 火星 / 金星** 四条星球内容线的附属模组：
+一个 jar、一个模组条目、一份依赖声明，四条内容线各自补齐群系、生物、Boss、天气、装备与机械。
 
 | 项 | 值 |
 |---|---|
@@ -15,56 +14,46 @@
 | 主类 | `com.suwako.northstarplanetaddon.NorthstarPlanetAddon` |
 | 必需依赖 | `northstar [0.6.5,)`、`create [6.0,)`、`geckolib [4.7,5.0)` |
 | 软依赖 | `curios`、`tacz`（缺失时金星模块自动降级） |
-| 许可 | All Rights Reserved（金星模块的原始工程为 MIT，见 §12） |
+| 许可 | All Rights Reserved |
 
 ---
 
 ## 目录
 
-0. [合并了什么](#0-合并了什么)
-1. [合并后的架构](#1-合并后的架构)
-2. [北极星月球附属（`moon`）](#2-北极星月球附属前缀-moon)
-3. [北极星水星附属（`mercury`）](#3-北极星水星附属前缀-mercury)
-4. [北极星火星附属（`mars`）](#4-北极星火星附属前缀-mars)
-5. [北极星金星附属（`venus`）](#5-北极星金星附属前缀-venus原-create-phosphoros)
-6. [四个星球会不会互相打架](#6-四个星球会不会互相打架)
-7. [目录结构](#7-目录结构)
-8. [构建与运行](#8-构建与运行)
-9. [从四个 jar 迁移到本模组](#9-从四个-jar-迁移到本模组)
-10. [已知问题与待办（按模块汇总）](#10-已知问题与待办按模块汇总)
-11. [合并过程中改了什么 / 没改什么](#11-合并过程中改了什么--没改什么)
-12. [来源与许可](#12-来源与许可)
+0. [内容总览](#0-内容总览)
+1. [架构与实现](#1-架构与实现)
+2. [月球附属（前缀 `moon`）](#2-月球附属前缀-moon)
+3. [水星附属（前缀 `mercury`）](#3-水星附属前缀-mercury)
+4. [火星附属（前缀 `mars`）](#4-火星附属前缀-mars)
+5. [金星附属（前缀 `venus`）](#5-金星附属前缀-venus)
+6. [四条内容线之间的约定与隔离](#6-四条内容线之间的约定与隔离)
+7. [美术资源约定](#7-美术资源约定)
+8. [目录结构](#8-目录结构)
+9. [构建与运行](#9-构建与运行)
+10. [已知问题与待办](#10-已知问题与待办)
+11. [作者与许可](#11-作者与许可)
 
 ---
 
-## 0. 合并了什么
+## 0. 内容总览
 
-| 模块 | 对外名称（中 / 英） | 原工程目录 | 原命名空间 | 单一命名空间下的前缀 | 目标星球 / 维度 | 内容规模（源码实测） |
-|---|---|---|---|---|---|---|
-| 月球 | 北极星月球附属 / Northstar Moon Addon | `NorthstarMoonAddon` | `northstar_moon_addon` | `moon` | `northstar:moon` | 12 方块 / 21 物品 / 5 实体 / 2 流体 / 2 群系 |
-| 水星 | 北极星水星附属 / Northstar Mercury Addon | `NorthstarMercuryAddon` | `northstar_mercury_addon` | `mercury` | `northstar:mercury` | 1 方块 / 5 物品 / 3 实体 / 1 效果 / 1 群系 |
-| 火星 | 北极星火星附属 / Northstar Mars Addon | `NorthstarMarsAddon` | `northstarmarsaddon` | `mars` | `northstar:mars` | 6 方块 / 25 物品 / 2 实体 / 2 效果 / 3 群系 |
-| 金星 | 北极星金星附属 / Northstar Venus Addon | `phosphoros` | `phosphoros` | `venus` | `northstar_planet_addon:venus_clouds`（自定义维度） | 17 方块 / 10 方块实体 / 83 物品 / 11 实体 / 5 群系 / 8 结构 |
+**一个模组、一个命名空间、四个内容前缀。** 注册命名空间统一为 `northstar_planet_addon`，四条内容线用路径前缀区分：
+`northstar_planet_addon:moon_rabbit`、`northstar_planet_addon:mercury_sand`、`northstar_planet_addon:ares`、
+`northstar_planet_addon:pressure_tank`。创造模式标签页各用一个 ID：`…:moon` / `…:mercury` / `…:mars` / `…:venus`。
 
-原来的四个工程**保持不动**，本工程是它们的合并产物，可以单独构建、单独发布。
+| 内容线 | 对外名称（中 / 英） | 前缀 | 目标星球 / 维度 | 内容规模 | 一句话玩法 |
+|---|---|---|---|---|---|
+| 月球 | 北极星月球附属 / Northstar Moon Addon | `moon` | `northstar:moon` | 12 方块 / 21 物品 / 5 实体 / 2 流体 / 2 群系 | 月林与露天温泉、月华树、月兔与月壳蟹、梦眠月鹿 Boss、温泉浸泡 |
+| 水星 | 北极星水星附属 / Northstar Mercury Addon | `mercury` | `northstar:mercury` | 1 方块 / 5 物品 / 3 实体 / 1 效果 / 1 群系 | 太阳风暴天气、陨石坠落、水星沙与干涸海床、太阳鱼 |
+| 火星 | 北极星火星附属 / Northstar Mars Addon | `mars` | `northstar:mars` | 6 方块 / 25 物品 / 2 实体 / 2 效果 / 3 群系 | 沙尘暴与护目镜、火星钢装备、星核炮、熔核巨像·阿瑞斯 |
+| 金星 | 北极星金星附属 / Northstar Venus Addon | `venus` | `northstar_planet_addon:venus_clouds`（本模组自带维度） | 17 方块 / 10 方块实体 / 83 物品 / 11 实体 / 5 群系 / 8 结构 | 云海维度、气压机器、四套护甲、三个 Boss 与「反枪械宪章」伤害管线 |
 
-**关键设计：一个模组、一个命名空间、四个前缀。**
-
-- 模组 ID 与注册命名空间都是 `northstar_planet_addon`，四个星球附属用路径前缀区分解锁：
-  `northstar_planet_addon:moon_rabbit`、`northstar_planet_addon:mercury_sand`、
-  `northstar_planet_addon:ares`、`northstar_planet_addon:pressure_tank`；
-- 创造模式标签页各用一个 ID：`northstar_planet_addon:moon` / `mercury` / `mars` / `venus`；
-- 语言键统一成 `itemGroup.<命名空间>.<前缀>` 这类形式，四套命名空间合进同一个
-  `assets/northstar_planet_addon/` 与 `data/northstar_planet_addon/`；
-- 中文名统一为「北极星 ×× 附属」，英文统一为「Northstar ×× Addon」；**「启明星」保留为金星模块的
-  素材 / 装备品牌名**（启明星核、启明星战甲、启明星祭坛、启明星套餐……）。
-
-> ⚠️ 命名空间统一是**破坏性变更**：旧存档里 `northstarmarsaddon:molten_core_helmet` 这类 ID 不会被识别。
-> 升级路径与映射表见 [§9](#9-从四个-jar-迁移到本模组)。
+中文名统一为「北极星 ×× 附属」，英文统一为「Northstar ×× Addon」；**「启明星」是金星内容线的装备与素材品牌名**
+（启明星核、启明星战甲、启明星祭坛、启明星套餐……）。
 
 ---
 
-## 1. 合并后的架构
+## 1. 架构与实现
 
 ### 1.1 一个入口，四个模块类
 
@@ -74,9 +63,9 @@ public final class NorthstarPlanetAddon {
     public static final String MODID = "northstar_planet_addon";
 
     public NorthstarPlanetAddon(IEventBus modBus, ModContainer container) {
-        MoonModule.init(modBus);          // 月球：注册表 + 事件 + 客户端接线
-        MercuryModule.init(modBus);       // 水星：注册表 + 事件 + 网络 + 客户端接线
-        MarsModule.init(modBus);          // 火星：8 个 DeferredRegister（其余走 @EventBusSubscriber）
+        MoonModule.init(modBus);             // 月球：注册表 + 事件 + 客户端接线
+        MercuryModule.init(modBus);          // 水星：注册表 + 事件 + 网络 + 客户端接线
+        MarsModule.init(modBus);             // 火星：8 个 DeferredRegister（其余走 @EventBusSubscriber）
         VenusModule.init(modBus, container); // 金星：13 个注册表 + 配置 + 游戏总线事件
     }
 }
@@ -91,22 +80,13 @@ public final class NorthstarPlanetAddon {
 
 注册顺序在模块内部自洽（流体类型必须先于流体），模块之间**没有注册表依赖**，因此编排顺序不影响结果。
 
-### 1.2 包名映射与命名约定
+### 1.2 命名空间与前缀
 
-| 原包 | 现包 |
-|---|---|
-| `com.suwako.northstarmoonaddon` | `com.suwako.northstarplanetaddon.moon` |
-| `com.suwako.northstarmercuryaddon` | `com.suwako.northstarplanetaddon.mercury` |
-| `com.vitran.northstarmarsaddon` | `com.suwako.northstarplanetaddon.mars` |
-| `com.phosphoros` | `com.suwako.northstarplanetaddon.venus` |
-
-原入口类 `NorthstarMoonAddon` / `NorthstarMercuryAddon` / `NorthstarMarsAddon` / `Phosphoros` 分别改名为
-`MoonModule` / `MercuryModule` / `MarsModule` / `VenusModule`，并去掉 `@Mod`；
-每个模块类只暴露两个常量：
+每个模块类只暴露两个常量，其余代码一律按它们拼注册名与资源路径：
 
 ```java
 public static final String NAMESPACE = NorthstarPlanetAddon.MODID;  // 统一命名空间
-public static final String MODULE    = "moon";                      // 本模块前缀
+public static final String MODULE    = "moon";                      // 本内容线前缀
 ```
 
 | 对外项 | 月球 | 水星 | 火星 | 金星 |
@@ -119,14 +99,28 @@ public static final String MODULE    = "moon";                      // 本模块
 | 包 | `…northstarplanetaddon.moon` | `….mercury` | `….mars` | `….venus` |
 | 日志前缀 | `[moon]` | `[mercury]` | `[mars]` | `[venus]` |
 
-资源与数据的目录也随之统一：四套 `assets/<旧命名空间>/` 合并成一份 `assets/northstar_planet_addon/`，
-四套 `data/<旧命名空间>/` 合并成一份 `data/northstar_planet_addon/`（`data/minecraft/` 与
-`data/northstar/` 是向原版与北极星的追加，保持原名）。
+资源与数据同样只有一份：`assets/northstar_planet_addon/` 与 `data/northstar_planet_addon/`；
+`data/minecraft/` 与 `data/northstar/` 是对原版与北极星的标签追加，保持原来的命名空间。
 
-### 1.3 Mixin：两个配置，五个 Mixin
+### 1.3 注册表与事件的组织
 
-月球与水星原本各有一套「群系源注入」Mixin，合并后按模块拆成两个配置（保持与原来完全一致的应用方式，
-两者 `@Shadow` 的字段相同但接口方法前缀不同：月球 `nma$`、水星 `mna$`，互不冲突）：
+| 内容线 | 注册方式 | 事件接线 |
+|---|---|---|
+| 月球 | 集中在 `MoonModule.init` 内按依赖顺序注册 | `modBus` 上注册客户端接线；游戏总线监听群系注入与温泉 tick |
+| 水星 | 集中在 `MercuryModule.init`，另有网络包注册 | `@EventBusSubscriber` + `modBus` 网络注册 |
+| 火星 | 8 个 `DeferredRegister`（方块 / 物品 / 盔甲材质 / 实体 / 效果 / 数据组件 / feature / 创造标签） | 全部 `@EventBusSubscriber(modid = NorthstarPlanetAddon.MODID)` |
+| 金星 | 13 个 `DeferredRegister`（含方块实体、菜单、配方序列化器、流体、群系源） | 游戏总线注册 `CombatEvents` / `PlayerEvents` / `PhosphorosCommands` |
+
+`@EventBusSubscriber` 的 `modid` 必须指向 `NorthstarPlanetAddon.MODID`，否则 NeoForge 不会把监听器挂到本模组上。
+
+网络载荷共三类：太阳风暴状态（`northstar_planet_addon:solar_storm`，`bool`，`playToClient`）、
+火星沙尘暴 / 冷却器换弹、金星气压计数据。它们共用命名空间但路径互不相同。
+
+指令：`/solarstorm start|stop|query|impact`（水星）、`/northstarmars sandstorm …`（别名 `/sandstorm`，火星）、
+`/phosphoros debug dps|boss|classify`（金星，仅 OP）。
+按键：全模组只有一个 `KeyMapping`——火星冷却器的 `R`（分类键 `key.categories.northstar_planet_addon`）。
+
+### 1.4 Mixin：两个配置，五个 Mixin
 
 | 配置 | package | Mixin | 目标类 | 手段 |
 |---|---|---|---|---|
@@ -136,32 +130,10 @@ public static final String MODULE    = "moon";                      // 本模块
 | | | `MultiNoiseBiomeSourceMixin` | `MultiNoiseBiomeSource` | 同结构，方法前缀 `mna$` |
 | | | `PlayerExhaustionMixin` | `Player` | `@ModifyVariable(method = "causeFoodExhaustion(F)V", at = HEAD)`，沐浴阳光时饥饿消耗 ×0.4 |
 
-全部 Mixin 都是 `@Shadow` 字段桥接或 `@ModifyVariable`，**没有一个 `@Redirect`**。
+全部 Mixin 都是 `@Shadow` 字段桥接或 `@ModifyVariable`，**没有一个 `@Redirect`**——避免与其它模组抢同一调用点。
 两个配置同时登记在 `neoforge.mods.toml` 的 `[[mixins]]`（开发运行）与 jar 清单的 `MixinConfigs`（成品包，逗号分隔）。
 
 火星与金星**没有 Mixin**：火星的群系注入走反射，金星的伤害管线走事件。
-
-### 1.4 共享数据文件的合并（并集）
-
-四个模块里有 5 个数据文件落在同一路径（`data/minecraft/…` 与 `data/northstar/…`），合并时按**并集**写入，
-而不是后复制者覆盖：
-
-| 文件 | 合并后内容 |
-|---|---|
-| `data/minecraft/tags/block/mineable/shovel.json` | `northstar_planet_addon:dreamsleep_grass`、`moon_soil`、`mercury_sand` |
-| `data/northstar/tags/entity_type/can_survive_cold.json` | 月兔、月壳蟹、月鹿、太阳鱼、炽烈太阳鱼、恶魔蛾、阿瑞斯 |
-| `data/northstar/tags/entity_type/can_survive_heat.json` | 太阳鱼、炽烈太阳鱼、恶魔蛾、阿瑞斯 |
-| `data/northstar/tags/entity_type/doesnt_require_oxygen.json` | 同上七个 |
-
-同理，合并进同一命名空间后有两处**注册表重名**必须改名，否则加载即崩：
-
-| 冲突 | 处理 |
-|---|---|
-| 四个模块的创造模式标签页都叫 `main` | 改成 `moon` / `mercury` / `mars` / `venus` |
-| 火星与金星都注册了效果 `corrosion` | 火星保留 `northstar_planet_addon:corrosion`（腐蚀）；金星改为 `northstar_planet_addon:acid_corrosion`（酸蚀，语言键同名调整） |
-
-其余 `data/minecraft/**`、`data/northstar/**` 是各模块独占的文件（`northstar:tags/worldgen/biome/moon_biomes`、
-`mercury_biomes`、`mars_biomes`、`has_mars_base`、`moon_blocks`、`mercury_stone_replaceable` 等），原样保留。
 
 ### 1.5 依赖与开发期联调 jar
 
@@ -170,7 +142,7 @@ public static final String MODULE    = "moon";                      // 本模块
 | mod | 类型 | 区间 | 理由 |
 |---|---|---|---|
 | `neoforge` / `minecraft` | required | `[21.1,)` / `[1.21.1]` | — |
-| `northstar` | required | `[0.6.5,)` | 四个模块的目标维度、方块与群系都来自它 |
+| `northstar` | required | `[0.6.5,)` | 四条内容线光顾的维度、方块与群系都来自它 |
 | `create` | required | `[6.0,)` | 火星机械腐蚀 / 星核炮摧毁动力方块；金星气动马达与 WorkConsumer |
 | `geckolib` | required | `[4.7,5.0)` | 火星恶魔蛾与阿瑞斯的 geo/animation |
 | `curios` | optional | `*` | 金星弹道校准器槽位，缺失时改为背包内生效 |
@@ -182,15 +154,15 @@ public static final String MODULE    = "moon";                      // 本模块
 
 ### 1.6 配置文件
 
-| 文件 | 来源模块 |
+| 文件 | 归属 |
 |---|---|
-| `config/northstar_planet_addon-venus-common.toml` | 金星（战斗乘数 / 上限 / Boss / 世界 / 机器 / 兼容），键名与原 `phosphoros-common.toml` 一致 |
+| `config/northstar_planet_addon-venus-common.toml` | 金星（战斗乘数 / 上限 / Boss / 世界 / 机器 / 兼容） |
 
-其余三个模块没有配置项，参数写死在常量里（详见各模块章节）。
+其余三条内容线没有配置项，参数写死在常量里（详见各章节）。
 
 ---
 
-## 2. 北极星月球附属（前缀 `moon`）
+## 2. 月球附属（前缀 `moon`）
 
 **定位**：给 `northstar:moon` 追加月林 / 露天温泉两个群系、月华树木家族、月兔 / 月壳蟹 / 梦眠月鹿 Boss、
 温泉流体与梦眠祭坛召唤仪式。
@@ -240,7 +212,7 @@ public static final String MODULE    = "moon";                      // 本模块
 
 ---
 
-## 3. 北极星水星附属（前缀 `mercury`）
+## 3. 水星附属（前缀 `mercury`）
 
 **定位**：给 `northstar:mercury` 加太阳风暴天气、水星沙、干涸海床群系、太阳鱼 / 炽烈太阳鱼与「沐浴阳光」效果。
 
@@ -253,7 +225,7 @@ public static final String MODULE    = "moon";                      // 本模块
 | 实体 3 | `meteor`（MISC，物理下落）、`sunfish`（12 HP / 3 攻击）、`blazing_sunfish`（36 HP / 护甲 6 / 8 攻击，火免疫） |
 | 效果 1 | `sunbath`：移速 +30%（`ADD_MULTIPLIED_TOTAL`）、饥饿消耗 ×0.4 |
 | 伤害类型 5 | `solar_storm`、`meteor`、`sunfish_ram`、`sunfish_flame`、`sunfish_beam`（全部 `burning` 特效） |
-| 音效 4 | 全部复用北极星已有 ogg（`martian_duststorm_above`、`laser_burn*`、`rocket_blast*`） |
+| 音效 4 | 复用北极星已有 ogg（`martian_duststorm_above`、`laser_burn*`、`rocket_blast*`） |
 | 网络 1 | `northstar_planet_addon:solar_storm`（`bool`，`playToClient`） |
 | 其它 | 创造标签 `northstar_planet_addon:mercury`（5 项） |
 
@@ -292,7 +264,7 @@ public static final String MODULE    = "moon";                      // 本模块
 
 ---
 
-## 4. 北极星火星附属（前缀 `mars`）
+## 4. 火星附属（前缀 `mars`）
 
 **定位**：给 `northstar:mars` 加赤色荒原 / 火山灰平原 / 火星冰原三个群系、恶魔蛾、火星钢装备、
 沙尘暴天气与护目镜、便携式冷却器、火星草莓、星核炮，以及 Boss「熔核巨像 · 阿瑞斯」。
@@ -347,9 +319,9 @@ public static final String MODULE    = "moon";                      // 本模块
 
 ---
 
-## 5. 北极星金星附属（前缀 `venus`，原 Create: Phosphoros）
+## 5. 金星附属（前缀 `venus`）
 
-**定位**：独立的云海维度 `northstar_planet_addon:venus_clouds` + 气动 / 压力机器体系 + 四套护甲 / 五把武器 / 四把工具 +
+**定位**：本模组自带维度 `northstar_planet_addon:venus_clouds` + 气动 / 压力机器体系 + 四套护甲 / 五把武器 / 四把工具 +
 三个 Boss + 「反枪械宪章」的弹道伤害管线。
 
 ### 5.1 依赖策略：三层隔离
@@ -370,7 +342,7 @@ TaCZ 只有数据侧联动：`TaczCompat` 在 `ServerStartedEvent` 打印 `#nort
 | 方块实体 | 10 | 上述机器；气动马达是**条件注册**（有 Create 时换成 `KineticPneumaticMotorEntity`） |
 | 物品 | 83 | 19 材料、5 武器 + 弹道校准器、16 护甲（4 套 × 4 件）、8 食物、4 工具、3 召唤物、5 模块、3 种子、5 刷怪蛋、13 方块物品、硫酸桶 |
 | 实体 | 11 | 3 Boss（`nephele` 520 / `hephaestus` 800 / `aphrodite` 1000）+ 8 群系生物 |
-| 效果 / 流体 / 组件 / 材质 | 1 / 2 / 3 / 4 | 腐蚀（护甲 −1 每级，周期 40>>amp tick 掉血）、硫酸（density 1400、`canDrown`）、`freshness`/`corrosion`/`charge`、钨钢 / 云行者 / 熔管重甲 / 启明星 |
+| 效果 / 流体 / 组件 / 材质 | 1 / 2 / 3 / 4 | 酸蚀 `acid_corrosion`（护甲 −1 每级，周期 40>>amp tick 掉血）、硫酸（density 1400、`canDrown`）、`freshness`/`corrosion`/`charge`、钨钢 / 云行者 / 熔管重甲 / 启明星 |
 | 菜单 | 1 | `northstar_planet_addon:machine`（高压锅与高压熔炉共用，4 输入 + 1 输出 + 进度 + 气压条） |
 | 配方序列化器 | 1 | `northstar_planet_addon:high_pressure`（无序多材料贪心匹配，默认 8 bar / 1200 ℃ / 400 tick） |
 | 创造标签 | 1 | `northstar_planet_addon:venus`（按注册顺序铺满） |
@@ -411,29 +383,47 @@ TaCZ 只有数据侧联动：`TaczCompat` 在 `ServerStartedEvent` 打印 `#nort
 
 ---
 
-## 6. 四个星球会不会互相打架
+## 6. 四条内容线之间的约定与隔离
 
-合并后四个模块共用一个 jar、一条 mod bus、一条 game bus、一套配置目录。逐项检查过：
+四条内容线共用一个 jar、一条 mod bus、一条 game bus、一套配置目录，因此按下列约定分工：
 
-| 可能的冲突点 | 现状 | 为什么没问题 |
+| 关注点 | 约定 | 结果 |
 |---|---|---|
-| 注册表重名 | **已处理两处** | 四个模块现在共用一个命名空间，所以逐类比对过注册路径：创造标签页 `main` ×4 → 改成 `moon`/`mercury`/`mars`/`venus`；效果 `corrosion` 火星与金星重名 → 金星改为 `acid_corrosion`。其余 10 个注册表（block / item / entity_type / fluid / feature / armor_material / menu / recipe_type / recipe_serializer / biome_source / damage_type / sound_event）路径两两不重复 |
-| 资源 / 数据文件重名 | **已处理** | 四套 `assets/*` 与 `data/*` 合并成一份目录，逐文件比对过：只有 `lang/en_us.json`、`lang/zh_cn.json`、`sounds.json` 三处同名，按并集合并（详见 §1.4） |
-| 群系注入互相覆盖 | 无 | 月球 / 水星打的是 `northstar:moon` 与 `northstar:mercury`，火星打 `northstar:mars`，金星是自己维度的群系源；目标维度两两不同 |
-| Mixin 抢同一调用点 | 无 | 5 个 Mixin 全是 `@Shadow` 字段桥接 + 1 个 `@ModifyVariable`；月球与水星的接口方法前缀不同（`nma$` / `mna$`），且分在两个配置里 |
-| 网络包 / 协议 | 无 | 三个载荷（水星风暴、火星沙尘暴、火星换弹、金星气压计）共用命名空间但路径不同，互不覆盖 |
-| 天气类变量 | 无 | 太阳风暴（水星）与沙尘暴（火星）都是自建服务端静态 / `SavedData` 状态，维度内生效，不碰原版 `Level` 天气 |
-| 客户端雾 / HUD | 无 | 各处理器都先判维度：水星雾只在水星、火星雾只在火星；火星 HUD 只在沙尘暴时出现，金星 HUD 只在有 Boss / 有气压计数据时出现 |
-| 按键 | 只有一个 | 火星的 `R`（换冷却器）是唯一 `KeyMapping`，分类键统一为 `key.categories.northstar_planet_addon` |
-| 常量 / 工具类重名 | 已隔离 | 模块之间同名类（如两个 `RefreshableBiomeSource`、两个 `ModBlocks`、两个 `ModTabs`、两个 `ModEffects`）都在各自包内，互不引用 |
-| 事件订阅 | 已归一 | 火星与金星的 `@EventBusSubscriber` 全部指向 `NorthstarPlanetAddon.MODID`，否则 NeoForge 根本不会把这些监听器挂到本模组上 |
+| 注册名 | 一律 `<前缀>_<名字>`（月球的少数基础方块沿用北极星风格命名，如 `dreamsleep_grass`） | 12 个注册表（block / item / entity_type / fluid / feature / armor_material / menu / recipe_type / recipe_serializer / biome_source / damage_type / sound_event）路径两两不重复 |
+| 创造标签页 | 各线一个：`moon` / `mercury` / `mars` / `venus` | 标签 ID 与标题键 `itemGroup.northstar_planet_addon.<前缀>` 一一对应 |
+| 效果命名 | 火星 `corrosion`（腐蚀）、金星 `acid_corrosion`（酸蚀） | 两个不同的酸类效果各自独立，语言键同名对应 |
+| 资源与数据 | 共用 `assets/northstar_planet_addon/` 与 `data/northstar_planet_addon/`；向原版与北极星的标签追加放 `data/minecraft/`、`data/northstar/` | `lang/en_us.json`、`lang/zh_cn.json`、`sounds.json` 是三个共用文件，条目按 ID 排序维护，四条内容线各写各的前缀 |
+| 群系注入 | 月球 / 水星打 `northstar:moon` 与 `northstar:mercury`，火星打 `northstar:mars`，金星是自己维度的群系源 | 目标维度两两不同，互不覆盖 |
+| Mixin | 5 个全是 `@Shadow` 字段桥接 + 1 个 `@ModifyVariable`，月球与水星的接口方法前缀不同（`nma$` / `mna$`）且分在两个配置里 | 不存在抢同一调用点的风险 |
+| 网络包 | 太阳风暴（水星）、沙尘暴 / 换弹（火星）、气压计（金星） | 共用命名空间但路径不同，互不覆盖 |
+| 天气 | 太阳风暴与沙尘暴都是自建服务端状态（`SavedData` / 静态字段），维度内生效 | 不碰原版 `Level` 天气，两套天气可以同时存在 |
+| 客户端雾 / HUD | 每个处理器先判维度：水星雾只在水星、火星雾只在火星；火星 HUD 只在沙尘暴时出现，金星 HUD 只在有 Boss / 气压计数据时出现 | 同一屏最多只有一条线的覆盖层 |
+| 按键 | 全模组只有一个 `KeyMapping`（火星 `R` 换冷却器） | 分类键统一 `key.categories.northstar_planet_addon` |
+| 事件订阅 | 火星与金星的 `@EventBusSubscriber` 全部指向 `NorthstarPlanetAddon.MODID` | 监听器能挂到本模组上 |
+| 同名工具类 | 各线自己的 `ModBlocks` / `ModTabs` / `ModEffects` / `RefreshableBiomeSource` 留在各自包内 | 类名相同但互不引用 |
 
-唯一需要留意的相邻关系：**北极星金星附属的「反枪械宪章」只管 `AbstractBossEntity`**，与火星阿瑞斯、月球梦眠月鹿无关；
-三个 Boss 体系各自独立（火星靠核心温度与护盾，月球靠阶段与技能池，金星靠护甲板 + 弱点 + 过载）。
+三个 Boss 体系各自独立：火星靠核心温度与护盾，月球靠阶段与技能池，金星靠护甲板 + 弱点 + 过载。
+金星的「反枪械宪章」只对 `AbstractBossEntity` 生效，与阿瑞斯、梦眠月鹿无关。
 
 ---
 
-## 7. 目录结构
+## 7. 美术资源约定
+
+| 资源 | 路径 | 规格 |
+|---|---|---|
+| 物品图标 | `assets/northstar_planet_addon/textures/item/<名字>.png` | 16×16 或 32×32；模型为 `minecraft:item/generated`，`layer0` 指向同名贴图 |
+| 盔甲穿戴层 | `assets/northstar_planet_addon/textures/models/armor/<材质>_layer_1.png` / `_layer_2.png` | 64×32，按原版人形 UV 布局（layer_1 = 头盔 + 胸甲 + 靴子，layer_2 = 护腿），UV 与 `ArmorMaterial.Layer("northstar_planet_addon:<材质>")` 对应 |
+| 生物皮肤 / 模型 | `textures/entity/`、`geo/`、`animations/` | 原版 `HierarchicalModel` 皮肤 64×64；GeckoLib 的 geo + animation 各自成对 |
+
+**启明星战甲（`phosphoros`）** 的当前美术：物品图标 32×32（珍珠白甲板 + 金色描边 + 磷光青点缀，头盔带冠饰与护目槽，
+胸甲带领甲 / 肩甲 / 核心晶石，护腿带腰封与膝甲，战靴带翻口与鞋尖护片）；
+穿戴层 `phosphoros_layer_1/2.png` 为 64×32 双层贴图，按「护面板 + 金色包边 + 磷光缝线」绘制，
+layer_1 覆盖头盔（冠顶星纹 / 面罩护目槽 / 颊甲通气口 / 颈甲）、胸甲（肩甲 / 胸板核心 / 腰带）与靴子（膝甲 / 胫甲 / 鞋底），
+layer_2 覆盖护腿（腰封 + 腿甲 + 膝甲）与胯甲。
+
+---
+
+## 8. 目录结构
 
 ```
 NorthstarPlanetAddon/
@@ -442,12 +432,10 @@ NorthstarPlanetAddon/
 ├── settings.gradle
 ├── gradlew(.bat) + gradle/   Gradle 9.2.1 wrapper
 ├── libs/                     开发期联调 jar（northstar / create / flywheel / ponder / Registrate / geckolib）
-├── docs/
-│   ├── legacy-notes/         合并前逐模组的源码级梳理（旧命名空间下的事实，含全部数值与类名出处）
-│   └── runserver-smoke-test.log
+├── docs/                     逐内容线的源码级笔记（含全部数值与类名出处）与 runserver 冒烟测试日志
 ├── tools/
-│   ├── regen-module-packages.ps1   从四个旧工程重新生成「模块内容包」（除入口类）
-│   └── regen-resources.ps1         重建 resources：并集合并 + 命名空间统一 + 对外名称统一
+│   ├── regen-module-packages.ps1   按内容线重新生成模块内容包（除入口类）
+│   └── regen-resources.ps1         重建 resources：并集写入 + 命名空间与前缀归一
 └── src/main/
     ├── java/com/suwako/northstarplanetaddon/
     │   ├── NorthstarPlanetAddon.java        唯一 @Mod 入口
@@ -461,22 +449,20 @@ NorthstarPlanetAddon/
         ├── northstar_planet_addon.moon.mixins.json
         ├── northstar_planet_addon.mercury.mixins.json
         ├── pack.mcmeta
-        ├── assets/northstar_planet_addon/   四套资源合并：animations / blockstates / geo / lang /
+        ├── assets/northstar_planet_addon/   animations / blockstates / geo / lang /
         │                                    models / sounds(+sounds.json) / textures
-        ├── data/northstar_planet_addon/     四套数据合并：advancement / damage_type / dimension /
+        ├── data/northstar_planet_addon/     advancement / damage_type / dimension /
         │                                    dimension_type / loot_table / neoforge / recipe /
         │                                    structure / tags / worldgen
-        ├── data/northstar/                  向北极星标签追加的 17 个文件（含 3 个并集合并过的）
-        └── data/minecraft/                  向原版标签追加的 25 个文件（含 1 个并集合并过的）
+        ├── data/northstar/                  向北极星标签追加的 17 个文件
+        └── data/minecraft/                  向原版标签追加的 25 个文件
 ```
 
-`assets/` 与 `data/` 下只剩一个属于本模组的命名空间目录：资源与数据包按命名空间寻址，
-统一之后「一个星球附属占一个命名空间」变成「四个星球附属共用一个命名空间、用路径区分」，
-后续要加内容时直接往 `northstar_planet_addon` 里放即可，不必再新建目录。
+`assets/` 与 `data/` 下只有一个属于本模组的命名空间目录；新增内容直接往 `northstar_planet_addon` 里放，用前缀区分归属。
 
 ---
 
-## 8. 构建与运行
+## 9. 构建与运行
 
 ```powershell
 # Windows：需要 JDK 21（Gradle 用 17 起也能跑，但 toolchain 要能解析到 21）
@@ -496,11 +482,10 @@ cd E:\mc\ModCreator\NorthstarPlanetAddon
 - `libs/*.jar` 是 `compileOnly` + `runtimeOnly`，**不会被打进 jar**（`build/libs` 里只有本模组）。
 - jar 内清单登记了 `MixinConfigs: northstar_planet_addon.moon.mixins.json,northstar_planet_addon.mercury.mixins.json`，
   `neoforge.mods.toml` 另有两条 `[[mixins]]`（供 ModDev 从类目录加载时使用）。
-- 本机验证结果见下一节。
 
-### 8.1 本机验证记录（可复现）
+### 9.1 本机验证记录（可复现）
 
-`.\gradlew.bat build` **BUILD SUCCESSFUL**，产物 `build/libs/northstar_planet_addon-1.0.0.jar` 约 5.94 MB /
+`.\gradlew.bat build` **BUILD SUCCESSFUL**，产物 `build/libs/northstar_planet_addon-1.0.0.jar` 约 5.95 MB /
 1132 个条目：`assets/` 下只有 `northstar_planet_addon` 一个命名空间，`data/` 下是
 `northstar_planet_addon`、`northstar`、`minecraft` 三个，外加 5 个 Mixin 类。
 
@@ -523,76 +508,27 @@ Done (8.099s)! For help, type "help"
 即：注册表全部就位、两个 Mixin 配置都按 `JAVA_21` 生效、三个群系注入（月球 2 条 / 水星 1 条 / 火星 3 群系）
 全部成功、数据包（含 `northstar_planet_addon:venus_clouds` 维度）全部解析通过。完整日志见 `docs/runserver-smoke-test.log`。
 
-这次冒烟测试同时抓出并修掉了一个**原工程里就存在的启动崩溃**：北极星金星附属的
-`machine/ModRecipes` 在静态初始化里直接 `Registry.register(BuiltInRegistries.RECIPE_TYPE, …)` 注册配方类型，
-而 `BuiltInRegistries.RECIPE_TYPE` 在模组构造期早已冻结，会抛
-`IllegalStateException: Registry is already frozen`，导致整个模组加载失败。
-现在配方**类型**也走 `DeferredRegister`（`ModRecipes.RECIPE_TYPES`），使用点通过
-`ModRecipes.highPressureType()` 在注册表就绪后取值。
+这次冒烟测试同时抓出并修掉了一个启动崩溃：`machine/ModRecipes` 原先在静态初始化里直接
+`Registry.register(BuiltInRegistries.RECIPE_TYPE, …)`，而 `BuiltInRegistries.RECIPE_TYPE` 在模组构造期早已冻结，
+会抛 `IllegalStateException: Registry is already frozen` 导致整个模组加载失败。现在配方**类型**也走
+`DeferredRegister`（`ModRecipes.RECIPE_TYPES`），使用点通过 `ModRecipes.highPressureType()` 在注册表就绪后取值。
 
-日志里仍会出现三类**不影响启动**的提示（都来自原有数据，不是合并引入的）：
+日志里仍会出现三类**不影响启动**的提示：
 
 | 日志 | 含义 |
 |---|---|
 | `Couldn't load tag northstar_planet_addon:ballistic as it is missing following references` | 没装 TaCZ 时该标签引用的 `tacz:*` 伤害类型不存在，标签整条加载失败 → `#northstar_planet_addon:ballistic` 为空，弹道判定退化为 `#minecraft:is_projectile` 兜底（`TaczCompat` 会打印解出的条数） |
 | `Detected northstar_planet_addon:mushroom_moth ... AMBIENT mob category but was added under CREATURE` | 金星 `fungal_forest` 群系把 `mushroom_moth` 挂在 creature 分类下，与实体注册的 `AMBIENT` 不一致（只影响刷怪上限统计） |
-| `The following entities have not registered to the RegisterSpawnPlacementsEvent` | 金星的 6 种生物（`cloud_ray` / `mushroom_moth` / `lava_worm` / `frost_stalker` / `spore_walker` / `acid_jelly`）没有注册刷怪放置规则，等于「落点不受限」；要收紧需在北极星金星附属加 `RegisterSpawnPlacementsEvent` |
+| `The following entities have not registered to the RegisterSpawnPlacementsEvent` | 金星的 6 种生物（`cloud_ray` / `mushroom_moth` / `lava_worm` / `frost_stalker` / `spore_walker` / `acid_jelly`）没有注册刷怪放置规则，等于「落点不受限」 |
 
 **没有验证到的部分**：`runClient` 未做可视化核对——模型 / 贴图 / 雾效 / HUD / 按键手感的实际观感必须进游戏确认。
 公共侧（注册表、Mixin、群系注入、数据包、网络包注册）已由上面这次 `runServer` 覆盖。
 
-
 ---
 
-## 9. 从四个 jar 迁移到本模组
+## 10. 已知问题与待办
 
-统一命名空间是**破坏性变更**：旧存档里带旧命名空间的 ID 在新版本里不存在。分两种情况。
-
-### 9.1 新存档 / 只要一个 jar
-
-1. **删掉原来的四个 jar**：`northstar_moon_addon-*.jar`、`northstar_mercury_addon-*.jar`、
-   `NorthstarMarsAddon-*.jar`、`phosphoros-*.jar`。新旧**不能同时装**——两者注册同一批 ID，会直接抛重复注册错误。
-2. 放进 `northstar_planet_addon-1.0.0.jar`，确认 `northstar` / `create` / `geckolib` 在 `mods/` 里。
-3. 起服后看日志确认四个星球附属都装上了（见 9.3）。
-
-### 9.2 沿用旧存档：ID 映射表
-
-| 旧 ID | 新 ID |
-|---|---|
-| `northstar_moon_addon:<path>` | `northstar_planet_addon:<path>` |
-| `northstar_mercury_addon:<path>` | `northstar_planet_addon:<path>` |
-| `northstarmarsaddon:<path>` | `northstar_planet_addon:<path>` |
-| `phosphoros:<path>` | `northstar_planet_addon:<path>` |
-| 效果 `phosphoros:corrosion` | `northstar_planet_addon:acid_corrosion`（火星的 `corrosion` 保持不变） |
-| 维度 `phosphoros:venus_clouds` | `northstar_planet_addon:venus_clouds` |
-
-规则很简单：**只换命名空间，路径部分不变**；只有金星的腐蚀效果因为与火星重名被改成了 `acid_corrosion`。
-
-- 存档里的方块 / 物品 / 生物 / 群系都是按 ID 存盘的，所以旧存档里的这些内容会变成「未知 ID」。
-  想继续用需要自己做一次 ID 重映射（数据修复工具或手工改 level.dat / 区块 NBT），**本模组不自带迁移器**；
-- 维度改名后，旧的金星云海世界数据不会再被加载（会按新 ID 重新生成）；
-- 旧 `config/phosphoros-common.toml` 不再被读取，新键在 `config/northstar_planet_addon-venus-common.toml`，
-  键名一一对应，需要的话手工搬过去。
-
-结论：**旧存档先备份**；接受「旧内容变成未知」，或先做 ID 重映射再升级。
-
-### 9.3 装好后确认
-
-```
-[moon] 北极星月球附属 1.0.0：已装载，向 northstar:moon 注入月林与露天温泉群系（不需要改过的北极星 jar）。
-[mercury] 北极星水星附属 1.0.0 已装载：太阳风暴、水星沙与干涸海床（northstar:mercury）。
-[mars] 北极星火星附属：注册表已初始化（沙尘暴 / 阿瑞斯 / 火星钢 / 星核装备）
-[venus] 北极星金星附属：护甲板 / 弱点 / 弹道伤害管线已装载（反枪械宪章 R1–R5）
-北极星星球附属 / Northstar Planet Addon 1.0.0 已装载：月球 + 水星 + 火星 + 金星四个星球附属。
-```
-
-群系注入是否成功另有各模块自己的日志（成功时会打印切分后的气候带边界）。
-
----
-## 10. 已知问题与待办（按模块汇总）
-
-这些都来自源码核对，不是猜的；合并过程**没有**修改玩法数值，所以它们原样保留
-（唯一的例外是 §8.1 里那个启动崩溃的配方类型注册）。
+以下均来自源码核对，数值与实现保持现状。
 
 **月球**
 
@@ -600,9 +536,9 @@ Done (8.099s)! For help, type "help"
    北极星改参数后注入会整体放弃并打 error，月亮保持原样。
 2. 梦眠月鹿的战斗状态（阶段 / 冷却 / `meteorUsed`）不写存档，区块卸载后回到第一阶段。
 3. 祭坛一次性、召唤后 40 tick 自毁且不掉落；只在夜间（或固定时间维度的 `[13000,23000)`）可用。
-4. 结构模板在 `data/northstar_planet_addon/structure/dreamsleep_alter.nbt`（路径是小写 `alter`，不是 `altar`），`MoonPearlItem` 里的模板键与之对应，改名需两处同步。
-5. 原月球 `zh_cn.json` 里 `broken_night_pearl` 键重复；合并时按 JSON 语义取后者，现在只剩一个键。
-6. 温泉 `canConvertToSource(true)`：两个相邻源 + 实心底面即可再生，需要限制时得取消 `CreateFluidSourceEvent`。
+4. 结构模板在 `data/northstar_planet_addon/structure/dreamsleep_alter.nbt`（路径是小写 `alter`，不是 `altar`），
+   `MoonPearlItem` 里的模板键与之对应，改名需两处同步。
+5. 温泉 `canConvertToSource(true)`：两个相邻源 + 实心底面即可再生，需要限制时得取消 `CreateFluidSourceEvent`。
 
 **水星**
 
@@ -620,8 +556,6 @@ Done (8.099s)! For help, type "help"
 5. 阿瑞斯护盾期 `hurt()` 返回 false，因此不能用 `kill()` 收尾（自爆走 `setHealth(0)` + `die`）。
 6. 沙尘暴与星核炮击都是进程内静态状态，不写存档。
 7. `anti_corrosion_coating` 目前只是冷却器的合成材料，没有运行时效果；耐腐蚀来自 3 件套判定。
-8. `northstarmarsaddon` 工程里 `resources/assets/northstarmarsaddon/modelem/FungusShearsItem.java` 是误放的源码残留，
-   合并时已排除（真正的 `FungusShearsItem` 在金星模块里）。
 
 **金星**
 
@@ -635,59 +569,17 @@ Done (8.099s)! For help, type "help"
 7. 8 个结构是 feature 手写摆放，没有 NBT 模板与 `structure_set`，尺寸小于原设计草案。
 8. `lava_tube_galleries` 群系本身没有结构（`lava_tube_city` 挂在另外 3 个群系里）。
 
-**合并层面**
+**跨内容线**
 
-1. 新旧四个 jar **不能同时装**（同 ID 重复注册）。
-2. 命名空间统一是破坏性变更：旧存档里的 `northstarmarsaddon:*`、`phosphoros:*` 等 ID 不再存在，
-   升级路径与映射表见 §9.2。
-3. 四个模块的既有 `README.md`（各自工程内）部分描述早于当前源码（例如月球 README 说运行时注入已删除、
-   太阳鱼片不能吃、阿瑞斯祭坛是 3×3×3 结构等），**以本文件与 `docs/legacy-notes/` 为准**。
-   那四份笔记是合并前逐类逐 JSON 核对过的源码级梳理，本文件是它们的汇总版。
-4. 原工程 `neo_version` 有 21.1.248 / 21.1.249 两种，合并统一到 **21.1.248**（同一分支，API 无差异）。
-5. 金星配置文件名从 `phosphoros-common.toml` 改为 `northstar_planet_addon-venus-common.toml`，键名不变。
-6. `docs/legacy-notes/` 的四份梳理是在**统一命名空间之前**做的，里面写的仍是旧命名空间的 ID；
-   读的时候把 `northstar_moon_addon:` / `northstar_mercury_addon:` / `northstarmarsaddon:` / `phosphoros:`
-   一律换成 `northstar_planet_addon:` 即可（金星腐蚀效果除外，现为 `acid_corrosion`）。
+1. 新增注册项请遵守 `<前缀>_<名字>` 命名，并在对应 `DeferredRegister` 里注册；重名会在加载期直接报错。
+2. 群系注入的三处实现（月球 `nma$`、水星 `mna$`、火星反射）都以北极星当前的气候参数盒为锚点，
+   升级北极星后请同时复核注入日志。
 
 ---
 
-## 11. 合并过程中改了什么 / 没改什么
+## 11. 作者与许可
 
-**改了什么**
-
-| 项 | 变化 |
-|---|---|
-| mod id | 四个 → 一个：`northstar_planet_addon` |
-| **注册命名空间** | 四个旧命名空间 → 统一为 `northstar_planet_addon`；资源与数据目录合并成 `assets/northstar_planet_addon` 与 `data/northstar_planet_addon` |
-| **对外名称** | 统一为「北极星月球 / 水星 / 火星 / 金星附属」（英文 Northstar Moon / Mercury / Mars / Venus Addon）；「启明星」保留为金星素材名 |
-| 创造标签页 ID | 四个 `main` → `moon` / `mercury` / `mars` / `venus`；标题键 `itemGroup.northstar_planet_addon.<前缀>` |
-| 效果重名 | 金星的 `corrosion` → `acid_corrosion`（酸蚀），火星的 `corrosion`（腐蚀）不变 |
-| 语言文件 | 四份 `lang/en_us.json` + `zh_cn.json` 合并成一份（各 355 条），`sounds.json` 合并成一份 |
-| Java 包 | 四个根包 → `com.suwako.northstarplanetaddon.{moon,mercury,mars,venus}` |
-| 入口类 | 4 个 `@Mod` 类 → 1 个 `@Mod` 入口 + 4 个 `XxxModule.init(...)` 静态方法 |
-| 常量名 | 各模块 `MODID` → `NAMESPACE`（语义就是那个保留的注册命名空间） |
-| 事件订阅 | 火星 / 金星所有 `@EventBusSubscriber(modid = …)` 指向新 mod id（否则监听器不会被挂上） |
-| Mixin 配置 | 2 个独立配置，文件名带模块前缀，`compatibilityLevel` 从 `JAVA_17` 提到 `JAVA_21` |
-| 启动日志 | 统一前缀（`[moon]` / `[mercury]` / `[mars]` / `[venus]`），版本号改读新 mod 容器 |
-| 配置文件名 | `phosphoros-common.toml` → `northstar_planet_addon-venus-common.toml` |
-| 共享标签文件 | 4 个 `data/northstar/tags/entity_type/*` 与 1 个 `data/minecraft/tags/block/mineable/shovel.json` 按并集合并 |
-| 金星配方类型注册 | 从「静态初始化直接写 `BuiltInRegistries.RECIPE_TYPE`」改成走 `DeferredRegister`（原写法在模组构造期必然抛「Registry is already frozen」，见 §8.1） |
-
-**没改什么**
-
-- 所有内容 ID 的**路径部分**（`moon_rabbit`、`mercury_sand`、`ares`、`pressure_tank` ……），只换了命名空间。
-- 所有玩法数值与状态机逻辑：Boss 血量、技能冷却、伤害倍率、风暴时长、温度阈值、伤害管线 8 步顺序……
-- 所有资源的相对路径（`textures/…`、`models/…`、`worldgen/…`、`recipe/…`）。
-- 所有跨模组集成方式（注册名 / 标签 / 反射 + 反射桥接类）。
-
----
-
-## 12. 来源与许可
-
-- 月球 / 水星 / 火星三个模块来自工程 `NorthstarMoonAddon`、`NorthstarMercuryAddon`、`NorthstarMarsAddon`，
-  原作者分别标注为 Suwako / Vitran，许可 `All Rights Reserved`。
-- 金星模块来自工程 `phosphoros`（Create: Phosphoros，原作者标注 Phosphoros Team，许可 **MIT**）。
-  按 MIT 要求，该部分的原始版权与许可声明应随分发保留；本工程整体 `license` 字段暂按多数模块标为
-  `All Rights Reserved`，如需改为 MIT 或双许可，请自行调整 `gradle.properties` 的 `mod_license` 并补充许可文件。
-- 四个星球的目标模组是 [Create: Northstar Redux](https://modrinth.com/mod/create-northstar)（modid `northstar`），
+- 作者：Suwako、Vitran、Phosphoros Team。
+- 许可：`All Rights Reserved`（如需改为 MIT 或双许可，请调整 `gradle.properties` 的 `mod_license` 并补充许可文件）。
+- 目标模组是 [Create: Northstar Redux](https://modrinth.com/mod/create-northstar)（modid `northstar`），
   本模组不含它的任何代码，运行时依赖它的维度、方块、群系与标签。
