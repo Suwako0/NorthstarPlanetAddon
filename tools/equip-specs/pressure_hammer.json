@@ -1,0 +1,12 @@
+{
+  "modid": "northstar_planet_addon",
+  "name": "pressure_hammer",
+  "kind": "hammer",
+  "parts": { "gem": true, "wrap": true, "tassel": false },
+  "palette": {
+    "blade": ["#22262a", "#2e2e2e", "#434343", "#717171"],
+    "guard": ["#1c1c1c", "#2e2e2e", "#383838", "#4f4f4f"],
+    "gem": "#48c8c0",
+    "wrap": "#4b4b4b"
+  }
+}

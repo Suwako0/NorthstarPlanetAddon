@@ -1,0 +1,6 @@
+﻿{
+    "modid":  "northstar_planet_addon",
+    "set":  "molten_core",
+    "package":  "com.suwako.northstarplanetaddon.mars",
+    "atlas":  128
+}

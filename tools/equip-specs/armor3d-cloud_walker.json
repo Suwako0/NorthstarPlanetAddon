@@ -1,0 +1,6 @@
+﻿{
+    "modid":  "northstar_planet_addon",
+    "set":  "cloud_walker",
+    "package":  "com.suwako.northstarplanetaddon.venus",
+    "atlas":  128
+}
