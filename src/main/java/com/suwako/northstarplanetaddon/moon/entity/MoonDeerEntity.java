@@ -16,6 +16,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Mth;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -40,6 +41,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.entity.PartEntity;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -73,6 +75,15 @@ public class MoonDeerEntity extends Animal {
             BossEvent.BossBarColor.BLUE,
             BossEvent.BossBarOverlay.PROGRESS);
     private final EnumMap<Skill, Integer> cooldowns = new EnumMap<>(Skill.class);
+
+    /**
+     * Hit proxies that make the whole silhouette clickable instead of just one box around the
+     * torso. The numbers are read straight off the model, in blocks measured from the hooves with
+     * the deer facing -z: width x height, then lateral / forward / height offsets. The main box
+     * already covers the legs and the torso, so the parts only fill in what sticks out of it.
+     */
+    /** Empty until the constructor runs, so a part lookup during super() can never NPE. */
+    private MoonDeerPart[] parts = new MoonDeerPart[0];
 
     /**
      * Body language the client model plays. Skills are server-side logic, so the current one has to be
@@ -141,6 +152,64 @@ public class MoonDeerEntity extends Animal {
         this.bossEvent.setDarkenScreen(false);
         this.bossEvent.setPlayBossMusic(false);
         this.bossEvent.setCreateWorldFog(false);
+
+        this.parts = new MoonDeerPart[]{
+                new MoonDeerPart(this, "chest", 1.00F, 1.30F, 0.0D, 0.80D, 1.00D),
+                new MoonDeerPart(this, "neck", 0.95F, 1.10F, 0.0D, 0.95D, 1.80D),
+                new MoonDeerPart(this, "head", 1.00F, 1.20F, 0.0D, 1.40D, 2.25D),
+                new MoonDeerPart(this, "antler_left", 1.00F, 1.10F, -0.50D, 1.44D, 2.60D),
+                new MoonDeerPart(this, "antler_right", 1.00F, 1.10F, 0.50D, 1.44D, 2.60D),
+                new MoonDeerPart(this, "haunch", 1.00F, 1.30F, 0.0D, -0.55D, 1.00D),
+                new MoonDeerPart(this, "tail", 0.60F, 1.10F, 0.0D, -1.05D, 1.15D)
+        };
+        // Reserve the ids right after our own so a part can never collide with another entity.
+        this.setId(ENTITY_COUNTER.getAndAdd(this.parts.length + 1) + 1);
+    }
+
+    @Override
+    public void setId(int id) {
+        super.setId(id);
+        if (this.parts != null) {
+            for (int i = 0; i < this.parts.length; i++) {
+                this.parts[i].setId(id + 1 + i);
+            }
+        }
+    }
+
+    @Override
+    public boolean isMultipartEntity() {
+        return true;
+    }
+
+    @Override
+    public PartEntity<?>[] getParts() {
+        return this.parts;
+    }
+
+    /**
+     * The pick box is inflated a little on every side. The neck and head swing well over half a block
+     * during the idle sweep and the combat wind-ups, so a hit box traced exactly on the rest pose
+     * would let the head slide out from under the crosshair.
+     */
+    @Override
+    public float getPickRadius() {
+        return 0.5F;
+    }
+
+    /** Keeps every hit proxy glued to the animated model, on both sides. */
+    private void tickParts() {
+        float yaw = this.yBodyRot * Mth.DEG_TO_RAD;
+        double forwardX = -Mth.sin(yaw);
+        double forwardZ = Mth.cos(yaw);
+        double rightX = -Mth.cos(yaw);
+        double rightZ = -Mth.sin(yaw);
+        for (MoonDeerPart part : this.parts) {
+            double forward = part.getForwardOffset();
+            double lateral = part.getLateralOffset();
+            part.setPos(this.getX() + forwardX * forward + rightX * lateral,
+                    this.getY() + part.getHeightOffset(),
+                    this.getZ() + forwardZ * forward + rightZ * lateral);
+        }
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -200,6 +269,7 @@ public class MoonDeerEntity extends Animal {
     @Override
     public void tick() {
         super.tick();
+        this.tickParts();
         if (this.level().isClientSide()) {
             return;
         }

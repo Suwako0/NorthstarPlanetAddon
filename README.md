@@ -205,8 +205,37 @@ public static final String MODULE    = "moon";                      // 本内容
 
 ### 2.4 客户端
 
-三个生物都是**原版 `HierarchicalModel` + 64×64 皮肤**（不用 GeckoLib）。兔 / 蟹的骨骼动画定义在 `NMAAnimations`
-（idle / hop / pinch / throw / walk / gaze），鹿在 `setupAnim` 里按技能硬编码姿态。
+三个生物都是**原版 `HierarchicalModel`**（不用 GeckoLib）：兔 / 蟹的骨骼动画定义在 `NMAAnimations`
+（idle / hop / pinch / throw / walk / gaze），鹿的姿态全部在 `MoonDeerModel.setupAnim` 里分层叠加。
+
+梦眠月鹿的模型用 **Blockbench 制作、脚本生成**：项目文件 `build/art/moon_deer.bbmodel`（**53 个骨骼 /
+213 个立方体** / 256×256 贴图），导出 `build/art/moon_deer.geo.json` 后由
+`build/art/gen-moon-deer-java.ps1` 生成 `MoonDeerModel` 的 `createBodyLayer()`（含每块的 `texOffs`、
+`PartPose` 与 `CubeDeformation`，并负责 `° → rad` 与 +Y/-Y 坐标翻转），改动一律走
+「Blockbench → 重新导出 → 重新生成」，不手改生成段。躯干上几块大方量（胸 / 腹 / 臀 / 臀板 / 肩峰 / 颈 /
+头骨 / 大腿）都拆成「上盖 + 中段 + 下盖」三层，且上下两层的 X/Z 各内收 0.5–1.3 单位，所以轮廓是阶梯状收边
+而不是一块方板。骨架是完整的四足结构：四段躯干（胸 / 肩峰 / 收腹 / 后臀）+ 臀板 + 胸口月纹板 + 脊背纵脊、
+两节脖子（含颈部鬃毛）+ 颈鬃、头骨 / 眉脊 / 面板 / 颊甲 / 颊毛 / 上下颌 / 鼻镜 / 鼻梁、额心神眼 + 两侧眼 +
+双耳、**每侧六枝鹿角**（角基 / 中段 / 角尖 + 前枝 / 后枝 / 外枝 / 上下副枝 + 两簇垂挂花）、胸前三层鬃毛、
+脊背 5 片冰刃 + 颈部 2 片、两节尾骨 + 尾扇、四条**三节腿**（大腿 / 小腿 / 蹄，另有球节、系部）。
+整体 29.3 × 56.9 × 48.0 模型单位（约 1.8 × 3.6 × 3.0 格），蹄子正好落在 `y = 24` 的地面平面上。
+
+判定区不是一个大方块，而是「主干碰撞箱 + 7 个判定部件」：`EntityType` 的盒子是 1.8 × 2.9（整只鹿的高度与
+鹿角跨度，视高 2.6 = 鹿自己眼睛的高度，所以脖子和头本身就落在盒子里），胸前 / 颈部 / 头部 / 左右鹿角 /
+臀后 / 尾巴各有自己的 `MoonDeerPart`（`PartEntity` 子类，与末影龙同一套多部件机制），每 tick 按 `yBodyRot`
+贴在模型上；打中任一部件都会转成对本体的 `hurt`，所以护甲、阶段无敌、抗性与伤害管线全部照常生效。
+另外所有判定盒（含主干）都带 0.5 格的 `getPickRadius`：颈部与头部在待机扫视和技能蓄力时摆动超过半格，
+贴着静止姿态描的盒子会让头从准星下滑出去。各部件的尺寸和偏移不是估的，而是由
+`build/art/measure-deer-parts.ps1` 算出每根骨骼在「以蹄为原点、面朝 -z」的世界空间中的实际包围盒后取的，
+再由 `build/art/verify-deer-hitbox.ps1` 逐块取角点回代覆盖率（含 0.5 格容差）：
+**1704 个立方体角点 100% 落在判定区内**。
+
+动画分三层叠加，全部用相对量，静止姿态由模型本身决定：**步态层**（对角四拍、三节腿折叠 / 蹄回正、
+躯干两次起伏 + 侧倾、颈头反向稳定、鬃毛与尾巴滞后）→ **待机层**（双频呼吸、重心偏移、慢速左右张望、
+耳朵各自抽动、鹿角与花簇滞后、脊刃行波、尾巴甩动）→ **技能层**（8 个技能各自按「蓄力 → 出手 → 收势」
+分段缓动，用模型自带的「每实体技能时钟」推进，另有受击缩身抖动与倒地过程）。渲染时再叠一层
+`RenderType.eyes` 的自发光贴图 `moon_deer_glow.png`，让双眼、额心神眼、胸口月纹与花簇在暗处自己发亮。
+
 `NMAAnimationResources` 是资源重载监听器，可热替换 `assets/<ns>/animations/**/*.json` 的两份兔动画。
 月林背景音乐仅在 `northstar:moon` + `moon_forest` 群系播放（随机 200–3600 tick），月鹿存活或离开维度立即停曲。
 
@@ -420,6 +449,22 @@ TaCZ 只有数据侧联动：`TaczCompat` 在 `ServerStartedEvent` 打印 `#nort
 穿戴层 `phosphoros_layer_1/2.png` 为 64×32 双层贴图，按「护面板 + 金色包边 + 磷光缝线」绘制，
 layer_1 覆盖头盔（冠顶星纹 / 面罩护目槽 / 颊甲通气口 / 颈甲）、胸甲（肩甲 / 胸板核心 / 腰带）与靴子（膝甲 / 胫甲 / 鞋底），
 layer_2 覆盖护腿（腰封 + 腿甲 + 膝甲）与胯甲。
+
+**梦眠月鹿（`moon_deer`）** 走的是「Blockbench 建模 → 脚本生成」的流水线，工具全部在 `build/art/`：
+
+| 文件 | 作用 |
+|---|---|
+| `moon_deer.bbmodel` | Blockbench 源工程（Modded Entity 格式，53 骨骼 / 213 立方体 / 256×256 贴图） |
+| `moon_deer.geo.json` | 从 Blockbench 导出的 Bedrock 几何（骨骼 pivot / 旋转 / 每块 box UV） |
+| `gen-moon-deer-java.ps1` | 几何 → Java：坐标映射（+Y 朝上 → 原版 +Y 朝下、地面 y=24、X 镜像）、父级相对偏移、`° → rad`、`CubeDeformation` |
+| `moon-deer-anim.java.txt` | 手写动画体（三层叠加 + 8 技能分段缓动 + 受击 / 倒地），生成时拼到几何后面 |
+| `painter3.ps1` | 按导出的 UV 表逐面绘制 `moon_deer.png` 与 `moon_deer_glow.png`：每个面沿纵向做「亮 → 暗」色阶渐变，两档之间用 4×4 Bayer 有序抖动过渡（不是散点）；只有眼睛 / 神眼 / 月纹 / 花簇 / 冰刃尖保留刻意的发光小块 |
+| `audit-deer-java.ps1` | 用 Java 的 `ModelPart` 变换顺序复算包围盒与各部位位置，核对导出 → Java 的坐标映射 |
+| `measure-deer-parts.ps1` | 按骨骼分组输出世界空间包围盒（单位：格，原点在蹄、面朝 -z），`MoonDeerPart` 的尺寸与偏移就是照它定的 |
+| `verify-deer-hitbox.ps1` | 把「主干盒子 + 7 个部件」回代，逐块取立方体角点算判定区覆盖率，改完判定区跑一遍确认没有漏掉部位 |
+
+因为 `MoonDeerModel` 是生成物，改动顺序固定为：Blockbench 改模型 → 导出 `moon_deer.geo.json` →
+跑 `gen-moon-deer-java.ps1` → 跑 `painter3.ps1`（UV 变了必须重画）→ 跑 `audit-deer-java.ps1` 核对 → `gradlew build`。
 
 ---
 

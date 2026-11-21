@@ -38,13 +38,16 @@ public final class NMAEntityTypes {
                     .build("moon_shell_crab"));
 
     /**
-     * 梦眠月鹿 Boss. Sized a little above a horse to match the model, whose antler tips reach 2 blocks.
+     * 梦眠月鹿 Boss. The box spans the whole creature's height and antler spread (1.8 x 2.9 blocks, eye
+     * height 2.6 = the deer's own eyes, measured off the model), so the neck and head sit inside it;
+     * the chest front, neck, head, both antler racks, the haunch and the tail additionally carry their
+     * own hit parts, which is what makes the long body and the antlers clickable from the side.
      */
     public static final DeferredHolder<EntityType<?>, EntityType<MoonDeerEntity>> MOON_DEER =
             ENTITY_TYPES.register("lunar_deer", () -> EntityType.Builder
                     .of(MoonDeerEntity::new, MobCategory.CREATURE)
-                    .sized(1.5F, 1.8F)
-                    .eyeHeight(1.55F)
+                    .sized(1.8F, 2.9F)
+                    .eyeHeight(2.6F)
                     .clientTrackingRange(64)
                     .build("lunar_deer"));
 
