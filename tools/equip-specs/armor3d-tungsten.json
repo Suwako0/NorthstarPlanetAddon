@@ -1,6 +1,9 @@
-﻿{
-    "modid":  "northstar_planet_addon",
-    "set":  "tungsten",
-    "package":  "com.suwako.northstarplanetaddon.venus",
-    "atlas":  128
+{
+  "modid": "northstar_planet_addon",
+  "set": "tungsten",
+  "package": "com.suwako.northstarplanetaddon.venus",
+  "description": "Tungsten pressure sentinel armor, riveted titanium pressure shell with visor, broad shoulders and reinforced greaves for Venus refinery ruins.",
+  "theme": "iron",
+  "silhouette": "broad",
+  "seed": "tungsten|redesign2026|pressure_sentinel|broad"
 }

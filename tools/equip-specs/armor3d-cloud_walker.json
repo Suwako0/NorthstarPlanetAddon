@@ -1,6 +1,9 @@
-﻿{
-    "modid":  "northstar_planet_addon",
-    "set":  "cloud_walker",
-    "package":  "com.suwako.northstarplanetaddon.venus",
-    "atlas":  128
+{
+  "modid": "northstar_planet_addon",
+  "set": "cloud_walker",
+  "package": "com.suwako.northstarplanetaddon.venus",
+  "description": "Cloud-walker aerostat suit, frost-blue glider harness with wing membranes, hood, mantle and light scout bracers above the Venus cloud sea.",
+  "theme": "frost",
+  "silhouette": "winged",
+  "seed": "cloud_walker|redesign2026|aerostat_scout|winged"
 }

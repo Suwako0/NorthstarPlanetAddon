@@ -37,6 +37,12 @@ neoForge {
                     '--output', file('src/generated/resources/').getAbsolutePath(),
                     '--existing', file('src/main/resources/').getAbsolutePath()
         }
+        // 无头验证：只跑本模组的 GameTest，避免把依赖模组的测试一起拉进来
+        gameTestServer {
+            type = 'gameTestServer'
+            programArgument '--nogui'
+            systemProperty 'neoforge.enabledGameTestNamespaces', mod_id
+        }
     }
 
     mods {

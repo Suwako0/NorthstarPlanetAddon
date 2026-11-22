@@ -353,5 +353,13 @@
   "advancement.northstar_planet_addon.aphrodite.description": "Defeat Aphrodite, Queen of Sulfur",
   "message.northstar_planet_addon.aphrodite_cocoon_broken": "The cocoon bursts open (%s)!",
   "message.northstar_planet_addon.summon_blocked": "A boss is already nearby - deal with it first",
-  "message.northstar_planet_addon.summon_success": "%s awakens!"
+  "message.northstar_planet_addon.summon_success": "%s awakens!",
+  "item.northstar_planet_addon.molten_core_sword.desc": "Molten Core Greatsword - the Ares forge core, still burning.",
+  "item.northstar_planet_addon.molten_core_sword.ability": "Right-click: geothermal slash, %1$s fire damage in a fan, %2$ss cooldown",
+  "item.northstar_planet_addon.acidic_spear.desc": "Acidic Spear - every hit stacks corrosion on the target.",
+  "item.northstar_planet_addon.acidic_spear.ability": "Sneak + right-click: acid burst, %1$s damage in a %2$s-range area and knockback",
+  "item.northstar_planet_addon.pressure_hammer.desc": "Pressure Hammer - heavy enough to overload a boss chassis.",
+  "item.northstar_planet_addon.pressure_hammer.ability": "Right-click after a full swing: shockwave, %1$s damage, %2$ss cooldown",
+  "item.northstar_planet_addon.starcore_cannon.ability": "Right-click: call down a starcore bombardment, %1$ss cooldown",
+  "item.northstar_planet_addon.acidic_spear.throw": "Hold right-click to charge and throw (trident style); the spear drops where it lands and can be picked up."
 }

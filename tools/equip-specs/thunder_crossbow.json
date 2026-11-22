@@ -2,9 +2,21 @@
   "modid": "northstar_planet_addon",
   "name": "thunder_crossbow",
   "kind": "crossbow",
+  "length": 32,
   "palette": {
-    "blade": ["#2b3038", "#3f4750", "#5b6670", "#8a97a2", "#c2ccd4"],
-    "guard": ["#1a1e24", "#262c33", "#333b43", "#414a53"],
+    "blade": [
+      "#2b3038",
+      "#3f4750",
+      "#5b6670",
+      "#8a97a2",
+      "#c2ccd4"
+    ],
+    "guard": [
+      "#1a1e24",
+      "#262c33",
+      "#333b43",
+      "#414a53"
+    ],
     "wrap": "#2a2118",
     "gem": "#8fd8ff",
     "tassel": "#7a4a2c"

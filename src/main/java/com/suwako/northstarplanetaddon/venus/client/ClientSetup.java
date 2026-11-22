@@ -6,7 +6,6 @@ import com.suwako.northstarplanetaddon.venus.VenusModule;
 import com.suwako.northstarplanetaddon.venus.client.model.AcidJellyModel;
 import com.suwako.northstarplanetaddon.venus.client.model.AphroditeModel;
 import com.suwako.northstarplanetaddon.venus.client.model.CloudRayModel;
-import com.suwako.northstarplanetaddon.venus.client.model.HephaestusModel;
 import com.suwako.northstarplanetaddon.venus.client.model.NepheleModel;
 import com.suwako.northstarplanetaddon.venus.client.renderer.AcidJellyRenderer;
 import com.suwako.northstarplanetaddon.venus.client.renderer.AphroditeRenderer;
@@ -26,7 +25,6 @@ public final class ClientSetup {
     @SubscribeEvent
     public static void onRegisterLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
         event.registerLayerDefinition(NepheleModel.LAYER, NepheleModel::createBodyLayer);
-        event.registerLayerDefinition(HephaestusModel.LAYER, HephaestusModel::createBodyLayer);
         event.registerLayerDefinition(AphroditeModel.LAYER, AphroditeModel::createBodyLayer);
         event.registerLayerDefinition(CloudRayModel.LAYER, CloudRayModel::createBodyLayer);
         event.registerLayerDefinition(AcidJellyModel.LAYER, AcidJellyModel::createBodyLayer);
@@ -45,6 +43,9 @@ public final class ClientSetup {
         event.registerEntityRenderer(ModEntities.THUNDER_CHICK.get(), net.minecraft.client.renderer.entity.BatRenderer::new);
         event.registerEntityRenderer(ModEntities.LAVA_WORM.get(), net.minecraft.client.renderer.entity.SilverfishRenderer::new);
         event.registerEntityRenderer(ModEntities.BRASS_DEACON.get(), net.minecraft.client.renderer.entity.VindicatorRenderer::new);
+        // 投掷的酸蚀矛：直接用物品模型渲染（缩小到约 1.2 格，免得飞出去像根电线杆）
+        event.registerEntityRenderer(ModEntities.THROWN_ACID_SPEAR.get(),
+                context -> new net.minecraft.client.renderer.entity.ThrownItemRenderer<>(context, 0.5F, false));
     }
 
     @SubscribeEvent

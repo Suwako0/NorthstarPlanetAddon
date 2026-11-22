@@ -1,0 +1,21 @@
+{
+    "modid":  "northstar_planet_addon",
+    "name":  "acidic_spear",
+    "package":  "com.suwako.northstarplanetaddon.venus",
+    "className":  "AcidicSpearItem",
+    "theme":  "poison",
+    "combat":  {
+                   "onHit":  {
+                                 "duration":  120,
+                                 "chance":  35
+                             },
+                   "ability":  {
+                                   "radius":  3,
+                                   "cooldown":  100,
+                                   "damage":  4
+                               },
+                   "passive":  {
+                                   "every":  25
+                               }
+               }
+}

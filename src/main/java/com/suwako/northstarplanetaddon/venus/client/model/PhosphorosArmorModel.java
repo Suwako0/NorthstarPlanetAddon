@@ -16,39 +16,38 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ArmorItem;
 
 /**
- * PhosphorosArmorModel — 自动生成的装饰版盔甲模型（17 个额外部件，其中 8 个装饰件）。
- * 贴图：assets/northstar_planet_addon/textures/models/armor/phosphoros_armor.png（128x128）。
- *
- * 只渲染装饰件：基础的头/身/臂/腿不在这里画，交给 phosphoros_layer_1/2.png，
- * 所以脸和手不会被盔甲模型整块盖住（这是"戴上头盔看不见脸"的根因）。
- * 渲染哪个槽位由 setSlot(ArmorItem.Type) 决定，避免头盔渲染时把披风、护腿也画出来。
+ * Phosphoros dawn aegis: a radiant, ornate Venusian champion set.
+ * The vanilla armor layer supplies the fitted body shell; this model supplies
+ * the sculptural gold decorations and celestial silhouette.
  */
 public class PhosphorosArmorModel extends HumanoidModel<LivingEntity> implements ArmorDecoModel {
 
-    private final ModelPart crownLeft;
-    private final ModelPart crownMid;
-    private final ModelPart crownRight;
-    private final ModelPart hornLeft;
-    private final ModelPart hornRight;
-    private final ModelPart chestPlate;
-    private final ModelPart coreGem;
+    private final ModelPart halo;
+    private final ModelPart haloRing;
+    private final ModelPart crownSpikeLeft;
+    private final ModelPart crownSpikeRight;
     private final ModelPart pauldronLeft;
     private final ModelPart pauldronRight;
-    private final ModelPart cape;
-    private final ModelPart belt;
-    private final ModelPart bracerRight;
+    private final ModelPart mantleLeft;
+    private final ModelPart mantleRight;
+    private final ModelPart chestGem;
     private final ModelPart bracerLeft;
+    private final ModelPart bracerRight;
     private final ModelPart tassetRight;
     private final ModelPart tassetLeft;
     private final ModelPart greaveRight;
     private final ModelPart greaveLeft;
+    private final ModelPart kneeGemRight;
+    private final ModelPart kneeGemLeft;
+    private final ModelPart stud_1;
+    private final ModelPart stud_2;
+    private final ModelPart stud_3;
 
     private boolean showHead = true;
     private boolean showBody = true;
     private boolean showArms = true;
     private boolean showLegs = true;
 
-    /** 渲染前按槽位设置：HELMET 只画头部件，CHESTPLATE 画躯干+护臂，LEGGINGS/BOOTS 画腿部件。 */
     public void setSlot(ArmorItem.Type type) {
         this.showHead = type == ArmorItem.Type.HELMET;
         this.showBody = type == ArmorItem.Type.CHESTPLATE || type == ArmorItem.Type.LEGGINGS || type == ArmorItem.Type.BODY;
@@ -58,139 +57,100 @@ public class PhosphorosArmorModel extends HumanoidModel<LivingEntity> implements
 
     public PhosphorosArmorModel(ModelPart root) {
         super(root);
-        this.crownLeft = root.getChild("head").getChild("crown_left");
-        this.crownMid = root.getChild("head").getChild("crown_mid");
-        this.crownRight = root.getChild("head").getChild("crown_right");
-        this.hornLeft = root.getChild("head").getChild("horn_left");
-        this.hornRight = root.getChild("head").getChild("horn_right");
-        this.chestPlate = root.getChild("body").getChild("chest_plate");
-        this.coreGem = root.getChild("body").getChild("core_gem");
-        this.pauldronLeft = root.getChild("body").getChild("pauldron_left");
-        this.pauldronRight = root.getChild("body").getChild("pauldron_right");
-        this.cape = root.getChild("body").getChild("cape");
-        this.belt = root.getChild("body").getChild("belt");
-        this.bracerRight = root.getChild("right_arm").getChild("bracer_right");
-        this.bracerLeft = root.getChild("left_arm").getChild("bracer_left");
-        this.tassetRight = root.getChild("right_leg").getChild("tasset_right");
-        this.tassetLeft = root.getChild("left_leg").getChild("tasset_left");
-        this.greaveRight = root.getChild("right_leg").getChild("greave_right");
-        this.greaveLeft = root.getChild("left_leg").getChild("greave_left");
+        ModelPart headPart = root.getChild("head");
+        ModelPart bodyPart = root.getChild("body");
+        ModelPart rightArmPart = root.getChild("right_arm");
+        ModelPart leftArmPart = root.getChild("left_arm");
+        ModelPart rightLegPart = root.getChild("right_leg");
+        ModelPart leftLegPart = root.getChild("left_leg");
+        this.halo = headPart.getChild("halo");
+        this.haloRing = headPart.getChild("halo_ring");
+        this.crownSpikeLeft = headPart.getChild("crown_spike_left");
+        this.crownSpikeRight = headPart.getChild("crown_spike_right");
+        this.pauldronLeft = bodyPart.getChild("pauldron_left");
+        this.pauldronRight = bodyPart.getChild("pauldron_right");
+        this.mantleLeft = bodyPart.getChild("mantle_left");
+        this.mantleRight = bodyPart.getChild("mantle_right");
+        this.chestGem = bodyPart.getChild("chest_gem");
+        this.bracerLeft = leftArmPart.getChild("bracer_left");
+        this.bracerRight = rightArmPart.getChild("bracer_right");
+        this.tassetRight = rightLegPart.getChild("tasset_right");
+        this.tassetLeft = leftLegPart.getChild("tasset_left");
+        this.greaveRight = rightLegPart.getChild("greave_right");
+        this.greaveLeft = leftLegPart.getChild("greave_left");
+        this.kneeGemRight = rightLegPart.getChild("knee_gem_right");
+        this.kneeGemLeft = leftLegPart.getChild("knee_gem_left");
+        this.stud_1 = bodyPart.getChild("stud_1");
+        this.stud_2 = bodyPart.getChild("stud_2");
+        this.stud_3 = bodyPart.getChild("stud_3");
     }
 
     public static LayerDefinition createArmorLayer(CubeDeformation deformation) {
         MeshDefinition mesh = HumanoidModel.createMesh(deformation, 0.0F);
         PartDefinition root = mesh.getRoot();
-
         PartDefinition head = root.getChild("head");
-        head.addOrReplaceChild("crown_left",
-                CubeListBuilder.create().texOffs(0, 0).addBox(-4, -4, -1, 1, 4, 2),
-                PartPose.offset(0, -8, 0));
-        head.addOrReplaceChild("crown_mid",
-                CubeListBuilder.create().texOffs(8, 0).addBox(-1, -6, -1, 2, 6, 2),
-                PartPose.offset(0, -8, 0));
-        head.addOrReplaceChild("crown_right",
-                CubeListBuilder.create().texOffs(18, 0).addBox(3, -4, -1, 1, 4, 2),
-                PartPose.offset(0, -8, 0));
-        head.addOrReplaceChild("horn_left",
-                CubeListBuilder.create().texOffs(26, 0).addBox(-6, -3, -1, 2, 3, 2),
-                PartPose.offset(0, -8, 0));
-        head.addOrReplaceChild("horn_right",
-                CubeListBuilder.create().texOffs(36, 0).addBox(4, -3, -1, 2, 3, 2),
-                PartPose.offset(0, -8, 0));
-        PartDefinition body = root.getChild("body");
-        body.addOrReplaceChild("chest_plate",
-                CubeListBuilder.create().texOffs(46, 0).addBox(-4.5F, 0, -2.5F, 9, 6, 5),
-                PartPose.offset(0, 0, 0));
-        body.addOrReplaceChild("core_gem",
-                CubeListBuilder.create().texOffs(76, 0).addBox(-1, 2, -2.8F, 2, 2, 1),
-                PartPose.offset(0, 0, 0));
-        body.addOrReplaceChild("pauldron_left",
-                CubeListBuilder.create().texOffs(84, 0).addBox(-6, -1, -2.5F, 3, 3, 5),
-                PartPose.offset(0, 0, 0));
-        body.addOrReplaceChild("pauldron_right",
-                CubeListBuilder.create().texOffs(102, 0).addBox(3, -1, -2.5F, 3, 3, 5),
-                PartPose.offset(0, 0, 0));
-        body.addOrReplaceChild("cape",
-                CubeListBuilder.create().texOffs(0, 13).addBox(-4, 1, 2.2F, 8, 10, 0.6F),
-                PartPose.offset(0, 0, 0));
-        body.addOrReplaceChild("belt",
-                CubeListBuilder.create().texOffs(20, 13).addBox(-4.2F, 5, -2.2F, 8.4F, 1.5F, 4.4F),
-                PartPose.offset(0, 0, 0));
-        PartDefinition rightarm = root.getChild("right_arm");
-        rightarm.addOrReplaceChild("bracer_right",
-                CubeListBuilder.create().texOffs(48, 13).addBox(-2.2F, 4, -2.2F, 4.4F, 3, 4.4F),
-                PartPose.offset(0, 0, 0));
-        PartDefinition leftarm = root.getChild("left_arm");
-        leftarm.addOrReplaceChild("bracer_left",
-                CubeListBuilder.create().texOffs(68, 13).addBox(-2.2F, 4, -2.2F, 4.4F, 3, 4.4F),
-                PartPose.offset(0, 0, 0));
-        PartDefinition rightleg = root.getChild("right_leg");
-        rightleg.addOrReplaceChild("tasset_right",
-                CubeListBuilder.create().texOffs(88, 13).addBox(-2.2F, 0, -2.2F, 4.4F, 2, 4.4F),
-                PartPose.offset(0, 0, 0));
-        rightleg.addOrReplaceChild("greave_right",
-                CubeListBuilder.create().texOffs(0, 26).addBox(-2.2F, 6, -2.2F, 4.4F, 5, 4.4F),
-                PartPose.offset(0, 0, 0));
-        PartDefinition leftleg = root.getChild("left_leg");
-        leftleg.addOrReplaceChild("tasset_left",
-                CubeListBuilder.create().texOffs(108, 13).addBox(-2.2F, 0, -2.2F, 4.4F, 2, 4.4F),
-                PartPose.offset(0, 0, 0));
-        leftleg.addOrReplaceChild("greave_left",
-                CubeListBuilder.create().texOffs(20, 26).addBox(-2.2F, 6, -2.2F, 4.4F, 5, 4.4F),
-                PartPose.offset(0, 0, 0));
+        head.addOrReplaceChild("halo", CubeListBuilder.create().texOffs(0, 0).addBox(-4, -14, -4, 8, 0.57F, 8), PartPose.offset(0, -8, 0));
+        head.addOrReplaceChild("halo_ring", CubeListBuilder.create().texOffs(34, 0).addBox(-5, -14.4F, -5, 10, 0.475F, 10), PartPose.offset(0, -8, 0));
+        head.addOrReplaceChild("crown_spike_left", CubeListBuilder.create().texOffs(0, 22).addBox(-5.2F, -13.5F, -1.1F, 2.2F, 4.0F, 2.2F), PartPose.offsetAndRotation(0, -8, 0, 0, 0, -0.22F));
+        head.addOrReplaceChild("crown_spike_right", CubeListBuilder.create().texOffs(9, 22).addBox(3.0F, -13.5F, -1.1F, 2.2F, 4.0F, 2.2F), PartPose.offsetAndRotation(0, -8, 0, 0, 0, 0.22F));
 
+        PartDefinition body = root.getChild("body");
+        body.addOrReplaceChild("pauldron_left", CubeListBuilder.create().texOffs(76, 0).addBox(-11.2F, -2, -3, 7.2F, 4, 6), PartPose.offset(0, 0, 0));
+        body.addOrReplaceChild("pauldron_right", CubeListBuilder.create().texOffs(0, 13).addBox(4.0F, -2, -3, 7.2F, 4, 6), PartPose.offset(0, 0, 0));
+        body.addOrReplaceChild("mantle_left", CubeListBuilder.create().texOffs(18, 22).addBox(-9.6F, -0.4F, 2.2F, 5.8F, 1.6F, 2.0F), PartPose.offsetAndRotation(0, 0, 0, 0.2F, 0, -0.12F));
+        body.addOrReplaceChild("mantle_right", CubeListBuilder.create().texOffs(34, 22).addBox(3.8F, -0.4F, 2.2F, 5.8F, 1.6F, 2.0F), PartPose.offsetAndRotation(0, 0, 0, 0.2F, 0, 0.12F));
+        body.addOrReplaceChild("chest_gem", CubeListBuilder.create().texOffs(48, 22).addBox(-1.7F, 0.2F, -3.15F, 3.4F, 3.8F, 0.65F), PartPose.offset(0, 0, 0));
+        body.addOrReplaceChild("stud_1", CubeListBuilder.create().texOffs(115, 13).addBox(0.5F, 2.8F, -2.85F, 0.6F, 0.6F, 0.4F), PartPose.offset(0, 0, 0));
+        body.addOrReplaceChild("stud_2", CubeListBuilder.create().texOffs(119, 13).addBox(-0.5F, 4.55F, -2.85F, 0.6F, 0.6F, 0.4F), PartPose.offset(0, 0, 0));
+        body.addOrReplaceChild("stud_3", CubeListBuilder.create().texOffs(123, 13).addBox(-0.17F, 2.65F, -2.85F, 0.6F, 0.6F, 0.4F), PartPose.offset(0, 0, 0));
+
+        PartDefinition rightArm = root.getChild("right_arm");
+        rightArm.addOrReplaceChild("bracer_right", CubeListBuilder.create().texOffs(64, 22).addBox(-3.45F, 1.4F, -2.55F, 3.0F, 5.0F, 5.1F), PartPose.offset(0, 0, 0));
+        PartDefinition leftArm = root.getChild("left_arm");
+        leftArm.addOrReplaceChild("bracer_left", CubeListBuilder.create().texOffs(80, 22).addBox(0.45F, 1.4F, -2.55F, 3.0F, 5.0F, 5.1F), PartPose.offset(0, 0, 0));
+
+        PartDefinition rightLeg = root.getChild("right_leg");
+        rightLeg.addOrReplaceChild("tasset_right", CubeListBuilder.create().texOffs(29, 13).addBox(-2.3F, 0, -2.3F, 4.6F, 2.28F, 4.6F), PartPose.offset(0, 0, 0));
+        rightLeg.addOrReplaceChild("greave_right", CubeListBuilder.create().texOffs(71, 13).addBox(-2.4F, 5, -2.4F, 4.8F, 5.7F, 4.8F), PartPose.offset(0, 0, 0));
+        rightLeg.addOrReplaceChild("knee_gem_right", CubeListBuilder.create().texOffs(96, 22).addBox(-1.25F, 3.0F, -2.75F, 2.5F, 1.5F, 0.7F), PartPose.offset(0, 0, 0));
+        PartDefinition leftLeg = root.getChild("left_leg");
+        leftLeg.addOrReplaceChild("tasset_left", CubeListBuilder.create().texOffs(50, 13).addBox(-2.3F, 0, -2.3F, 4.6F, 2.28F, 4.6F), PartPose.offset(0, 0, 0));
+        leftLeg.addOrReplaceChild("greave_left", CubeListBuilder.create().texOffs(93, 13).addBox(-2.4F, 5, -2.4F, 4.8F, 5.7F, 4.8F), PartPose.offset(0, 0, 0));
+        leftLeg.addOrReplaceChild("knee_gem_left", CubeListBuilder.create().texOffs(106, 22).addBox(-1.25F, 3.0F, -2.75F, 2.5F, 1.5F, 0.7F), PartPose.offset(0, 0, 0));
         return LayerDefinition.create(mesh, 128, 128);
     }
 
     @Override
     public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, int color) {
-        // 仅装饰件；基础身体由原版 layer 贴图负责，脸/手保持可见
-        if (this.showHead) {
-            poseStack.pushPose();
-            this.head.translateAndRotate(poseStack);
-            this.crownLeft.render(poseStack, buffer, packedLight, packedOverlay, color);
-            this.crownMid.render(poseStack, buffer, packedLight, packedOverlay, color);
-            this.crownRight.render(poseStack, buffer, packedLight, packedOverlay, color);
-            this.hornLeft.render(poseStack, buffer, packedLight, packedOverlay, color);
-            this.hornRight.render(poseStack, buffer, packedLight, packedOverlay, color);
+        if (showHead) {
+            poseStack.pushPose(); head.translateAndRotate(poseStack);
+            halo.render(poseStack, buffer, packedLight, packedOverlay, color);
+            haloRing.render(poseStack, buffer, packedLight, packedOverlay, color);
+            crownSpikeLeft.render(poseStack, buffer, packedLight, packedOverlay, color);
+            crownSpikeRight.render(poseStack, buffer, packedLight, packedOverlay, color);
             poseStack.popPose();
         }
-        if (this.showBody) {
-            poseStack.pushPose();
-            this.body.translateAndRotate(poseStack);
-            this.chestPlate.render(poseStack, buffer, packedLight, packedOverlay, color);
-            this.coreGem.render(poseStack, buffer, packedLight, packedOverlay, color);
-            this.pauldronLeft.render(poseStack, buffer, packedLight, packedOverlay, color);
-            this.pauldronRight.render(poseStack, buffer, packedLight, packedOverlay, color);
-            this.cape.render(poseStack, buffer, packedLight, packedOverlay, color);
-            this.belt.render(poseStack, buffer, packedLight, packedOverlay, color);
+        if (showBody) {
+            poseStack.pushPose(); body.translateAndRotate(poseStack);
+            pauldronLeft.render(poseStack, buffer, packedLight, packedOverlay, color);
+            pauldronRight.render(poseStack, buffer, packedLight, packedOverlay, color);
+            mantleLeft.render(poseStack, buffer, packedLight, packedOverlay, color);
+            mantleRight.render(poseStack, buffer, packedLight, packedOverlay, color);
+            chestGem.render(poseStack, buffer, packedLight, packedOverlay, color);
+            stud_1.render(poseStack, buffer, packedLight, packedOverlay, color);
+            stud_2.render(poseStack, buffer, packedLight, packedOverlay, color);
+            stud_3.render(poseStack, buffer, packedLight, packedOverlay, color);
             poseStack.popPose();
         }
-        if (this.showArms) {
-            poseStack.pushPose();
-            this.rightArm.translateAndRotate(poseStack);
-            this.bracerRight.render(poseStack, buffer, packedLight, packedOverlay, color);
-            poseStack.popPose();
+        if (showArms) {
+            poseStack.pushPose(); rightArm.translateAndRotate(poseStack); bracerRight.render(poseStack, buffer, packedLight, packedOverlay, color); poseStack.popPose();
+            poseStack.pushPose(); leftArm.translateAndRotate(poseStack); bracerLeft.render(poseStack, buffer, packedLight, packedOverlay, color); poseStack.popPose();
         }
-        if (this.showArms) {
-            poseStack.pushPose();
-            this.leftArm.translateAndRotate(poseStack);
-            this.bracerLeft.render(poseStack, buffer, packedLight, packedOverlay, color);
-            poseStack.popPose();
-        }
-        if (this.showLegs) {
-            poseStack.pushPose();
-            this.rightLeg.translateAndRotate(poseStack);
-            this.tassetRight.render(poseStack, buffer, packedLight, packedOverlay, color);
-            this.greaveRight.render(poseStack, buffer, packedLight, packedOverlay, color);
-            poseStack.popPose();
-        }
-        if (this.showLegs) {
-            poseStack.pushPose();
-            this.leftLeg.translateAndRotate(poseStack);
-            this.tassetLeft.render(poseStack, buffer, packedLight, packedOverlay, color);
-            this.greaveLeft.render(poseStack, buffer, packedLight, packedOverlay, color);
-            poseStack.popPose();
+        if (showLegs) {
+            poseStack.pushPose(); rightLeg.translateAndRotate(poseStack);
+            tassetRight.render(poseStack, buffer, packedLight, packedOverlay, color); greaveRight.render(poseStack, buffer, packedLight, packedOverlay, color); kneeGemRight.render(poseStack, buffer, packedLight, packedOverlay, color); poseStack.popPose();
+            poseStack.pushPose(); leftLeg.translateAndRotate(poseStack);
+            tassetLeft.render(poseStack, buffer, packedLight, packedOverlay, color); greaveLeft.render(poseStack, buffer, packedLight, packedOverlay, color); kneeGemLeft.render(poseStack, buffer, packedLight, packedOverlay, color); poseStack.popPose();
         }
     }
 }

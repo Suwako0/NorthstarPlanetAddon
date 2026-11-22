@@ -1,12 +1,14 @@
 package com.suwako.northstarplanetaddon.mars.item;
 
 import com.suwako.northstarplanetaddon.mars.world.StarcoreBombardment;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -40,6 +42,8 @@ public class StarcoreCannonItem extends Item {
     public static final int COOLDOWN_TICKS = 600;
     /** 瞄准距离：超出这个距离就打在射线上第一个方块处。 */
     private static final double AIM_RANGE = 48.0D;
+    /** 被动层：手持时每 15 tick 一次粒子（attack.mjs 生成参数）。 */
+    private static final int PASSIVE_EVERY = 20;
 
     public StarcoreCannonItem(Item.Properties properties) {
         super(properties);
@@ -50,6 +54,29 @@ public class StarcoreCannonItem extends Item {
                                 TooltipFlag flag) {
         tooltip.add(Component.translatable("tooltip.northstar_planet_addon.starcore_cannon")
                 .withStyle(ChatFormatting.GOLD));
+        tooltip.add(Component.translatable("item.northstar_planet_addon.starcore_cannon.ability",
+                COOLDOWN_TICKS / 20).withStyle(ChatFormatting.YELLOW));
+    }
+
+    /**
+     * 被动层（attack.mjs · flame 主题）：手持时每 15 tick 冒一簇熔岩粒子。
+     *
+     * <p>本物品的主动层是 {@link StarcoreBombardment} 星核炮击，命中层不适用（不是近战武器类），
+     * 所以攻击模组只接被动层。</p>
+     */
+    @Override
+    public void inventoryTick(ItemStack stack, Level level, Entity entity, int slot, boolean selected) {
+        super.inventoryTick(stack, level, entity, slot, selected);
+        if (!selected || level.isClientSide || !(entity instanceof Player player)) {
+            return;
+        }
+        if (player.tickCount % PASSIVE_EVERY != 0) {
+            return;
+        }
+        if (level instanceof ServerLevel server) {
+            server.sendParticles(ParticleTypes.LAVA,
+                    player.getX(), player.getY() + 0.9, player.getZ(), 2, 0.25, 0.3, 0.25, 0.0);
+        }
     }
 
     @Override

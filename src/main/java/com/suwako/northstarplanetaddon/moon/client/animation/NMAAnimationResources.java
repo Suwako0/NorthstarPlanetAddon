@@ -49,6 +49,12 @@ public final class NMAAnimationResources extends SimpleJsonResourceReloadListene
                          ProfilerFiller profiler) {
         ImmutableMap.Builder<ResourceLocation, AnimationDefinition> loaded = ImmutableMap.builder();
         for (Map.Entry<ResourceLocation, JsonElement> entry : resources.entrySet()) {
+            // 这个加载器只认本模组自己那套 {length, bones:{bone:{rotation:[{time,x,y,z}]}}} 格式；
+            // GeckoLib 的 *.animation.json（Ares / 赫菲斯托斯等）是另一套 schema，直接跳过，
+            // 否则每次资源重载都会刷一串 "Missing numeric field length" 的假报错。
+            if (entry.getKey().getPath().endsWith(".animation.json") || isGeckolibFormat(entry.getValue())) {
+                continue;
+            }
             try {
                 loaded.put(entry.getKey(), parse(entry.getValue().getAsJsonObject()));
             } catch (RuntimeException exception) {
@@ -57,6 +63,15 @@ public final class NMAAnimationResources extends SimpleJsonResourceReloadListene
         }
         animations = loaded.buildKeepingLast();
         MoonModule.LOGGER.debug("Loaded {} editable entity animations.", animations.size());
+    }
+
+    /** GeckoLib 的动画文件带顶层 {@code animations} 对象 + {@code format_version}，不归本加载器管。 */
+    private static boolean isGeckolibFormat(JsonElement element) {
+        if (!element.isJsonObject()) {
+            return false;
+        }
+        JsonObject root = element.getAsJsonObject();
+        return root.has("animations") || root.has("format_version");
     }
 
     private static AnimationDefinition parse(JsonObject root) {

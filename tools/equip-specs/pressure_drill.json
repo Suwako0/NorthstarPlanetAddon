@@ -2,9 +2,21 @@
   "modid": "northstar_planet_addon",
   "name": "pressure_drill",
   "kind": "drill",
+  "length": 32,
   "palette": {
-    "blade": ["#3a4046", "#4c545a", "#6d777e", "#9aa5ac", "#d5dde2"],
-    "guard": ["#1c2026", "#282e34", "#353d44", "#434c54"],
+    "blade": [
+      "#3a4046",
+      "#4c545a",
+      "#6d777e",
+      "#9aa5ac",
+      "#d5dde2"
+    ],
+    "guard": [
+      "#1c2026",
+      "#282e34",
+      "#353d44",
+      "#434c54"
+    ],
     "wrap": "#30230f",
     "gem": "#48c8c0",
     "tassel": "#5a4a30"

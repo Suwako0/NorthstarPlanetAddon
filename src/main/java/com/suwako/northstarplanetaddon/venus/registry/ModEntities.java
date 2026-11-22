@@ -36,12 +36,18 @@ public final class ModEntities {
                     .clientTrackingRange(16)
                     .build("aphrodite"));
 
-    /** 赫菲斯托斯巨像（第 4.3 节）：地表型，缓慢逼近。 */
+    /**
+     * 赫菲斯托斯巨像（第 4.3 节）：地表型，缓慢逼近。
+     *
+     * <p>判定箱 11.0×9.9 与重制后模型的真实外廓一致（模型 176×158 模型单位）：双拳/前臂
+     * 在 ±4.1 格外，旧版 6×9 的盒子把它们排除在判定之外 —— 玩家照着拳头打会打空。
+     * 巨像不走寻路（见 {@code HephaestusEntity#tickBossAi}），宽判定箱不会造成卡路。</p>
+     */
     public static final DeferredHolder<EntityType<?>, EntityType<HephaestusEntity>> HEPHAESTUS =
             ENTITY_TYPES.register("hephaestus", () -> EntityType.Builder
                     .of(HephaestusEntity::new, MobCategory.MONSTER)
-                    .sized(6.0F, 9.0F)
-                    .eyeHeight(7.5F)
+                    .sized(11.0F, 9.9F)
+                    .eyeHeight(8.6F)
                     .fireImmune()
                     .clientTrackingRange(16)
                     .build("hephaestus"));
@@ -124,6 +130,17 @@ public final class ModEntities {
                     .eyeHeight(1.7F)
                     .clientTrackingRange(8)
                     .build("brass_deacon"));
+
+    // ------------------------------------------------------------------ 投掷物
+    /** 酸蚀矛投掷体：三叉戟式投掷的落点实体（命中留在地面可捡回）。 */
+    public static final DeferredHolder<EntityType<?>, EntityType<com.suwako.northstarplanetaddon.venus.entity.ThrownAcidSpear>>
+            THROWN_ACID_SPEAR = ENTITY_TYPES.register("acidic_spear", () -> EntityType.Builder
+                    .<com.suwako.northstarplanetaddon.venus.entity.ThrownAcidSpear>of(
+                            com.suwako.northstarplanetaddon.venus.entity.ThrownAcidSpear::new, MobCategory.MISC)
+                    .sized(0.5F, 0.5F)
+                    .clientTrackingRange(6)
+                    .updateInterval(10)
+                    .build("acidic_spear"));
 
     /** mod bus：EntityAttributeCreationEvent。 */
     public static void registerAttributes(EntityAttributeCreationEvent event) {

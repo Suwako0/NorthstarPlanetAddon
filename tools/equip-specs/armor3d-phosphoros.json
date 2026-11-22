@@ -1,6 +1,9 @@
-﻿{
-    "modid":  "northstar_planet_addon",
-    "set":  "phosphoros",
-    "package":  "com.suwako.northstarplanetaddon.venus",
-    "atlas":  128
+{
+  "modid": "northstar_planet_addon",
+  "set": "phosphoros",
+  "package": "com.suwako.northstarplanetaddon.venus",
+  "description": "Phosphoros dawn aegis, radiant golden royal heavy champion armor with halo, crown, cape, chest medallion, mantle, bracers, pauldrons, belt and ceremonial greaves for the Venus dawn champion.",
+  "theme": "gold",
+  "silhouette": "broad",
+  "seed": "phosphoros|redesign2026|variant_b|broad"
 }

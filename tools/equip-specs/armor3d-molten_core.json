@@ -1,6 +1,9 @@
-﻿{
-    "modid":  "northstar_planet_addon",
-    "set":  "molten_core",
-    "package":  "com.suwako.northstarplanetaddon.mars",
-    "atlas":  128
+{
+  "modid": "northstar_planet_addon",
+  "set": "molten_core",
+  "package": "com.suwako.northstarplanetaddon.mars",
+  "description": "Molten-core Mars warplate, tall inferno armor with volcanic horns, ribs, chest gem, spiked shoulders and ember-red mantle around a burning reactor core.",
+  "theme": "flame",
+  "silhouette": "tall",
+  "seed": "molten_core|redesign2026|volcanic_reactor|tall"
 }

@@ -2,10 +2,19 @@
   "modid": "northstar_planet_addon",
   "name": "starcore_cannon",
   "kind": "staff",
-  "lengthPreset": "sword",
-  "parts": { "gem": true, "wrap": true, "tassel": false },
+  "length": 34,
+  "parts": {
+    "gem": true,
+    "wrap": true,
+    "tassel": false
+  },
   "palette": {
-    "guard": ["#1c211e", "#2e332f", "#444c47", "#69706c"],
+    "guard": [
+      "#1c211e",
+      "#2e332f",
+      "#444c47",
+      "#69706c"
+    ],
     "gem": "#ffb03a",
     "wrap": "#373e3a"
   }

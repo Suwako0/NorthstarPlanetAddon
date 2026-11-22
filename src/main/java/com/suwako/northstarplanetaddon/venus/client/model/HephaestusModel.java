@@ -1,135 +1,110 @@
 package com.suwako.northstarplanetaddon.venus.client.model;
 
+import com.suwako.northstarplanetaddon.NorthstarPlanetAddon;
+import com.suwako.northstarplanetaddon.venus.VenusModule;
 import com.suwako.northstarplanetaddon.venus.entity.boss.HephaestusEntity;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.model.EntityModel;
-import net.minecraft.client.model.geom.ModelLayerLocation;
-import net.minecraft.client.model.geom.ModelPart;
-import net.minecraft.client.model.geom.PartPose;
-import net.minecraft.client.model.geom.builders.CubeListBuilder;
-import net.minecraft.client.model.geom.builders.LayerDefinition;
-import net.minecraft.client.model.geom.builders.MeshDefinition;
-import net.minecraft.client.model.geom.builders.PartDefinition;
+import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
+import software.bernie.geckolib.animation.Animation;
+import software.bernie.geckolib.loading.FileLoader;
+import software.bernie.geckolib.loading.object.BakedAnimations;
+import software.bernie.geckolib.model.GeoModel;
 
 /**
- * 赫菲斯托斯巨像模型：躯干 + 头 + 双臂 + 双腿 + 背部炉心 + 双肩散热口。
+ * 赫菲斯托斯巨像的 GeckoLib 模型（2026-01 重制版）。
  *
- * <p>贴图 128×128，UV 布局（与 {@code docs/TEXTURE-SPEC.md} 一致）：</p>
- * <table>
- *   <tr><th>区域</th><th>部位</th></tr>
- *   <tr><td>(0,0)–(64,36)</td><td>躯干 20×24×12</td></tr>
- *   <tr><td>(64,0)–(104,20)</td><td>头部 10×10×10</td></tr>
- *   <tr><td>(0,36)–(32,68)</td><td>手臂 8×24×8（左右共用）</td></tr>
- *   <tr><td>(32,36)–(72,66)</td><td>腿 10×20×10（左右共用）</td></tr>
- *   <tr><td>(96,20)–(128,36)</td><td>背部炉心 8×8×8</td></tr>
- *   <tr><td>(72,36)–(96,46)</td><td>肩部散热口 6×4×6（左右共用）</td></tr>
- * </table>
+ * <p>资源由 {@code docs/models/hephaestus.bbmodel} 导出：
+ * <ul>
+ *   <li>{@code geo/entity/hephaestus.geo.json} —— 20 根骨骼、241 个方块、512×2048 box UV</li>
+ *   <li>{@code animations/entity/hephaestus.animation.json} ——
+ *       idle / idle_p2 / idle_p3 / walk / lava_punch / backhand / slag_throw / quake_stomp /
+ *       steam_vent / overload_burst / plate_break / death</li>
+ *   <li>{@code textures/entity/hephaestus.png} 主体贴图 +
+ *       {@code hephaestus_glowmask.png} 自发光遮罩（由 {@code AutoGlowingGeoLayer} 读取）</li>
+ * </ul>
+ * 模型为 1 单位 = 1/16 格的原生比例（脚底 y=0，头顶约 158 单位 ≈ 9.9 格），渲染器不再额外缩放。</p>
+ *
+ * <h2>为什么重写 {@link #getAnimation}</h2>
+ * <p>GeckoLib 的 {@code GeoModel#getAnimation} 只从静态缓存 {@code GeckoLibCache.getBakedAnimations()}
+ * 里查，查不到<b>直接抛</b> {@code Unable to find animation file}（不是返回 null）。这张缓存由客户端资源
+ * 重载监听器填充，在整合包（Connector / 多资源包 / 自定义加载顺序）里有可能取不到我们这一个文件 ——
+ * 一旦取不到，Boss 就会一动不动。</p>
+ *
+ * <p>这里做了两层兜底：先照常查缓存（正常环境零开销）；命中失败就用 {@link FileLoader} 自己把
+ * {@code hephaestus.animation.json} 读一遍并缓存下来。两条路都失败才真正没有动画，且只记一次日志。</p>
  */
-public class HephaestusModel extends EntityModel<HephaestusEntity> {
+public class HephaestusModel extends GeoModel<HephaestusEntity> {
 
-    public static final ModelLayerLocation LAYER =
-            new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath("northstar_planet_addon", "hephaestus"), "main");
+    private static final ResourceLocation MODEL =
+            VenusModule.id("geo/entity/hephaestus.geo.json");
+    private static final ResourceLocation TEXTURE =
+            VenusModule.id("textures/entity/hephaestus.png");
+    private static final ResourceLocation ANIMATIONS =
+            VenusModule.id("animations/entity/hephaestus.animation.json");
 
-    private final ModelPart root;
-    private final ModelPart body;
-    private final ModelPart head;
-    private final ModelPart armLeft;
-    private final ModelPart armRight;
-    private final ModelPart legLeft;
-    private final ModelPart legRight;
-    private final ModelPart core;
+    /** 自读回退结果；null 表示还没试过。 */
+    private static BakedAnimations fallbackAnimations;
+    /** 自读也失败了（只记一次日志，不刷屏）。 */
+    private static boolean fallbackFailed;
+    private static boolean cacheMissLogged;
 
-    public HephaestusModel(ModelPart root) {
-        this.root = root;
-        this.body = root.getChild("body");
-        this.head = this.body.getChild("head");
-        this.armLeft = this.body.getChild("arm_left");
-        this.armRight = this.body.getChild("arm_right");
-        this.legLeft = this.body.getChild("leg_left");
-        this.legRight = this.body.getChild("leg_right");
-        this.core = this.body.getChild("core");
-    }
-
-    public static LayerDefinition createBodyLayer() {
-        MeshDefinition mesh = new MeshDefinition();
-        PartDefinition root = mesh.getRoot();
-
-        PartDefinition body = root.addOrReplaceChild("body",
-                CubeListBuilder.create().texOffs(0, 0)
-                        .addBox(-10.0F, -12.0F, -6.0F, 20.0F, 24.0F, 12.0F),
-                PartPose.offset(0.0F, 12.0F, 0.0F));
-
-        body.addOrReplaceChild("head",
-                CubeListBuilder.create().texOffs(64, 0)
-                        .addBox(-5.0F, -10.0F, -5.0F, 10.0F, 10.0F, 10.0F),
-                PartPose.offset(0.0F, -12.0F, 0.0F));
-
-        body.addOrReplaceChild("arm_left",
-                CubeListBuilder.create().texOffs(0, 36)
-                        .addBox(-4.0F, 0.0F, -4.0F, 8.0F, 24.0F, 8.0F),
-                PartPose.offset(11.0F, -10.0F, 0.0F));
-
-        body.addOrReplaceChild("arm_right",
-                CubeListBuilder.create().texOffs(0, 36).mirror()
-                        .addBox(-4.0F, 0.0F, -4.0F, 8.0F, 24.0F, 8.0F),
-                PartPose.offset(-11.0F, -10.0F, 0.0F));
-
-        body.addOrReplaceChild("leg_left",
-                CubeListBuilder.create().texOffs(32, 36)
-                        .addBox(-5.0F, 0.0F, -5.0F, 10.0F, 20.0F, 10.0F),
-                PartPose.offset(5.0F, 12.0F, 0.0F));
-
-        body.addOrReplaceChild("leg_right",
-                CubeListBuilder.create().texOffs(32, 36).mirror()
-                        .addBox(-5.0F, 0.0F, -5.0F, 10.0F, 20.0F, 10.0F),
-                PartPose.offset(-5.0F, 12.0F, 0.0F));
-
-        body.addOrReplaceChild("core",
-                CubeListBuilder.create().texOffs(96, 20)
-                        .addBox(-4.0F, -4.0F, -4.0F, 8.0F, 8.0F, 8.0F),
-                PartPose.offset(0.0F, 2.0F, 6.0F));
-
-        body.addOrReplaceChild("vent_left",
-                CubeListBuilder.create().texOffs(72, 36)
-                        .addBox(-3.0F, -2.0F, -3.0F, 6.0F, 4.0F, 6.0F),
-                PartPose.offset(11.0F, -12.0F, 0.0F));
-
-        body.addOrReplaceChild("vent_right",
-                CubeListBuilder.create().texOffs(72, 36).mirror()
-                        .addBox(-3.0F, -2.0F, -3.0F, 6.0F, 4.0F, 6.0F),
-                PartPose.offset(-11.0F, -12.0F, 0.0F));
-
-        return LayerDefinition.create(mesh, 128, 128);
+    @Override
+    public ResourceLocation getModelResource(HephaestusEntity animatable) {
+        return MODEL;
     }
 
     @Override
-    public void setupAnim(HephaestusEntity entity, float limbSwing, float limbSwingAmount,
-                          float ageInTicks, float netHeadYaw, float headPitch) {
-        float swing = Mth.cos(limbSwing * 0.4F) * 0.9F * limbSwingAmount;
-        this.legLeft.xRot = swing;
-        this.legRight.xRot = -swing;
-        this.armLeft.xRot = -swing * 0.6F;
-        this.armRight.xRot = swing * 0.6F;
-
-        this.head.yRot = netHeadYaw * Mth.DEG_TO_RAD * 0.5F;
-        this.head.xRot = headPitch * Mth.DEG_TO_RAD * 0.5F;
-
-        // 缓慢的呼吸/震动
-        this.body.y = 12.0F + Mth.sin(ageInTicks * 0.08F) * 0.4F;
-
-        // 炉心在过载时脉动（弱点提示）
-        float pulse = entity.isOverloaded() ? 1.0F + Mth.sin(ageInTicks * 0.6F) * 0.12F : 1.0F;
-        this.core.xScale = pulse;
-        this.core.yScale = pulse;
-        this.core.zScale = pulse;
+    public ResourceLocation getTextureResource(HephaestusEntity animatable) {
+        return TEXTURE;
     }
 
     @Override
-    public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight,
-                               int packedOverlay, int color) {
-        this.root.render(poseStack, buffer, packedLight, packedOverlay, color);
+    public ResourceLocation getAnimationResource(HephaestusEntity animatable) {
+        return ANIMATIONS;
+    }
+
+    @Override
+    public Animation getAnimation(HephaestusEntity animatable, String name) {
+        Animation animation = null;
+        try {
+            animation = super.getAnimation(animatable, name);
+        } catch (RuntimeException exception) {
+            if (!cacheMissLogged) {
+                cacheMissLogged = true;
+                NorthstarPlanetAddon.LOGGER.warn(
+                        "[hephaestus] GeckoLib 动画缓存里没有 {}（{}），改由模型自读动画文件", ANIMATIONS, exception.getMessage());
+            }
+        }
+        if (animation == null) {
+            BakedAnimations baked = selfLoadedAnimations();
+            animation = baked == null ? null : baked.getAnimation(name);
+        }
+        // 控制器每请求一个动画名就打一次，用来判断「动作没播」到底是没切换，还是切了但没解析出来
+        if (REQUESTED.add(name)) {
+            NorthstarPlanetAddon.LOGGER.info("[hephaestus] 控制器请求动画 {} → {}", name,
+                    animation == null ? "未解析" : ("OK " + animation.length() + " tick / "
+                            + animation.boneAnimations().length + " 骨骼"));
+        }
+        return animation;
+    }
+
+    /** 已经打过日志的动画名，避免每帧刷屏。 */
+    private static final java.util.Set<String> REQUESTED = java.util.concurrent.ConcurrentHashMap.newKeySet();
+
+    private static synchronized BakedAnimations selfLoadedAnimations() {
+        if (fallbackAnimations != null || fallbackFailed) {
+            return fallbackAnimations;
+        }
+        try {
+            fallbackAnimations = FileLoader.loadAnimationsFile(ANIMATIONS,
+                    Minecraft.getInstance().getResourceManager());
+            NorthstarPlanetAddon.LOGGER.info("[hephaestus] 动画文件已由模型自行加载，共 {} 段",
+                    fallbackAnimations.animations().size());
+        } catch (Throwable throwable) {
+            fallbackFailed = true;
+            NorthstarPlanetAddon.LOGGER.error("[hephaestus] 自行加载动画文件失败，Boss 将没有骨骼动画：{} {}",
+                    ANIMATIONS, throwable.toString());
+        }
+        return fallbackAnimations;
     }
 }

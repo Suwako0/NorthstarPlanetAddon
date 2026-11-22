@@ -353,5 +353,13 @@
   "advancement.northstar_planet_addon.aphrodite.description": "击败阿佛洛狄忒，硫之女王",
   "message.northstar_planet_addon.aphrodite_cocoon_broken": "茧破开了（%s）！",
   "message.northstar_planet_addon.summon_blocked": "附近已经有 Boss 了，先解决掉它",
-  "message.northstar_planet_addon.summon_success": "%s 被唤醒了！"
+  "message.northstar_planet_addon.summon_success": "%s 被唤醒了！",
+  "item.northstar_planet_addon.molten_core_sword.desc": "融核巨剑 —— 阿瑞斯熔炉的核心，至今仍在燃烧。",
+  "item.northstar_planet_addon.molten_core_sword.ability": "右键「地热斩」：扇形内每个目标 %1$s 点火焰伤害并点燃，冷却 %2$s 秒",
+  "item.northstar_planet_addon.acidic_spear.desc": "酸蚀矛 —— 每次命中都会在目标身上叠一层腐蚀。",
+  "item.northstar_planet_addon.acidic_spear.ability": "潜行右键「酸液迸发」：%2$s 格内 %1$s 点伤害并将目标击退",
+  "item.northstar_planet_addon.pressure_hammer.desc": "压力锤 —— 重到能把 Boss 的机身砸出过载。",
+  "item.northstar_planet_addon.pressure_hammer.ability": "蓄力满后右键「震荡波」：%1$s 点伤害，冷却 %2$s 秒",
+  "item.northstar_planet_addon.starcore_cannon.ability": "右键「星核炮击」：在准心处召唤星核轰炸，冷却 %1$s 秒",
+  "item.northstar_planet_addon.acidic_spear.throw": "右键蓄力投掷（三叉戟式），命中留下腐蚀；掷出的矛落在地上可捡回。"
 }

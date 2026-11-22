@@ -1,38 +1,28 @@
-# phosphoros 盔甲模型（17 个部件 / 8 个装饰件）
+# phosphoros 盔甲（gold 主题，11 部件 / 5 装饰）
 
-实测 12 个自定义盔甲模型：平均 9.5 个部件、3.3 个装饰件 → 本模型高于平均线。
+种子：`phosphoros|redesign2026|variant_b|broad`（同名/同描述生成结果稳定；换 `seed` 或改名字即可重新随机）
 
-| 部件 | 父骨 | box(x,y,z,w,h,d) | UV | 占位 | 装饰 |
-|---|---|---|---|---|---|
-| crown_left | head | -4,-4,-1,1,4,2 | 0,0 | 6x6 | 是 |
-| crown_mid | head | -1,-6,-1,2,6,2 | 8,0 | 8x8 | 是 |
-| crown_right | head | 3,-4,-1,1,4,2 | 18,0 | 6x6 | 是 |
-| horn_left | head | -6,-3,-1,2,3,2 | 26,0 | 8x5 | 是 |
-| horn_right | head | 4,-3,-1,2,3,2 | 36,0 | 8x5 | 是 |
-| chest_plate | body | -4.5,0,-2.5,9,6,5 | 46,0 | 28x11 | 甲片 |
-| core_gem | body | -1,2,-2.8,2,2,1 | 76,0 | 6x3 | 是 |
-| pauldron_left | body | -6,-1,-2.5,3,3,5 | 84,0 | 16x8 | 甲片 |
-| pauldron_right | body | 3,-1,-2.5,3,3,5 | 102,0 | 16x8 | 甲片 |
-| cape | body | -4,1,2.2,8,10,0.6 | 0,13 | 18x11 | 是 |
-| belt | body | -4.2,5,-2.2,8.4,1.5,4.4 | 20,13 | 26x6 | 是 |
-| bracer_right | right_arm | -2.2,4,-2.2,4.4,3,4.4 | 48,13 | 18x8 | 甲片 |
-| bracer_left | left_arm | -2.2,4,-2.2,4.4,3,4.4 | 68,13 | 18x8 | 甲片 |
-| tasset_right | right_leg | -2.2,0,-2.2,4.4,2,4.4 | 88,13 | 18x7 | 甲片 |
-| tasset_left | left_leg | -2.2,0,-2.2,4.4,2,4.4 | 108,13 | 18x7 | 甲片 |
-| greave_right | right_leg | -2.2,6,-2.2,4.4,5,4.4 | 0,26 | 18x10 | 甲片 |
-| greave_left | left_leg | -2.2,6,-2.2,4.4,5,4.4 | 20,26 | 18x10 | 甲片 |
+| 部件 | 父骨 | box | UV | 类型 |
+|---|---|---|---|---|
+| halo | head | -4,-14,-4,8,0.57,8 | 0,0 | 装饰 |
+| halo_ring | head | -5,-14.4,-5,10,0.475,10 | 34,0 | 装饰 |
+| pauldron_left | body | -11.21000432597939,-2,-3,7.16000432597939,4,6 | 76,0 | 甲片 |
+| pauldron_right | body | 4.050000000000001,-2,-3,7.16000432597939,4,6 | 0,13 | 甲片 |
+| tasset_right | right_leg | -2.3,0,-2.3,4.6,2.28,4.6 | 29,13 | 甲片 |
+| tasset_left | left_leg | -2.3,0,-2.3,4.6,2.28,4.6 | 50,13 | 甲片 |
+| greave_right | right_leg | -2.4,5,-2.4,4.8,5.699999999999999,4.8 | 71,13 | 甲片 |
+| greave_left | left_leg | -2.4,5,-2.4,4.8,5.699999999999999,4.8 | 93,13 | 甲片 |
+| stud_1 | body | 0.4937407511752099,2.756114703603089,-2.85,0.6,0.6,0.4 | 115,13 | 装饰 |
+| stud_2 | body | -0.48663661431055516,4.543735710904002,-2.85,0.6,0.6,0.4 | 119,13 | 装饰 |
+| stud_3 | body | -0.16588539897929877,2.653541186824441,-2.85,0.6,0.6,0.4 | 123,13 | 装饰 |
 
-## 渲染规则（脸和手必须可见）
+## 三套贴图
 
-- `renderToBuffer` **只画上表这些装饰件**，不画基础头/身/臂/腿。
-- 基础覆盖交给 `phosphoros_layer_1/2.png`（原版盔甲层），所以脸、手、腿不会被模型整块盖住。
-- 每个装饰件按父骨变换渲染（`head/body/rightArm/...` 的 `translateAndRotate`），会跟随头部转动和摆臂。
-- 渲染前调用 `model.setSlot(ArmorItem.Type.HELMET/CHESTPLATE/LEGGINGS/BOOTS)`：只画该槽位对应的装饰件，
-  否则头盔渲染时会把披风、护腿、护臂一起画出来。
-- 如果非要把甲片做成 3D 并覆盖身体，那也必须保证 layer 贴图在脸部/手部是透明的，否则一定"看不见脸"。
+- `phosphoros_armor.png`（128x128）：装饰件图集
+- `phosphoros_layer_1.png`（64x32）：穿戴层，**脸部 (8,9)-(16,15) 与右手 (40,27)-(56,32) 已镂空**
+- `phosphoros_layer_2.png`（64x32）：外层描边，同样镂空
 
-## 贴图分两层
+## 渲染
 
-- 模型贴图：`textures/models/armor/phosphoros_armor.png`（128x128，上表 UV 对应）
-- 原版穿戴层：`textures/models/armor/phosphoros_layer_1.png` / `_layer_2.png`（64x32，皮肤式图集）
-- 物品图标：`textures/item/phosphoros_{helmet,chestplate,leggings,boots}.png`（16x16，4 张）
+`renderToBuffer` 只画装饰件，基础身体靠 layer 贴图；渲染前调 `setSlot(ArmorItem.Type)`。
+若你把 `_armor.png` 误当成 layer 贴图用，整套会变成实心方块 —— 这是"看不见脸/手"的常见原因。

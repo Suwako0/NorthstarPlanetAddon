@@ -206,15 +206,31 @@ if (els.length < MIN_PARTS) {
   process.exit(2)
 }
 
-/* display：与 weapon3d 的 big_handheld 同值；gui 按包围盒算，保证不溢出物品格 */
+/* 握持对齐：物品模型支点在 (8,8,8)，把握把中心平移到 (8,8,8)，手才握在握把上。
+ * 只认 grip/wrap（配重 butt_*、卡盘等不算握把，算进去会把中点拉偏 1~1.5 单位）。 */
+const round2 = (v) => Math.round(v * 100) / 100
+const gripParts = els.filter((e) => /grip|wrap/.test(e.name))
+const spanOf = (axis) => {
+  const vals = gripParts.flatMap((e) => [e.from[axis], e.to[axis]])
+  return vals.length ? (Math.min(...vals) + Math.max(...vals)) / 2 : 8
+}
+const shift = [8 - spanOf(0), 8 - spanOf(1), 8 - spanOf(2)]
+for (const e of els) {
+  for (const axis of [0, 1, 2]) {
+    e.from[axis] = round2(e.from[axis] + shift[axis])
+    e.to[axis] = round2(e.to[axis] + shift[axis])
+  }
+}
+
+/* display：握把已居中，thirdperson 不需要再补 2D 图标那 4 单位；长柄用 scale 0.75 / 0.6 */
 const BIG = {
-  thirdperson_righthand: { rotation: [0, -90, 55], translation: [0, 8, 0.5], scale: [1.75, 1.75, 0.85] },
-  thirdperson_lefthand: { rotation: [0, 90, -55], translation: [0, 8, 0.5], scale: [1.7, 1.7, 0.85] },
-  firstperson_righthand: { rotation: [0, -90, 25], translation: [1.13, 3.2, 1.13], scale: [1.36, 1.36, 0.68] },
-  firstperson_lefthand: { rotation: [0, 90, -25], translation: [1.13, 3.2, 1.13], scale: [1.36, 1.36, 0.68] },
-  ground: { translation: [0, 4, 0], scale: [1, 1, 0.5] },
-  fixed: { rotation: [0, 180, 0], translation: [0, 0, -1], scale: [2, 2, 1] },
-  head: { rotation: [0, 0, 0], translation: [0, 6, 0], scale: [1.5, 1.5, 1.5] },
+  thirdperson_righthand: { rotation: [0, -90, 55], translation: [0, 1, 0.5], scale: [0.75, 0.75, 0.75] },
+  thirdperson_lefthand: { rotation: [0, 90, -55], translation: [0, 1, 0.5], scale: [0.75, 0.75, 0.75] },
+  firstperson_righthand: { rotation: [0, -90, 25], translation: [1.13, 3.2, 1.13], scale: [0.6, 0.6, 0.6] },
+  firstperson_lefthand: { rotation: [0, 90, -25], translation: [1.13, 3.2, 1.13], scale: [0.6, 0.6, 0.6] },
+  ground: { translation: [0, 3, 0], scale: [0.9, 0.9, 0.45] },
+  fixed: { rotation: [0, 180, 0], translation: [0, 0, -1], scale: [1.6, 1.6, 1] },
+  head: { rotation: [0, 0, 0], translation: [0, 6, 0], scale: [1.3, 1.3, 1.3] },
 }
 const SLOT = 15
 const xs = els.flatMap((e) => [e.from[0], e.to[0]])
