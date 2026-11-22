@@ -86,7 +86,7 @@ public final class MoonModule {
                 output.accept(NMAItems.MOON_SHELL.get());
                 output.accept(NMAItems.MOONCAKE.get());
                 output.accept(NMAItems.MOON_PEARL.get());
-                output.accept(NMAItems.BROKEN_NIGHT_PEARL.get());
+                output.accept(NMAItems.BROKEN_MOON_PEARL.get());
                 output.accept(NMAItems.MOON_DEER_ANTLER.get());
                 output.accept(NMAItems.MOON_DEER_AXE.get());
                 output.accept(NMAItems.HOT_SPRING_BUCKET.get());

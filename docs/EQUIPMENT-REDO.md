@@ -18,9 +18,14 @@
 | `starcore_cannon` 星核炮 | staff（sword 长度） | 31.4 u ≈ 1.96 格 | 37 | `textures/item/starcore_cannon.png` | 火星钢杆 `#373e3a`，铜箍 `#c9a227`，星核 `#ffb03a` + 白热芯 `#ffe9b0` |
 | `acidic_spear` 酸蚀长枪 | spear | 56 u ≈ 3.5 格 | 51 | `textures/item/acidic_spear.png` | 钨钢枪头 `#3f464b`→`#eaf3f6`，酸液刃口 `#7dff4a`，绿宝石 `#56c02a` |
 | `pressure_hammer` 压力战锤 | hammer | 34.8 u ≈ 2.17 格 | 37 | `textures/item/pressure_hammer.png` | 钨锤头 `#2e2e2e`→`#717171`，压力表芯 `#48c8c0` + `#bfffff` |
-| `moon_deer_axe` 梦眠月斧 | axe | 32.2 u ≈ 2.01 格 | 36 | `textures/item/moon_deer_axe.png` | 月银 `#2a2740`→`#f2f5ff`，月蓝宝石 `#8f8bff` |
+| `moon_deer_axe` 梦眠月斧 | axe | 32.2 u ≈ 2.01 格 | 36 | **当前为 16x16 图标**（见下方注） | 月银 `#2a2740`→`#f2f5ff`，月蓝宝石 `#8f8bff` |
 | `thunder_crossbow` 雷霆弩 | **crossbow**（自建形制） | 34 u ≈ 2.13 格 | 44 | `textures/item/thunder_crossbow.png` | 钢 `#2b3038`→`#c2ccd4`，钢饰件 `#aeb9c2`，雷光宝石 `#8fd8ff` + `#eaf8ff` |
 | `pressure_drill` 高压钻 | **drill**（自建形制） | 34 u ≈ 2.13 格 | 42 | `textures/item/pressure_drill.png` | 钢 `#3a4046`→`#d5dde2`，黄铜箍 `#b08a3a`，压力表 `#48c8c0` + `#d4fffb` |
+
+> **注（月斧现状）**：`moon_deer_axe` 的 3D 规格仍留在 `tools/equip-specs/moon_deer_axe.json`，
+> 但工程里生效的是 2D 图标——`models/item/moon_deer_axe.json` 为 `item/handheld` + `layer0`，无 `elements`，
+> `textures/item/moon_deer_axe.png` 是 16x16。因此它现在没有 64x64 图集，也没有 `-atlas.md` 区域表；
+> 要恢复 3D 就重跑生成器，图集与区域表会一并再生。
 
 - 前五把走官方生成器（spec 在 `tools/equip-specs/<name>.json`）：
   `node <skills>/weapon-armor-art/scripts/weapon3d.mjs tools/equip-specs/<name>.json --out .`
@@ -30,7 +35,7 @@
   - 弩：托肩 + 三段弩身 + 弩臂座 + 双段弩臂×2 + 臂尖/臂箍 + 两段弓弦 + 三段弩矢 + 箭头 + 双尾羽 + 扳机护圈 + 手枪握把 + 三圈缠绳 + 瞄具 + 双宝石 + 四铆钉 + 两道箍 + 三件背带。
   - 钻：托底 + 手枪握把 + 三圈缠绳 + 扳机 + 三段枪体 + 三道箍 + 侧面压力表 + 气喉接口 + 卡盘 + 四螺栓 + 四段钻头 + 钻尖 + 两道钻头环 + 四段螺旋排屑槽 + 三片散热窗 + 四铆钉。
   - 生成器内置 `MIN_PARTS = 35` 硬校验，并把 `display.gui` 一起算好。
-- 七个模型都是 `elements` 3D 模型（无 parent），`texture_size:[64,64]`，`gui_light:front`，
+- 当前生效的六个模型都是 `elements` 3D 模型（无 parent），`texture_size:[64,64]`，`gui_light:front`，
   display 用第三方 `big_handheld` 数值（1.75 缩放），另有地面 / 展示台 / 头盔位与 `gui` 变换。
 - `weapon3d.mjs` 不写 `gui` 变换，3D 模型在物品栏会溢出格子，因此前五把用
   `tools/patch-gui-display.mjs` 按包围盒补了 `display.gui`（缩放到 15/16 格并居中）。
@@ -121,13 +126,12 @@ node tools/patch-armor-model.mjs src/main/java/**/<Set>ArmorModel.java
 类型调 `setSlot`），以及给 `addBox(...)` / `PartPose.offset(...)` 的 double 字面量补 `F`——
 1.21.1 的这些形参是 `float`，生成器写的是 `-2.2`，不补会 12 处/模型编译报错。
 
-## 5. 校验结果
+## 5. 校验方式与资产规模
 
-- **`gradlew build` 通过**：`BUILD SUCCESSFUL`。本机 Gradle 缓存里只有
-  `neoforge:21.1.249`（工程 pin 的 21.1.248 拉不到，`maven.neoforged.net` 不可达），
-  所以验证命令是 `gradlew build "-Pneo_version=21.1.249" --offline`
-  ——只是命令行覆盖属性，`gradle.properties` 没动。
-- `check-assets.mjs`：85 注册物品 / 92 贴图 / 144 模型，**errors 0，warnings 0**。
-- `model.mjs lint --expect item`：七个 3D 装备模型全部 `pass: true`
-  （42 / 37 / 51 / 37 / 36 / 44 / 42 elements，均 ≥ 35 下限）。
-- 尺寸复核：7 张装备图集 64x64；5 张盔甲模型图集 128x128；10 张穿戴层 64x32；20 张图标 16x16。
+- **构建**：工程 pin 的 `neoforge:21.1.248` 在 `maven.neoforged.net` 不可达，本机缓存只有 21.1.249，
+  所以本机验证用命令行覆盖属性（`gradle.properties` 不动）：
+  `gradlew build "-Pneo_version=21.1.249" --offline`。
+- **3D 模型 lint**：`model.mjs lint --expect item`，每个装备模型必须 ≥ 35 elements。
+- **当前资产规模**：92 张物品贴图（86 张 16x16 图标 + 6 张 64x64 武器图集）；5 张 128x128 盔甲模型图集；
+  10 张 64x32 穿戴层；144 个物品模型。
+- 物品图标的画法与校验标准见 `minecraft-item-icon-art` skill（`icon-tool check`），本项目不另存图标规范文件。

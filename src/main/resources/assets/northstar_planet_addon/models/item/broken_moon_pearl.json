@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "northstar_planet_addon:item/broken_night_pearl"
+    "layer0": "northstar_planet_addon:item/broken_moon_pearl"
   }
 }

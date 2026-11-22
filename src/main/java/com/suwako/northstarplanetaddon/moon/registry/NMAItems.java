@@ -29,7 +29,7 @@ public final class NMAItems {
             MoonPearlItem::new, new Item.Properties().rarity(Rarity.UNCOMMON));
 
     /** Spent moon pearl; surround it with Moon Shells to restore a usable Moon Pearl. */
-    public static final DeferredItem<Item> BROKEN_NIGHT_PEARL = ITEMS.registerSimpleItem("broken_night_pearl",
+    public static final DeferredItem<Item> BROKEN_MOON_PEARL = ITEMS.registerSimpleItem("broken_moon_pearl",
             new Item.Properties().rarity(Rarity.COMMON));
 
     /** Trophy dropped by the Dreamsleep Moon Deer boss. */

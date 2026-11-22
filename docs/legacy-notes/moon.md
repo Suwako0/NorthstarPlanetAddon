@@ -42,8 +42,8 @@
 |---|---|---|
 | `moon_shell` | `Item` | 月壳，`Rarity.COMMON`；1 个 → 3 骨粉 |
 | `mooncake` | `MooncakeItem` | `Foods.PUMPKIN_PIE`；食用后服务端给再生 I 200t、幸运 I 1200t |
-| `moon_pearl` | `MoonPearlItem` | `UNCOMMON`；对本模组梦境草右键放置祭坛结构，变成破损的月明珠 |
-| `broken_night_pearl` | `Item` | 消耗后的明珠；8 月壳围合成新明珠 |
+| `moon_pearl` | `MoonPearlItem` | `UNCOMMON`；对本模组梦境草右键放置祭坛结构，变成破损月明珠 |
+| `broken_moon_pearl` | `Item` | 消耗后的月明珠；8 月壳围合成新月明珠 |
 | `moon_deer_antler` | `Item` | `RARE`，Boss 掉落；也是月斧修复材料 |
 | `moon_rabbit_spawn_egg` | `DeferredSpawnEggItem` | 色 `0xC9C4D8`/`0xEBD8FF` |
 | `moon_shell_crab_spawn_egg` | `DeferredSpawnEggItem` | 色 `0x6E7A9E`/`0xA9E4FF` |
@@ -82,7 +82,7 @@
 
 ### 2.6 创造模式标签页
 
-`CREATIVE_TABS` 注册 `northstar_moon_addon:main`，标题 `itemGroup.northstar_moon_addon`（中「北极星月球拓展」/ 英「NorthStar Moon Addon」），图标 `moon_bloom`。`displayItems` 按顺序放入 21 项：梦眠之草、月壤、月之花、月华原木/木、去皮原木/木、木板、树叶、树苗、梦眠祭坛、月壳、月饼、月明珠、破损的月明珠、月鹿角、梦眠月斧、温泉水桶、月兔/月壳蟹/梦眠月鹿刷怪蛋。
+`CREATIVE_TABS` 注册 `northstar_moon_addon:main`，标题 `itemGroup.northstar_moon_addon`（中「北极星月球拓展」/ 英「NorthStar Moon Addon」），图标 `moon_bloom`。`displayItems` 按顺序放入 21 项：梦眠之草、月壤、月之花、月华原木/木、去皮原木/木、木板、树叶、树苗、梦眠祭坛、月壳、月饼、月明珠、破损月明珠、月鹿角、梦眠月斧、温泉水桶、月兔/月壳蟹/梦眠月鹿刷怪蛋。
 
 ## 3. 世界生成
 
@@ -257,7 +257,7 @@ assets/northstar_moon_addon/
   models/block/  dreamsleep_grass, moon_soil, moonlight_log(+_horizontal), stripped_moonlight_log(+_horizontal),
                  moonlight_wood, stripped_moonlight_wood, moonlight_planks, moonlight_leaves,
                  moonlight_sapling, moon_bloom, dreamsleep_altar, hot_spring
-  models/item/   11 个方块物品 + moon_shell, mooncake, moon_pearl, broken_night_pearl, moon_deer_antler,
+  models/item/   11 个方块物品 + moon_shell, mooncake, moon_pearl, broken_moon_pearl, moon_deer_antler,
                  moon_deer_axe, hot_spring_bucket, 3 个刷怪蛋
   textures/block/ 含 dreamsleep_grass_top/side, moon_soil, moonlight_*, moon_bloom, dreamsleep_altar_top/side/core,
                  hot_spring_still.png(+.mcmeta), hot_spring_flow.png(+.mcmeta)
@@ -279,7 +279,7 @@ data/northstar_moon_addon/
   recipe/        moonlight_planks(shapeless,4), moonlight_planks_from_stonecutting(1),
                  moonlight_wood(3), stripped_moonlight_wood, dreamsleep_grass(月壤+月之花),
                  bone_meal_from_moon_shell(3), moon_soil_from_smelting_moon_sand(200t/0.1xp),
-                 moon_pearl_repair(8 月壳 + 破损明珠), moon_deer_axe(月鹿角+月壳+月华木板)
+                 moon_pearl_repair(8 月壳 + 破损月明珠), moon_deer_axe(月鹿角+月壳+月华木板)
   advancement/   lunar_deer_defeated（challenge，player_killed_entity = lunar_deer）
 data/northstar_moonaddon/structure/  dreamsleep_alter.nbt
 data/minecraft/tags/block/  mineable/axe, mineable/shovel, mineable/pickaxe, logs, logs_that_burn,
@@ -302,7 +302,7 @@ data/northstar/tags/worldgen/biome/ moon_biomes
 6. **温泉可无限取源**：`canConvertToSource(true)` + `BaseFlowingFluid`，两个相邻源即可在实心地面上生第三源；若下游整合包需要限制，得取消 `CreateFluidSourceEvent` 或关掉该 flag。
 7. **祭坛一次性且无掉落**：召唤后 40 tick 自毁且不掉落（掉落表 `pools: []`），Boss 存活期间 128 格内任何祭坛都拒绝响应；祭坛只在夜间（或固定时间维度的 `[13000,23000)` 段）可用。
 8. **结构命名空间少一个下划线**：模板在 `data/northstar_moonaddon/structure/dreamsleep_alter.nbt`（`northstar_moonaddon`，`alter` 非 `altar`），与 `MoonPearlItem.DREAMSLEEP_ALTAR_TEMPLATE` 一致；改名需两处同步，否则只会在游戏内提示「无法感应模板」。
-9. **`zh_cn.json` 有重复键**：`item.northstar_moon_addon.broken_night_pearl` 出现两次（「破损的月明珠」与「破损夜明珠」），后者生效。
+9. **`zh_cn.json` 重复键（已修）**：曾出现两条 `broken_night_pearl`（「破损的月明珠」与「破损夜明珠」），后者生效。现统一为注册名 `broken_moon_pearl`、显示名「破损月明珠」/「Broken Moon Pearl」，模型与贴图同步改名，旧 id 不再存在。
 10. **`hot_spring` 没有方块物品**，创造栏只能拿到温泉水桶；`LiquidBlock` 带 `noLootTable()`，破坏不掉落任何东西。
 11. **Mixin 配置 `compatibilityLevel: JAVA_17`** 而工程 toolchain 是 Java 21；两个 Mixin 只用 `@Shadow` 字段，未使用较新注入器特性，实际是否需调整未确认。
 12. **月鹿 `MobCategory.CREATURE` 但从未进 biome spawners**，只能通过祭坛或刷怪蛋出现；同时 `removeWhenFarAway` 返回 false、`setPersistenceRequired()` 常驻。

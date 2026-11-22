@@ -102,7 +102,7 @@ public final class MoonPearlItem extends Item {
 
     /** Converts exactly the pearl used for altar placement, preserving any remaining pearl stack. */
     private static void replaceOneWithBrokenPearl(Player player, InteractionHand hand, ItemStack pearls) {
-        ItemStack brokenPearl = new ItemStack(com.suwako.northstarplanetaddon.moon.registry.NMAItems.BROKEN_NIGHT_PEARL.get());
+        ItemStack brokenPearl = new ItemStack(com.suwako.northstarplanetaddon.moon.registry.NMAItems.BROKEN_MOON_PEARL.get());
         if (pearls.getCount() == 1) {
             player.setItemInHand(hand, brokenPearl);
             return;

@@ -172,7 +172,7 @@ public static final String MODULE    = "moon";                      // 本内容
 | 类别 | 内容 |
 |---|---|
 | 方块 12 | 梦眠之草（可骨粉）、月壤、月华原木 / 木 / 去皮两件 / 木板 / 树叶（发光 12）/ 树苗、月之花（发光 6）、`hot_spring` 液体块（无 BlockItem、无掉落表）、梦眠祭坛 |
-| 物品 21 | 月壳、月饼（再生 I 200t + 幸运 I 1200t）、月明珠、破损的月明珠、月鹿角、梦眠月斧（2200 耐久 / 速度 9.5 / +4.5 / 附魔性 22）、温泉水桶、3 个刷怪蛋、11 个方块物品 |
+| 物品 21 | 月壳、月饼（再生 I 200t + 幸运 I 1200t）、月明珠、破损月明珠（`broken_moon_pearl`）、月鹿角、梦眠月斧（2200 耐久 / 速度 9.5 / +4.5 / 附魔性 22）、温泉水桶、3 个刷怪蛋、11 个方块物品 |
 | 实体 5 | `moon_rabbit`、`moon_shell_crab`、`lunar_deer`（Boss）、`moon_dust_projectile`、`moonlight_bolt` |
 | 流体 | `hot_spring` / `hot_spring_flowing` + 流体类型（temp 400、`canConvertToSource`、lightLevel 3） |
 | 音效 6 | `lunar_deer_hit1/2/3`、`lunar_deer_die`、`moonduel`（Boss 战曲）、`moonlight`（月林环境曲） |
@@ -199,7 +199,7 @@ public static final String MODULE    = "moon";                      // 本内容
 | 月兔（8 HP） | 金胡萝卜「萌宠反应」56t 动画 + 80t 冷却；金胡萝卜「交易」（`MoonRabbitGoldenCarrotGoal`）48t 咀嚼后 **90% 月饼 / 10% 月明珠**，再 80t 冷却 |
 | 月壳蟹（16 HP / 护甲 6） | 只被 `HurtByTargetGoal` 引战；≤4 格钳击（14t 动画、30t 冷却、推击），≤10 格月尘（18t 动画、50t 冷却、弹体 2.0 伤害） |
 | 梦眠月鹿 Boss（1000 HP / 护甲 10 / xp 2000） | 4 阶段（0.75 / 0.50 / 0.25）、8 技能（DASH 160t / BARRAGE 100t / RING 120t / BEAM 200t / MOON_RAIN 240t / SHADOW 200t / MOON_DUST 180t / METEOR 一次性），换阶段 20t 无敌 + 抗性 / 吸收，Boss 条含阶段名，专属战曲 `moonduel` 单独推流、只停这一首 |
-| 召唤链 | 月明珠右键**梦眠之草**（必须 `northstar:moon`）→ 放置祭坛结构并消耗 1 颗明珠 → 手持月明珠右键祭坛、**夜间**、128 格内无存活月鹿 → 生成 Boss；祭坛 40 tick 后自毁且不掉落 |
+| 召唤链 | 月明珠右键**梦眠之草**（必须 `northstar:moon`）→ 放置祭坛结构并消耗 1 颗月明珠（变成破损月明珠）→ 手持月明珠右键祭坛、**夜间**、128 格内无存活月鹿 → 生成 Boss；祭坛 40 tick 后自毁且不掉落 |
 | 温泉浸泡 | `EntityTickEvent.Post` 每 5 tick 检查 `isInFluidType(HOT_SPRING)`，续期再生 I + 饱和 I 各 20t |
 | 温泉湖 | 自定义 `HotSpringLakeFeature`：先跑原版 `LakeFeature`，再对湖底逐格重掷 `noise_threshold_provider`，让月石 / 月沙 / 月石灯混合真正逐块生效 |
 
