@@ -25,6 +25,7 @@ import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
@@ -82,7 +83,8 @@ import java.util.UUID;
  *     <li>{@code < 500°C} 脆化：受到伤害 +200%、行动迟缓、核心暴露。</li>
  * </ul>
  * <p>v1.9 新增：{@code > 1500°C} 时展开**半透明护盾**（{@link #hasShield()}），护盾期间完全无敌且
- * 受击不再升温，破盾只能靠便携式冷却器降温；每次实际结算的伤害给核心温度 +20℃（{@link #HEAT_PER_HIT}）。</p>
+ * 受击不再升温，破盾只能靠便携式冷却器降温；每次实际结算的伤害给核心温度 +20℃（{@link #HEAT_PER_HIT}）。
+ * 例外是处决类伤害 {@code DamageTypes.GENERIC_KILL}（{@code /kill}）：它无条件穿透护盾，见 {@link #hurt}。</p>
  * 玩家用便携式冷却器（水 / 液氧）右击降温。
  *
  * <h2>阶段</h2>
@@ -771,9 +773,14 @@ public class AresEntity extends IronGolem implements GeoEntity {
         return true;
     }
 
-    /** 免疫火焰、岩浆、溺水、坠落（文档「免疫」一栏）。 */
+    /** 免疫火焰、岩浆、溺水、坠落（文档「免疫」一栏）；处决类伤害永远不免疫，见 {@link #hurt}。 */
     @Override
     public boolean isInvulnerableTo(DamageSource source) {
+        // 护盾（{@link #hasShield()}）与上面的免疫清单都不该挡掉 /kill：
+        // LivingEntity#kill() 发的是 genericKill，必须始终有效。
+        if (source.is(DamageTypes.GENERIC_KILL)) {
+            return false;
+        }
         return source.is(DamageTypeTags.IS_FIRE)
                 || source.is(DamageTypeTags.IS_DROWNING)
                 || source.is(DamageTypeTags.IS_FALL)
@@ -1360,10 +1367,9 @@ public class AresEntity extends IronGolem implements GeoEntity {
         if (destroyed > 0) {
             MarsModule.LOGGER.info("Ares self-destruct destroyed {} kinetic blocks", destroyed);
         }
-        // v1.13：不能再用 kill()！LivingEntity#kill() = hurt(genericKill, MAX_VALUE)，而本类覆写的
-        // hurt() 在护盾期间直接 return false —— 自爆时核心温度通常 > 1500℃（护盾正开着），
-        // 于是 kill() 被自己的护盾挡掉，Boss 会带着 selfDestructed=true 继续活着（掉落已免、沙尘暴也不收）。
-        // 这里直接走死亡流程，保证自爆一定结束。
+        // v1.14：kill() 现在能用了 —— hurt() 对 GENERIC_KILL 无条件放行（见 {@link #hurt}），
+        // 所以自爆时不会再被护盾挡掉。这里仍保留直接走死亡流程的写法：语义更明确（「立即处决」），
+        // 也不依赖 kill() 的伤害数值。（旧注释「不能再用 kill()」的前提已随护盾穿透修复消失。）
         if (!this.isDeadOrDying()) {
             this.setHealth(0.0F);
             this.die(level.damageSources().explosion(this, this));
@@ -1449,6 +1455,19 @@ public class AresEntity extends IronGolem implements GeoEntity {
     /** 狂暴减伤 60%，脆化 / 脆弱期受到伤害 +200%；护盾期间完全无敌；每次实际结算的伤害 +20℃。 */
     @Override
     public boolean hurt(DamageSource source, float amount) {
+        // v1.14 修复：/kill 与所有处决类伤害（{@code DamageTypes.GENERIC_KILL}）必须穿透一切减伤与免疫。
+        // LivingEntity#kill() 的实现就是 hurt(this.damageSources().genericKill(), Float.MAX_VALUE)，
+        // 而下面那句「护盾期间 return false」会把 /kill 也一起挡掉 —— 实战里核心温度 > 1500℃ 时护盾常开，
+        // 于是 /kill @e 杀不死 BOSS。这里先处理处决伤害：不乘脆化/狂暴倍率、不加温、不吃护盾。
+        if (source.is(DamageTypes.GENERIC_KILL)) {
+            boolean killed = super.hurt(source, Float.MAX_VALUE);
+            if (!killed && !this.isDeadOrDying() && !this.isRemoved()) {
+                // 兜底：父类在某些边界帧（例如刚进入死亡动画）会拒绝结算，处决伤害不能因此失效。
+                this.setHealth(0.0F);
+                this.die(source);
+            }
+            return true;
+        }
         // v1.9 任务 2：护盾期间 Boss 无敌 —— 直接 return false。不扣血、不走受伤动画（红闪/受击音）、
         // 不产生击退，也不会把攻击者写进 lastHurtByMob（HurtByTargetGoal 因此不会因无效攻击而仇恨）。
         // 取舍：护盾期间**温度也不再因受击上升**（下面那段 +20 根本不会执行）。否则会互相锁死 ——

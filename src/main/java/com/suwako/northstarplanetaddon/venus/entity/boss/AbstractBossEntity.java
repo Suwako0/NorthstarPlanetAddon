@@ -17,6 +17,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -558,6 +559,11 @@ public abstract class AbstractBossEntity extends Monster {
     // ================================================================== 反逃课
     @Override
     public boolean isInvulnerableTo(DamageSource source) {
+        // /kill 走 LivingEntity#kill() = hurt(genericKill, MAX_VALUE)：处决类伤害必须始终生效，
+        // 阶段转换的无敌窗口也不能拦（AntiCheeseHandler 的注释同样写明「管理员权限本就该能杀」）。
+        if (source.is(DamageTypes.GENERIC_KILL)) {
+            return false;
+        }
         if (this.transitionTicks > 0) {
             return true;
         }

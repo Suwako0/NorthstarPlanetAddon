@@ -302,22 +302,24 @@
 **渲染器与模型**
 
 - `meteor`：原版 `ThrownItemRenderer<>(ctx, 2.0F, true)`（放大 2 倍、满亮）。
-- `SunfishRenderer`：`MobRenderer` + `SunfishModel`，影子 `0.5`，贴图 `textures/entity/sunfish.png`，附加 `EyesLayer` + `RenderType.eyes(sunfish_glow.png)`。
-- `BlazingSunfishRenderer`：`MobRenderer` + `BlazingSunfishModel`，影子 `0.7`，贴图 `textures/entity/blazing_sunfish.png`，发光层 `blazing_sunfish_glow.png`，`scale(1.15F)` 统一放大。
-- `SunfishModel`（`HierarchicalModel`，64×64）：部件树 `body → head(→snout, eye_left, eye_right)、dorsal_fin、pectoral_left(→tip)、pectoral_right(→tip)、anal_fin、tail(→base(→fan(→lobe_upper, lobe_lower)))`，共 17 个部件；类注释里带完整 UV 槽位表（body `(0,0) 8×7×12`、head `(40,0) 6×6×4`、dorsal `(0,19) 1×7×6`、wing `(14,19) 10×1×6`、tail fan `(0,32) 2×10×3` 等）。
-- `BlazingSunfishModel`：复用同一套构建函数（`bodyCubes()` / `addHead(body, true)` / `addFins` / `addTail(body, true)`）与 UV 表，只加 8 个部件——`crest_1..4`（`(18,32) 1×5×1`）、`vent_left/right`（`(22,32) 1×5×3`）、`flame_upper/lower`（`(30,32) 1×6×4`）。
-- 所有部件查找都走 `childOrEmpty()`：名字不匹配只 `warn` 并把该部件设为空，不会在资源重载时抛异常。
+- 两种太阳鱼已按概念图重做成「蛇形天空鱼」：共享骨架 `SkyfishModel<T>` + 两份**生成式网格**（`SunfishMesh`：115 cubes / 33 骨骼；`BlazingSunfishMesh`：127 cubes / 37 骨骼），贴图升级为 128×128 + 同 UV 的发光层。
+- 几何来源：`tools/entity-specs/sunfish.bbmodel`、`tools/entity-specs/blazing_sunfish.bbmodel` → `tools/gen-entity-model.mjs` 生成 `*Mesh.java`；骨骼枢轴由 `tools/fix-pivots.mjs` 在文件层写入（Blockbench 脚本改 `origin` 会写坏，见 `docs/SKYFISH-REDO.md`）。
+- 部件树（两版同构，方括号为炽热太阳鱼独有）：`body → neck1 → neck2 → head(→ jaw, horn_l(→ horn_l2 → horn_l3), horn_r(→ horn_r2 → horn_r3)[, barbel_l, barbel_r, crest]), fin_l(→ fin_l_tip), fin_r(→ fin_r_tip), belly, spine3..7, ventral_l, ventral_r[, core]`；`neck2 → spine1`、`neck1 → spine2`、`belly → tail1 → tail2 → tail3 → tail_fin → streamer_a..d`。
+- `SunfishRenderer`：`MobRenderer` + `SunfishModel`，影子 `0.5`，贴图 `textures/entity/sunfish.png`，`EyesLayer` + `RenderType.eyes(sunfish_glow.png)`，`translate(0, -0.42, 0)` 把更高的模型压回 1.2 高的碰撞盒。
+- `BlazingSunfishRenderer`：`MobRenderer` + `BlazingSunfishModel`，影子 `0.7`，贴图 `textures/entity/blazing_sunfish.png`，发光层 `blazing_sunfish_glow.png`，`translate(0, -0.34, 0)` + `scale(1.15F)`。
+- 发光层：`tools/extract-hd-textures.mjs` 导出 UV 清单，遮罩脚本只保留自发光部件（鳍膜 / 焰须 / 尾焰 / 背脊刺 / 胸核 / 角尖）的 UV 岛，与主贴图共用 UV。
+- 所有部件查找都走 `childOrEmpty()`：名字不匹配只 `warn` 并把该部件设为空，不会在资源重载时抛异常；`tools/check-model-parts.mjs` 静态校验手写类引用的部件名全部存在于生成的网格里。
 
 **动画**
 
-- 滑翔而非走路：躯干蛇行 + 浮沉（`body.y = 8 + sin(t*0.09)*0.7`）、`xRot` 跟随真实速度矢量（`clamp(-motionY*7, ±0.4)`，上升抬头/下潜低头）。
-- 尾巴是行进波：`tail → tailBase → tailFan → lobe_upper/lower` 的相位依次延后 `-0.35 / -0.7 / -1.1`。
-- 胸鳍 `flap = sin(t*0.14)`，翼尖用 `sin(t*0.14 - 0.6)` 滞后；背鳍与臀鳍反相轻摆。
-- 攻击姿态由 synched data `getAttackMode()` 改写已算好的滑翔姿态：
-  - `DIVE`：`body.yRot = t*1.35`（连续自旋）+ `xRot = -0.45 + pitch*0.3` + 收翼；
-  - `WING_FLAP`：`sin(t*0.95)` 高频振翅、翼尖再滞后 0.8；
-  - `RAY`：后仰、双翼后掠、低头瞄准（`head.xRot = -0.25`）。
-- `BlazingSunfishModel.animateExtras`：4 根骨冠依次摇动；`sin(t*0.06)`（约 7 秒）周期的「熔岩涌动」让 `vent` 的 `xScale/zScale` 鼓起、尾焰 `yScale` 拉长并左右甩动。
+- 共享（`SkyfishModel.setupAnim`）：躯干浮沉 + 侧摆、颈段反相补偿让头保持水平、尾巴 `tail1→tail2→tail3→tail_fin→streamer_a..d` 相位依次延后的行波、胸鳍根部主导 + 翼尖滞后、7 根背脊刺细碎摆动、腹鳍反相、颌部呼吸式微开。
+- 俯仰跟随真实速度矢量（上升抬头、下潜低头），头部再吃掉约一半俯仰以保持视线；俯仰振幅 `clamp(motionY*6, ±0.35)`。
+- 太阳鱼（舒缓）：`bobSpeed 0.05 / sway 0.045 / wave 0.085（振幅 0.18）/ 鳍 0.06±0.22`；角冠与颌部极轻摆动，`WING_FLAP` 时角冠后压、张嘴。
+- 炽热太阳鱼（暴躁）：`bobSpeed 0.09 / sway 0.085 / wave 0.15（振幅 0.26）/ 鳍 0.1±0.3`；胸核以 `sin(t*0.055)` 心跳（约 1.9 秒）并叠二次谐波抖动，长须滞后甩动、头冠抖动。
+- 攻击姿态由 synched data `getAttackMode()` 统一改写（基类 `applyAttackPose`）：
+  - `DIVE`：`body.yRot = t * diveSpinSpeed()`（太阳鱼 0.95、炽热鱼 1.35 弧度/刻）+ 收翼后掠 + 尾鞭；
+  - `WING_FLAP`：`sin(t*0.95)` 高频振翅、翼尖再滞后 0.8、身体抬升；
+  - `RAY`：后仰、双鳍前张、张嘴瞄准；炽热太阳鱼额外把胸核放大到约 1.25 并让头冠后压、长须外翻（`DIVE` 时胸核收束到 0.86）。
 
 **风暴表现**（`isStormVisible` = `stormActive && level.dimension() == northstar:mercury`，全部本地生成、不占网络）
 

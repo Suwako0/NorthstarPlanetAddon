@@ -289,7 +289,7 @@ public static final String MODULE    = "moon";                      // 本内容
 
 雾色 `(0.82, 0.18, 0.05)` + 远平面 ×0.48；每 tick 五类粒子（灰雾 / 尘 / 天降火花 / 余烬）与 6 tick 一次的阵风；
 80–220 tick 一次高空耀斑 + 雷声；镜头按「是否露天」在 12 tick 内过渡出 0.7° 抖动；三层循环环境音（风暴风 + 两种原版氛围）。
-太阳鱼父类模型 17 个部件，炽烈鱼在此基础上加 8 个部件；攻击姿态由同步数据 `ATTACK_MODE` 改写滑翔姿态。
+太阳鱼与炽热太阳鱼已重做为「蛇形天空鱼」：共享 `SkyfishModel` 骨架（生成式网格 115 / 127 cubes、33 / 37 骨骼、128×128 贴图 + 同 UV 发光层），靠角冠/鳍型/胸核/尾焰与节奏参数区分；攻击姿态由同步数据 `ATTACK_MODE` 改写滑翔姿态（详见 `docs/SKYFISH-REDO.md`）。
 
 ---
 
@@ -523,10 +523,24 @@ cd E:\mc\ModCreator\NorthstarPlanetAddon
 
 要点：
 
-- 首次构建会下载 NeoForge 21.1.248 与 NeoForm 产物，需要联网；之后可离线。
+- 首次构建会下载 NeoForge 21.1.249 与 NeoForm 产物，需要联网；之后可离线。
 - `libs/*.jar` 是 `compileOnly` + `runtimeOnly`，**不会被打进 jar**（`build/libs` 里只有本模组）。
 - jar 内清单登记了 `MixinConfigs: northstar_planet_addon.moon.mixins.json,northstar_planet_addon.mercury.mixins.json`，
   `neoforge.mods.toml` 另有两条 `[[mixins]]`（供 ModDev 从类目录加载时使用）。
+
+### 9.0 一键脚本 `构建jar包.bat` 与本机代理
+
+- 双击即可构建；支持 `--offline`、`--no-pause`，其余参数原样透传给 gradle（如 `构建jar包.bat clean build`）。
+- 脚本**只允许 ASCII 字符**：`cmd.exe` 解析 .bat 时会把非 ASCII 字节按错误偏移切行，历史上
+  `'_jdk' is not recognized` / `'��面' is not recognized` 这类报错就是这么产生的。改脚本时不要写中文。
+- JDK 版本直接读 `<jdk>\release` 里的 `JAVA_VERSION=`，不调用 `java -version`、不写临时文件。
+- **Java / Gradle 不读 Windows 系统代理**。本机代理是 `127.0.0.1:7897`，所以代理必须写在
+  `%USERPROFILE%\.gradle\gradle.properties`（`systemProp.https.proxyHost` / `systemProp.https.proxyPort`），
+  否则 Gradle 直连 `maven.neoforged.net` 会报 `Remote host terminated the handshake`——
+  浏览器 / PowerShell 却正常，因为 .NET 会自动使用系统代理。
+- 该文件里还配了 `repository.max.retries=8` 与 `http.connectionTimeout / socketTimeout`，脚本本身也会
+  最多重试 3 次，再退到 `--offline`。
+- 换机器 / 换代理端口时：改 `%USERPROFILE%\.gradle\gradle.properties`；没有代理就删掉那几行。
 
 ### 9.1 本机验证记录（可复现）
 

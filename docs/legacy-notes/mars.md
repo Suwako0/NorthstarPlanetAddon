@@ -126,7 +126,7 @@
 - 召唤链（`block/AresAltarBlock`）：手持 `minecraft:lava_bucket` 右击 `ares_altar_casing` → 祭坛上方 `+1` 生成 Boss（朝向 `player.getYRot()+180`）、`setDomainCenter(pos)`、熔岩桶变空桶（创造不消耗）、`WITHER_SPAWN` + LAVA/FLAME/LARGE_SMOKE 粒子；`SUMMON_RADIUS = 48` 内已有阿瑞斯则拒绝（`altar_already`），手持其它物品右击只给 `altar_hint`。
 - 属性：生命 800 / 护甲 20 / 击退抗性 1.0 / 攻击 12 / 移速 0.28 / 跟随 64 / 体型 ×2；`fireImmune`、免疫 `IS_FIRE` / `IS_DROWNING` / `IS_FALL`、`causeFallDamage` 恒 false；`push(...)` 与 `knockback(...)` 覆写为空实现（属性挡不住直接改速度的推力）。
 - 核心温度：唯一写入口 `setCoreTemperature`（夹到 `[0, 2200]` 并同步 `DATA_SHIELD`）；初始 1200，每 20 tick `+15 + phase×5`，每次**实际结算**的伤害 `+HEAT_PER_HIT = 20`；阈值 `SHIELD/OVERHEAT = 1500`、`BRITTLE = 500`。
-  - `> 1500`：伤害 ×0.4（减伤 60%）、攻击 +50%（`doHurtTarget` 追打）、移速 `+0.3 ADD_MULTIPLIED_BASE`、**展开护盾**；护盾期 `hurt` 直接返回 false ⇒ 完全无敌、受击不再升温，破盾只能靠冷却器。
+  - `> 1500`：伤害 ×0.4（减伤 60%）、攻击 +50%（`doHurtTarget` 追打）、移速 `+0.3 ADD_MULTIPLIED_BASE`、**展开护盾**；护盾期 `hurt` 直接返回 false ⇒ 完全无敌、受击不再升温，破盾只能靠冷却器。**例外：处决类伤害 `DamageTypes.GENERIC_KILL`（`/kill`、`/damage … generic_kill`）无条件穿透护盾、狂暴减伤与脆化倍率，见 `hurt` 顶部与 `isInvulnerableTo`。**
   - `< 500`：受伤 ×3、每 60 tick 挂 `MOVEMENT_SLOWDOWN` 等级 1。
 - 阶段一（血量 `>0.66`，熔火形态）：岩浆拳 `AresMeleeGoal` 冷却 `80` tick（4 秒）、前摇 `16` tick（0.8 秒），`getAttackBoundingBox().inflate(2.0)` 提供 4 格触及，命中后 3 格内其它生物再吃 6 点 + 60 tick 着火。
 - 阶段一另两个技能：地热喷发（CD `160`、前摇 `30`、6 个落点、半径 2、8 点、着火 `100` tick、选点搜索 32 格）、召唤恶魔蛾（CD `900`、前摇 `20`、2–4 只，`markSummoned()` 后代不掉落不给经验）。
@@ -136,7 +136,7 @@
 - 阶段三（其余，过载形态）：停止移动、`breakArmor()` 用 `-20 ADD_VALUE` 把护甲打到 0、`selfDestructTimer = 1200`（60 秒）；每 `40` tick 起一次前摇 `20` 的全图地热喷发（每个玩家脚下各一点、10 点、半径 2、着火 100 tick），倒计时归零调用 `selfDestruct`。
 - 前摇调度（`startWindup` / `windupTelegraph` / `executePendingSkill`）：前摇期间站定，每 5 tick 画落点（SMOKE + LAVA）或 Boss 身边鳞粉，结束时才结算，玩家可看着预警跑开。
 - 领域：`DOMAIN_RADIUS = 48`；`setTarget` 直接挡掉领域外目标，`enforceDomain` 每 tick 解除领域外目标的锁定，无目标且离领域中心 >8 格时走回中心。
-- 自爆（`selfDestruct`）：`level.explode(power 6, ExplosionInteraction.MOB)`；另对 32 格内非蛾非 Boss 实体按距离线性结算最多 100 点爆炸伤害 + 着火 120 tick；`KineticMachines.destroyNearby(level, pos, 16)` 摧毁 Create 动力方块；最后 `setHealth(0)` + `die(...)`（不能用 `kill()`：它等价 `hurt(genericKill)`，会被自己的护盾挡掉）。
+- 自爆（`selfDestruct`）：`level.explode(power 6, ExplosionInteraction.MOB)`；另对 32 格内非蛾非 Boss 实体按距离线性结算最多 100 点爆炸伤害 + 着火 120 tick；`KineticMachines.destroyNearby(level, pos, 16)` 摧毁 Create 动力方块；最后 `setHealth(0)` + `die(...)`（v1.14 起 `kill()` 也已可用——`hurt` 对 `GENERIC_KILL` 放行；这里保留直写是为了语义明确、不依赖伤害数值）。
 - 掉落（`dropCustomDeathLoot`，`selfDestructed` 时整段跳过且不给经验）：星核碎片 2–4、`northstar:martian_steel_ingot` 4–8（取不到退化为星核碎片）、`star_core_heart` 15%、恶魔蛾翼膜 2、暗红鳞粉 4–8；经验 `xpReward = 500`。
 - 血条与存档：`ServerBossEvent(RED, NOTCHED_10)`，名称键 `boss.northstarmarsaddon.ares.bar`（含阶段名与核心温度）；存档字段 `CoreTemperature` / `AresPhase` / `SelfDestructTimer` / `VulnerabilityTicks` / `Hovering` / `SelfDestructed`。
 
@@ -235,7 +235,7 @@
 5. **对 Northstar 注册名硬依赖**：`northstar:mars_stone` / `mars_deep_stone` / `mars_farmland` / `martian_steel_ingot` / `martian_pickaxe` / `martian_steel_*` 护甲 / `liquid_oxygen` / `titanium_sheet` 等；改名后标签静默变空、配方与挖掘加速失效。
 6. **`NorthstarContent.block()` 的告警分支不会触发**：`BuiltInRegistries.BLOCK.get` 返回注册表默认值而非 null，缺失时靠调用方 `stone == Blocks.AIR` 判断后静默跳过。
 7. **恶魔蛾对一切爆炸伤害免疫**：`DemonMothEntity#isInvulnerableTo` 含 `IS_EXPLOSION`（目的是让阿瑞斯自爆的 `level.explode` 不伤召唤物），副作用是 TNT 与苦力怕也伤不到它；它同时免疫火焰、溺水、冻结、仙人掌、甜浆果、窒息、摔落，且 `isSunBurnTick()` 恒 false。
-8. **阿瑞斯护盾期 `hurt()` 返回 false**：因此 `LivingEntity#kill()` 会被护盾挡掉；`selfDestruct` 特意改用 `setHealth(0)` + `die(...)`，后续若在别处调 `kill()` 需注意。
+8. **阿瑞斯护盾期 `hurt()` 返回 false（v1.14 已修）**：`LivingEntity#kill()` = `hurt(genericKill, MAX_VALUE)`，旧实现里护盾把 `/kill` 也一起挡掉（实战护盾常开 ⇒ `/kill @e` 杀不死）。现在 `hurt` 与 `isInvulnerableTo` 都对 `GENERIC_KILL` 放行；`selfDestruct` 仍保留 `setHealth(0)` + `die(...)` 的直写写法（语义更明确，不依赖伤害数值）。同类问题一并修在 `AbstractBossEntity`（阶段转换无敌窗口）与 `MoonDeerEntity`（相位无敌帧）。
 9. **沙尘暴与星核炮击都是进程内静态状态**：不写存档，`ServerStoppedEvent` 时清空；沙尘暴是服务端唯一实例且只对 `northstar:mars` 生效，与主世界天气无关。
 10. **冷却器降温是细水长流**：单次射流 3 ℃ / 8 ℃，一整罐 300 ℃ / 800 ℃；护盾期（>1500 ℃）想破盾通常要多罐，因为每秒还会自然升温 `15 + phase×5`。
 11. **`anti_corrosion_coating` 目前只是合成材料**：仅出现在 `portable_cooler` 配方，没有运行时效果；耐腐蚀来自 `#northstarmarsaddon:corrosion_resistant_armor` 的 3 件套判定。

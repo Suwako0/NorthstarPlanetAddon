@@ -19,6 +19,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.AgeableMob;
@@ -249,7 +250,8 @@ public class MoonDeerEntity extends Animal {
 
     @Override
     public boolean hurt(DamageSource source, float amount) {
-        if (this.phaseInvulnerabilityTicks > 0) {
+        // 处决类伤害（/kill → genericKill）穿透阶段无敌：否则过场无敌帧里 /kill @e 杀不掉它。
+        if (this.phaseInvulnerabilityTicks > 0 && !source.is(DamageTypes.GENERIC_KILL)) {
             return false;
         }
         if (this.stunnedTicks > 0) {
