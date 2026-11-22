@@ -24,8 +24,7 @@ import java.util.List;
  *   <tr><td>启明星战甲</td><td>5/10/8/4</td><td>4.0</td><td>800/1100/1050/900</td><td>原版下界合金</td></tr>
  * </table>
  *
- * <p>贴图沿用原版护甲层（美术资源到位后改成 {@code northstar_planet_addon:<套装名>} 即可，见
- * {@code docs/TEXTURE-SPEC.md}）。</p>
+ * <p>贴图沿用原版护甲层（美术资源到位后改成 {@code northstar_planet_addon:<套装名>} 即可。</p>
  */
 public final class ModArmorMaterials {
 

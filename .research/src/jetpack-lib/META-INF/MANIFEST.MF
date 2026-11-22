@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Specification-Title: Flight Lib
+Specification-Vendor: possible_triangle
+Specification-Version: 4.0.36
+Implementation-Title: Flight Lib
+Implementation-Version: 4.0.36
+Implementation-Vendor: possible_triangle
+Implementation-Timestamp: 2026-07-30T13:12:39.768181871
+

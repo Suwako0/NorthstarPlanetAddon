@@ -18,14 +18,14 @@ import net.minecraft.world.item.ArmorItem;
 /**
  * CloudWalkerArmorModel — 云行者套装的 3D 装饰件（79 部件）。
  *
- * <p>按参考图 docs/previews/cloud_walker-reference.jpg 重做：兜帽 + 颈巾 + 分层肩甲 +
+ * <p>按参考图重做（参考图与预览图只在制作期暂存，不入库）：兜帽 + 颈巾 + 分层肩甲 +
  * 胸口人字甲 + 腰封、背后蝶结与长飘带、膜翼（翼膜形状画在贴图 alpha 里）、
  * 破损长袍下摆、护膝 / 胫甲 / 战靴。</p>
  *
  * <p>贴图：assets/northstar_planet_addon/textures/models/armor/cloud_walker_armor.png（256x256）。</p>
  * <p>只画装饰件，基础甲面交给 cloud_walker_layer_1/2.png；脸和手由 layer 贴图开口保证可见。</p>
  *
- * <p>生成脚本：tools/gen-cloud-walker-armor.py（改形制请改脚本，不要手改本文件）。</p>
+ * <p>本类即唯一来源：形制直接改这里；改完重跑 <code>python tools/check-armor.py --set cloud_walker</code> 校验部件/UV。</p>
  */
 public class CloudWalkerArmorModel extends HumanoidModel<LivingEntity> implements ArmorDecoModel {
 

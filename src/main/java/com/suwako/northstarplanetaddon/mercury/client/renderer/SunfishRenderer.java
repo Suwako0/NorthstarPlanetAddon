@@ -15,7 +15,7 @@ import net.minecraft.resources.ResourceLocation;
  * horn tips and the four flame streamers glow on their own — which is what makes a shoal of them
  * visible in Mercury's night sky.
  * <p>
- * The 128x128 sheet is generated from {@code tools/entity-specs/sunfish.bbmodel}; the glow sheet is a
+ * The 128x128 sheet is exported from the Blockbench project (build-time scratch, not committed); the glow sheet is a
  * mask over the same UV layout (only the emissive cubes' islands), built by
  * {@code tools/extract-hd-textures.mjs} + the glow pass in that workflow.
  */

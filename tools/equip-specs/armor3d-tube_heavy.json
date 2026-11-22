@@ -1,9 +1,0 @@
-{
-  "modid": "northstar_planet_addon",
-  "set": "tube_heavy",
-  "package": "com.suwako.northstarplanetaddon.venus",
-  "description": "Lava-tube industrial heavy armor, ember-red furnace plate with dragon-like horns, spikes, chains and impact pauldrons for magma works.",
-  "theme": "flame",
-  "silhouette": "spiked",
-  "seed": "tube_heavy|redesign2026|furnace_breaker|spiked"
-}

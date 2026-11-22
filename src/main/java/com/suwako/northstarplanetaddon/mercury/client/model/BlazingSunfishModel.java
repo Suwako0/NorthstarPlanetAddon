@@ -20,7 +20,7 @@ import net.minecraft.util.Mth;
  * too — faster, bigger amplitude, a pulsing core and a charge-up flare during the beam attack.
  * <p>
  * Geometry lives in the generated {@link BlazingSunfishMesh}; regenerate it with
- * {@code node tools/gen-entity-model.mjs tools/entity-specs/blazing_sunfish.bbmodel ... BlazingSunfishMesh}.
+ * {@code node tools/gen-entity-model.mjs <project.bbmodel> ... BlazingSunfishMesh}.
  */
 public class BlazingSunfishModel extends SkyfishModel<BlazingSunfishEntity> {
 

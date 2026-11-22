@@ -5,7 +5,7 @@
 
 ## 唯一来源
 
-- 设计源文件：`docs/models/<name>.bbmodel`
+- 设计源文件：`build/scratch/models/<name>.bbmodel`（制作期暂存，`build/` 已被 `.gitignore` 忽略；任务结束删除，不入库）
 - 贴图：**存在 bbmodel 里**，用 `detail_cubes` / `paint_faces` 绘制
 - 游戏内资源：由脚本从 bbmodel **导出**，不手改
 
@@ -25,11 +25,11 @@
 
 ```bash
 python tools/bbmodel-export.py            # 贴图 + box-UV 偏移 -> PARTS 与 assets 贴图
-python tools/gen-molten-core-armor.py     # 生成 Java / 穿戴层 / 图标 / 预览
+python tools/bbmodel-to-java-parts.py     # 部件表 -> Java 模型类（按需再跑）
 ```
 
 - `runGameTestServer` 通过
-- `python tools/gen-molten-core-armor.py --only chest|legs|boots|head` 逐件检查
+- 逐件检查：`python tools/check-armor.py --set <套装名>`
 - 与 Blockbench 截图逐件对比：差异只允许来自光照
 
 ## 护甲专用的两条硬规则（踩过坑）

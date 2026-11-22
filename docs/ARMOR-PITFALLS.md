@@ -101,7 +101,7 @@ left_x_range = [-x1, -x0]   # 绕骨骼中线镜像
 
 ```bash
 python tools/bbmodel-export.py                 # 贴图 + box-UV 偏移
-python tools/gen-molten-core-armor.py          # Java + 穿戴层 + 图标 + 预览
+python tools/bbmodel-to-java-parts.py          # 模型部件 -> Java 模型类
 python tools/check-armor.py --set molten_core  # ← 新增，不通过不要交付
 .\gradlew.bat build
 ```

@@ -13,7 +13,7 @@ import software.bernie.geckolib.model.GeoModel;
 /**
  * 赫菲斯托斯巨像的 GeckoLib 模型（2026-01 重制版）。
  *
- * <p>资源由 {@code docs/models/hephaestus.bbmodel} 导出：
+ * <p>资源由 Blockbench 工程导出（编辑源只在制作期暂存，不入库）：
  * <ul>
  *   <li>{@code geo/entity/hephaestus.geo.json} —— 20 根骨骼、241 个方块、512×2048 box UV</li>
  *   <li>{@code animations/entity/hephaestus.animation.json} ——

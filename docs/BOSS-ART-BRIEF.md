@@ -71,7 +71,7 @@ Boss 在 30 格开外就要认得出是谁。判定标准：把模型压成纯�
 
 ### 1.6 制作规范
 
-- 模型一律在 **Blockbench** 里做，`.bbmodel` 入库（`docs/models/<name>.bbmodel`）。
+- 模型一律在 **Blockbench** 里做；`.bbmodel` 只是制作期工作文件：放 `build/scratch/models/<name>.bbmodel`（`build/` 已忽略），任务结束删除，**不入库**。
 - 实体格式**允许**旋转体与逐面 UV（GeckoLib / Bedrock），不必受装备那套 box UV 限制；但坐标仍应对齐整数格，避免贴图像素拉伸。
 - 每只 Boss 一份贴图集（不拆多张），阶段差异用**同尺寸贴图变体**（如 `xxx.png` / `xxx_phase2.png`），文件名与实体 id 对齐。
 - 动画命名固定：`idle` / `walk`（或 `fly`）/ `attack` / 每招一个专属名 / `phase_transition` / `death`。
@@ -237,7 +237,7 @@ Boss 在 30 格开外就要认得出是谁。判定标准：把模型压成纯�
 ## 6. 交付物与验收
 
 ### 6.1 每只 Boss 的交付清单
-- [ ] `docs/models/<entity_id>.bbmodel`（或 GeckoLib 工程文件）
+- [ ] 编辑源只留制作期暂存（`build/scratch/`），确认仓库里没有 `.bbmodel` / 预览图
 - [ ] 实体贴图（256×256）+ 阶段变体
 - [ ] 动画清单齐全（命名见 §1.6），循环动作首尾同姿态
 - [ ] 弱点区域在模型上有明确高对比标记，且坐标与 §1.2 表一致

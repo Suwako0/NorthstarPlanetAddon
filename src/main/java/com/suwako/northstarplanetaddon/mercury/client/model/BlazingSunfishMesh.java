@@ -6,8 +6,8 @@ import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 
 /**
- * 由 tools/gen-entity-model.mjs 从 tools/entity-specs/blazing_sunfish.bbmodel 生成（127 cubes / 37 groups）。
- * 重新生成：node tools/gen-entity-model.mjs tools/entity-specs/blazing_sunfish.bbmodel src/main/java/com/suwako/northstarplanetaddon/mercury/client/model/BlazingSunfishMesh.java com.suwako.northstarplanetaddon.mercury.client.model BlazingSunfishMesh
+ * 由 tools/gen-entity-model.mjs 从制作期 Blockbench 工程（build/scratch/models/blazing_sunfish.bbmodel，不入库）生成（127 cubes / 37 groups）。
+ * 重新生成：先按参考图在 Blockbench 重建工程并 pack_uv(box)、跑 fix-pivots，再执行 node tools/gen-entity-model.mjs <工程.bbmodel> src/main/java/com/suwako/northstarplanetaddon/mercury/client/model/BlazingSunfishMesh.java com.suwako.northstarplanetaddon.mercury.client.model BlazingSunfishMesh
  */
 final class BlazingSunfishMesh {
     private BlazingSunfishMesh() {

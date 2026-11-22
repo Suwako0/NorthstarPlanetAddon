@@ -1,0 +1,40 @@
+modLoader="javafml"
+loaderVersion="[1,)"
+license="All rights reserved"
+issueTrackerURL="https://github.com/pssbletrngle/flightlib/issues"
+
+[[mods]]
+    modId="flightlib"
+    version="4.0.36"
+
+    displayName="Flight Lib"
+    authors="possible_triangle"
+    description="library for jetpack-like behaviour"
+    logoFile = "assets/flightlib/icon.png"
+    logoBlur = false
+
+[[dependencies.flightlib]]
+    modId = "neoforge"
+    type = "required"
+    versionRange = "[21,)"
+    ordering = "NONE"
+    side = "BOTH"
+
+[[dependencies.flightlib]]
+    modId = "minecraft"
+    type = "required"
+    versionRange = "[1.21.1,)"
+    ordering = "NONE"
+    side = "BOTH"
+
+[[dependencies.flightlib]]
+    modId="kotlinforforge"
+    mandatory=true
+    versionRange="[5.8,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[mixins]]
+    config="flightlib.mixins.json"
+[[mixins]]
+    config="flightlib.neoforge.mixins.json"

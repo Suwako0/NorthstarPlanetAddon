@@ -7,8 +7,8 @@
  *   node tools/gen-entity-model.mjs <input.bbmodel> <output.java 绝对路径> <package> <ClassName>
  *
  * 例：
- *   node tools/gen-entity-model.mjs tools/entity-specs/sunfish.bbmodel \
- *        "E:/mc/ModCreator/NorthstarPlanetAddon/tools/entity-specs/_gen_test/SunfishMesh.java" \
+ *   node tools/gen-entity-model.mjs build/scratch/models/sunfish.bbmodel \
+ *        "src/main/java/.../SunfishMesh.java" \
  *        com.suwako.northstarplanetaddon.mercury.client.model SunfishMesh
  *
  * 转换约定（与项目几何规范一致）：

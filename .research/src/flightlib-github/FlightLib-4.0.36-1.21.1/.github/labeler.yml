@@ -1,0 +1,22 @@
+# <meta>
+#    <source>@pssbletrngle/github-meta-generator</source>
+#    <version>1.0.116</version>
+#    <timestamp>2026-07-30T07:59:15.457Z</timestamp>
+#    <hash>b15a1caa2b17072b</hash>
+# </meta>
+
+neoforge:
+  - "/^neoforge$/m"
+fabric:
+  - "/^fabric$/m"
+forge:
+  - "/^forge$/m"
+
+1.21.x:
+  - "/^1.21$/m"
+1.20.x:
+  - "/^1.20$/m"
+1.19.x:
+  - "/^1.19$/m"
+1.18.x:
+  - "/^1.18$/m"

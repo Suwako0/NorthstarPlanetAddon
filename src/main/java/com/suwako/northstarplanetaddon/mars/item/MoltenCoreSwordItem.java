@@ -25,7 +25,7 @@ import java.util.List;
 /**
  * 熔核巨剑（{@code molten_core_sword}）—— 三层攻击模组 + 原有「地热斩」。
  *
- * <p>三维模型由 {@code docs/models/molten_core_sword.bbmodel} 导出为普通 Java 3D 物品模型
+ * <p>三维模型由 Blockbench 工程导出（编辑源只在制作期暂存于 {@code build/scratch/models/}，不入库）为普通 Java 3D 物品模型
  * （{@code models/item/molten_core_sword.json} + {@code textures/item/molten_core_sword.png}）。
  * 物品本身<b>不做骨骼动画</b>：手持时的挥砍由玩家的手臂动作驱动，剑保持刚体。</p>
  *

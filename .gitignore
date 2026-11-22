@@ -4,3 +4,7 @@ run/
 logs/
 .vscode/
 *.class
+
+# 一次性任务脚本的产物
+__pycache__/
+*.pyc

@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env pwsh
+#!/usr/bin/env pwsh
 <#
 .SYNOPSIS
   抓取 Minecraft 启动卡死时的现场：线程栈 + 最新日志。
@@ -6,7 +6,7 @@
   当游戏"卡在启动画面/未响应"时运行本脚本（游戏不要关）。它会：
     1) 找到 javaw.exe 的 PID 与它实际使用的 java 路径；
     2) 依次尝试 jcmd / 同版本 jstack / 任意可用 jstack 导出线程栈；
-    3) 把 logs/latest.log、logs/debug.log 与栈文件一起复制到 docs/diag/<时间戳>/。
+    3) 把 logs/latest.log、logs/debug.log 与栈文件一起复制到 build/diag/<时间戳>/（build/ 已忽略，属临时产物）。
   没抓到栈也不影响：日志也照样收，能定位到卡在哪个阶段。
 .EXAMPLE
   pwsh -File tools\diag-capture.ps1
@@ -14,7 +14,7 @@
 #>
 param(
   [string]$GameDir = "D:\game\mc\.minecraft\versions\FloatingReverie",
-  [string]$OutRoot = "docs\diag"
+  [string]$OutRoot = "build\diag"
 )
 
 $stamp = Get-Date -Format "yyyyMMdd-HHmmss"

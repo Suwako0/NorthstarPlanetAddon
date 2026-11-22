@@ -18,9 +18,9 @@ import net.minecraft.util.Mth;
  * frills down the nape, two modest three-lobed pectoral fins and a tail that dissolves into four flame
  * streamers. The whole body is stepped integer voxels, so the texture bands read as ribbed scales.
  * <p>
- * Geometry lives in the generated {@link SunfishMesh} (built from {@code tools/entity-specs/sunfish.bbmodel});
+ * Geometry lives in the generated {@link SunfishMesh} (built from a Blockbench project kept only as a build-time scratch file);
  * this class owns the layer, the 128x128 sheet and the calm motion language. Regenerate the mesh with
- * {@code node tools/gen-entity-model.mjs tools/entity-specs/sunfish.bbmodel ... SunfishMesh}.
+ * {@code node tools/gen-entity-model.mjs <project.bbmodel> ... SunfishMesh}.
  */
 public class SunfishModel<T extends SunfishEntity> extends SkyfishModel<T> {
 

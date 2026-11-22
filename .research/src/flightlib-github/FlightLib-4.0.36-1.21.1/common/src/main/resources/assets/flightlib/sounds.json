@@ -1,0 +1,19 @@
+{
+  "whoosh": {
+    "sounds": [
+      {
+        "name": "flightlib:whoosh_1",
+        "type": "file"
+      },
+      {
+        "name": "flightlib:whoosh_2",
+        "type": "file"
+      },
+      {
+        "name": "flightlib:whoosh_3",
+        "type": "file"
+      }
+    ],
+    "subtitle": "flightlib.subtitle.whoosh"
+  }
+}

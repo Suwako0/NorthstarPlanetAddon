@@ -24,7 +24,7 @@ import net.minecraft.world.item.ArmorItem;
  * <p>贴图：assets/northstar_planet_addon/textures/models/armor/molten_core_armor.png（128x128）。
  * 只画装饰件，身体本体交给 molten_core_layer_1/2.png；手部窗口仍然镂空。</p>
  *
- * <p>生成脚本：tools/gen-molten-core-armor.py（改形制请改脚本，不要手改本文件）。</p>
+ * <p>本类即唯一来源：形制直接改这里；改完重跑 <code>python tools/check-armor.py --set molten_core</code> 校验部件/UV。</p>
  */
 public class MoltenCoreArmorModel extends HumanoidModel<LivingEntity> implements ArmorDecoModel {
 

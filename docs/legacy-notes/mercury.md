@@ -303,7 +303,7 @@
 
 - `meteor`：原版 `ThrownItemRenderer<>(ctx, 2.0F, true)`（放大 2 倍、满亮）。
 - 两种太阳鱼已按概念图重做成「蛇形天空鱼」：共享骨架 `SkyfishModel<T>` + 两份**生成式网格**（`SunfishMesh`：115 cubes / 33 骨骼；`BlazingSunfishMesh`：127 cubes / 37 骨骼），贴图升级为 128×128 + 同 UV 的发光层。
-- 几何来源：`tools/entity-specs/sunfish.bbmodel`、`tools/entity-specs/blazing_sunfish.bbmodel` → `tools/gen-entity-model.mjs` 生成 `*Mesh.java`；骨骼枢轴由 `tools/fix-pivots.mjs` 在文件层写入（Blockbench 脚本改 `origin` 会写坏，见 `docs/SKYFISH-REDO.md`）。
+- 几何来源：制作期 Blockbench 工程（`build/scratch/models/`，不入库）→ `tools/gen-entity-model.mjs` 生成 `*Mesh.java`；骨骼枢轴由 `tools/fix-pivots.mjs` 在文件层写入（Blockbench 脚本改 `origin` 会写坏成 4~6 分量，所以改枢轴必须走这个脚本，不要在 Blockbench 里赋值）。
 - 部件树（两版同构，方括号为炽热太阳鱼独有）：`body → neck1 → neck2 → head(→ jaw, horn_l(→ horn_l2 → horn_l3), horn_r(→ horn_r2 → horn_r3)[, barbel_l, barbel_r, crest]), fin_l(→ fin_l_tip), fin_r(→ fin_r_tip), belly, spine3..7, ventral_l, ventral_r[, core]`；`neck2 → spine1`、`neck1 → spine2`、`belly → tail1 → tail2 → tail3 → tail_fin → streamer_a..d`。
 - `SunfishRenderer`：`MobRenderer` + `SunfishModel`，影子 `0.5`，贴图 `textures/entity/sunfish.png`，`EyesLayer` + `RenderType.eyes(sunfish_glow.png)`，`translate(0, -0.42, 0)` 把更高的模型压回 1.2 高的碰撞盒。
 - `BlazingSunfishRenderer`：`MobRenderer` + `BlazingSunfishModel`，影子 `0.7`，贴图 `textures/entity/blazing_sunfish.png`，发光层 `blazing_sunfish_glow.png`，`translate(0, -0.34, 0)` + `scale(1.15F)`。
