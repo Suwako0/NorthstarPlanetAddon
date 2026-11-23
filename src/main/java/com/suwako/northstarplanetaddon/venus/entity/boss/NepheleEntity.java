@@ -22,8 +22,20 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import software.bernie.geckolib.animatable.GeoEntity;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.animation.Animation;
+import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.animation.AnimationState;
+import software.bernie.geckolib.animation.PlayState;
+import software.bernie.geckolib.animation.RawAnimation;
+import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.List;
 
@@ -42,10 +54,10 @@ import java.util.List;
  * 召唤云帆鳐（3 只）。冷却与前摇照搬 4.2 节招式表，粒子与音效用于提示前摇
  * （前摇同样是弱点暴露条件）。</p>
  */
-public class NepheleEntity extends AbstractBossEntity {
+public class NepheleEntity extends AbstractBossEntity implements GeoEntity {
 
-    /** 云爆弹：8 伤害、4 格圆、冷却 8s、前摇 1.0s。 */
-    private static final int CLOUD_BOMB_CD = 160;
+    /** 云爆弹：8 伤害、4 格圆、冷却 5s、前摇 1.0s（原 8s 太慢，玩家常常等不到一个招式）。 */
+    private static final int CLOUD_BOMB_CD = 100;
     private static final int CLOUD_BOMB_WINDUP = 20;
     private static final double CLOUD_BOMB_RADIUS = 4.0D;
     private static final float CLOUD_BOMB_DAMAGE = 8.0F;
@@ -62,6 +74,39 @@ public class NepheleEntity extends AbstractBossEntity {
     private static final int DIVE_WINDUP = 30;
     private static final float DIVE_DAMAGE = 16.0F;
 
+    // ------------------------------------------------------------------ 动画
+    private static final RawAnimation ANIM_IDLE = RawAnimation.begin().thenLoop("idle");
+    private static final RawAnimation ANIM_FLY = RawAnimation.begin().thenLoop("fly");
+    private static final RawAnimation ANIM_BOMB =
+            RawAnimation.begin().then("cloud_burst", Animation.LoopType.PLAY_ONCE);
+    private static final RawAnimation ANIM_DIVE =
+            RawAnimation.begin().then("dive", Animation.LoopType.PLAY_ONCE);
+    private static final RawAnimation ANIM_SWEEP =
+            RawAnimation.begin().then("tail_sweep", Animation.LoopType.PLAY_ONCE);
+    private static final RawAnimation ANIM_SUMMON =
+            RawAnimation.begin().then("summon", Animation.LoopType.PLAY_ONCE);
+    private static final RawAnimation ANIM_PHASE =
+            RawAnimation.begin().then("phase_transition", Animation.LoopType.PLAY_ONCE);
+    private static final RawAnimation ANIM_PLATE =
+            RawAnimation.begin().then("plate_break", Animation.LoopType.PLAY_ONCE);
+    private static final RawAnimation ANIM_DEATH =
+            RawAnimation.begin().then("death", Animation.LoopType.HOLD_ON_LAST_FRAME);
+
+    /** 当前正在播放的一次性动作（同步给客户端，驱动动画控制器）。 */
+    private static final int ACTION_NONE = 0;
+    private static final int ACTION_BOMB = 1;
+    private static final int ACTION_DIVE = 2;
+    private static final int ACTION_SWEEP = 3;
+    private static final int ACTION_SUMMON = 4;
+    private static final int ACTION_PHASE = 5;
+    private static final int ACTION_PLATE = 6;
+
+    private static final EntityDataAccessor<Integer> DATA_ACTION =
+            SynchedEntityData.defineId(NepheleEntity.class, EntityDataSerializers.INT);
+
+    private final AnimatableInstanceCache animatableCache = GeckoLibUtil.createInstanceCache(this);
+    private int actionTicks;
+
     private int cloudBombTicks = CLOUD_BOMB_CD;
     private int tailSweepTicks = TAIL_SWEEP_CD;
     private int summonTicks = SUMMON_CD;
@@ -75,9 +120,82 @@ public class NepheleEntity extends AbstractBossEntity {
         this.setNoGravity(true);
         this.moveControl = new net.minecraft.world.entity.ai.control.FlyingMoveControl(this, 20, true);
         // 尾部散热口常驻暴露；背部两个气囊只在 P3 暴露
-        this.addWeakPoint("tail_vent", new Vec3(0.0D, 0.8D, 4.2D), 1.2D, WeakPoint.ALWAYS);
+        // 尾巴静止姿态已抬到躯干中线（y≈1.9 格），弱点跟着上移，否则判定球会飘在尾巴下方
+        this.addWeakPoint("tail_vent", new Vec3(0.0D, 1.9D, 4.2D), 1.2D, WeakPoint.ALWAYS);
         this.addWeakPoint("air_sac_left", new Vec3(-1.6D, 2.2D, -0.4D), 1.2D, WeakPoint.PHASE_3);
         this.addWeakPoint("air_sac_right", new Vec3(1.6D, 2.2D, -0.4D), 1.2D, WeakPoint.PHASE_3);
+    }
+
+    @Override
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(DATA_ACTION, ACTION_NONE);
+    }
+
+    // ------------------------------------------------------------------ GeckoLib 动画接线
+    @Override
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return this.animatableCache;
+    }
+
+    @Override
+    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+        // 单控制器（多控制器会抢骨骼，见 minecraft-geckolib-animation-delivery §3）
+        controllers.add(new AnimationController<>(this, "main", 4, this::mainController));
+    }
+
+    /** 优先级：死亡 > 一次性动作 > 阶段循环（P1 用 idle，P2 起用 fly）。 */
+    private PlayState mainController(AnimationState<NepheleEntity> state) {
+        if (this.isDeadOrDying()) {
+            state.getController().setAnimationSpeed(1.0D).setAnimation(ANIM_DEATH);
+            return PlayState.CONTINUE;
+        }
+        RawAnimation action = switch (this.entityData.get(DATA_ACTION)) {
+            case ACTION_BOMB -> ANIM_BOMB;
+            case ACTION_DIVE -> ANIM_DIVE;
+            case ACTION_SWEEP -> ANIM_SWEEP;
+            case ACTION_SUMMON -> ANIM_SUMMON;
+            case ACTION_PHASE -> ANIM_PHASE;
+            case ACTION_PLATE -> ANIM_PLATE;
+            default -> null;
+        };
+        if (action != null) {
+            state.getController().setAnimationSpeed(1.0D).setAnimation(action);
+            return PlayState.CONTINUE;
+        }
+        state.getController().setAnimationSpeed(1.0D)
+                .setAnimation(this.getPhase() >= 2 ? ANIM_FLY : ANIM_IDLE);
+        return PlayState.CONTINUE;
+    }
+
+    /** 触发一次性动作：只走服务端，实体数据自动同步到客户端。 */
+    private void playAction(int action, int ticks) {
+        if (!this.level().isClientSide) {
+            this.entityData.set(DATA_ACTION, action);
+            this.actionTicks = ticks;
+        }
+    }
+
+    @Override
+    protected void onPhaseChanged(int from, int to) {
+        super.onPhaseChanged(from, to);
+        // 换阶段 30 tick 无敌演出 = 光环分裂（P2）/ 断裂下垂（P3）
+        this.playAction(ACTION_PHASE, 30);
+    }
+
+    @Override
+    protected void onPlateBroken(int index) {
+        super.onPlateBroken(index);
+        // 单块冰晶甲片碎裂：受击后仰 + 对应 plate 骨抖动（动画里四块一起抖，视觉上够用）
+        this.playAction(ACTION_PLATE, 12);
+        if (this.level() instanceof ServerLevel serverLevel) {
+            serverLevel.sendParticles(ParticleTypes.SNOWFLAKE, this.getX(), this.getY() + 3.6D, this.getZ(),
+                    26, 2.4D, 0.8D, 2.4D, 0.06D);
+            serverLevel.sendParticles(ParticleTypes.ITEM_SNOWBALL, this.getX(), this.getY() + 3.6D, this.getZ(),
+                    14, 2.0D, 0.6D, 2.0D, 0.12D);
+            serverLevel.playSound(null, this.blockPosition(), SoundEvents.GLASS_BREAK, SoundSource.HOSTILE,
+                    2.2F, 0.7F);
+        }
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -122,8 +240,8 @@ public class NepheleEntity extends AbstractBossEntity {
             return;
         }
 
-        // -------------------------------------------------- 巡航：悬停在目标上方 8 格
-        Vec3 desired = target.position().add(0.0D, 8.0D, 0.0D);
+        // -------------------------------------------------- 巡航：悬停在目标上方 5 格
+        Vec3 desired = target.position().add(0.0D, 5.0D, 0.0D);
         Vec3 delta = desired.subtract(this.position());
         if (delta.lengthSqr() > 9.0D) {
             this.setDeltaMovement(this.getDeltaMovement().add(delta.normalize().scale(0.06D)));
@@ -134,7 +252,7 @@ public class NepheleEntity extends AbstractBossEntity {
             this.cloudBombTicks = CLOUD_BOMB_CD;
             this.startWindup(target, CLOUD_BOMB_WINDUP, 0);
         }
-        if (--this.tailSweepTicks <= 0 && this.distanceToSqr(target) < 36.0D) {
+        if (--this.tailSweepTicks <= 0 && this.distanceToSqr(target) < 225.0D) {
             this.tailSweepTicks = TAIL_SWEEP_CD;
             this.tailSweep(target);
         }
@@ -152,6 +270,7 @@ public class NepheleEntity extends AbstractBossEntity {
     private void startWindup(LivingEntity target, int ticks, int move) {
         this.windupTicks = ticks;
         this.windupMove = move;
+        this.playAction(move == 1 ? ACTION_DIVE : ACTION_BOMB, ticks);
         if (this.level() instanceof ServerLevel serverLevel) {
             // 前摇提示：白烟 / 云团（同时也是弱点暴露的视觉提示）
             serverLevel.sendParticles(ParticleTypes.CLOUD, this.getX(), this.getY() + 2.0D, this.getZ(),
@@ -192,11 +311,13 @@ public class NepheleEntity extends AbstractBossEntity {
 
     /** 尾扫：正后方 6 格内 12 点伤害 + 击退。 */
     private void tailSweep(LivingEntity target) {
+        // 尾扫：判定改成「绕躯干 12 格内」，原来要求 6 格内而云鲸自身就悬停在玩家上方 5 格
+        this.playAction(ACTION_SWEEP, 16);
         if (!(this.level() instanceof ServerLevel serverLevel)) {
             return;
         }
         Vec3 behind = this.position().subtract(this.getLookAngle().scale(3.0D));
-        if (target.position().distanceToSqr(behind) < 36.0D) {
+        if (target.position().distanceToSqr(behind) < 64.0D) {
             target.hurt(serverLevel.damageSources().mobAttack(this), TAIL_SWEEP_DAMAGE);
             Vec3 push = target.position().subtract(this.position()).normalize().scale(1.4D);
             target.push(push.x, 0.4D, push.z);
@@ -224,6 +345,7 @@ public class NepheleEntity extends AbstractBossEntity {
 
     /** 召唤 3 只云帆鳐（第 2.4 节「枪械清场」职责的靶子）。 */
     private void summonRays() {
+        this.playAction(ACTION_SUMMON, 20);
         if (!(this.level() instanceof ServerLevel serverLevel)) {
             return;
         }
@@ -267,8 +389,14 @@ public class NepheleEntity extends AbstractBossEntity {
     @Override
     public void aiStep() {
         super.aiStep();
-        if (!this.level().isClientSide && this.getY() < this.level().getMinBuildHeight()) {
-            this.setPos(this.getX(), 200.0D, this.getZ());
+        if (!this.level().isClientSide) {
+            // 一次性动作播完就回落到循环动画
+            if (this.actionTicks > 0 && --this.actionTicks == 0) {
+                this.entityData.set(DATA_ACTION, ACTION_NONE);
+            }
+            if (this.getY() < this.level().getMinBuildHeight()) {
+                this.setPos(this.getX(), 200.0D, this.getZ());
+            }
         }
     }
 }

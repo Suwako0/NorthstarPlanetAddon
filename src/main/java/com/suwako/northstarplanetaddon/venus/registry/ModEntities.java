@@ -52,12 +52,12 @@ public final class ModEntities {
                     .clientTrackingRange(16)
                     .build("hephaestus"));
 
-    /** 涅斐勒，云鲸（第 4.2 节）：7×4 碰撞箱，飞行。 */
+    /** 涅斐勒，云鲸（第 4.2 节）：7×4.8 碰撞箱（模型主体高 4.7 格，4.0 会让箭矢穿过背甲），飞行。 */
     public static final DeferredHolder<EntityType<?>, EntityType<NepheleEntity>> NEPHELE =
             ENTITY_TYPES.register("nephele", () -> EntityType.Builder
                     .of(NepheleEntity::new, MobCategory.MONSTER)
-                    .sized(7.0F, 4.0F)
-                    .eyeHeight(2.6F)
+                    .sized(7.0F, 4.8F)
+                    .eyeHeight(3.2F)
                     .fireImmune()
                     .clientTrackingRange(16)
                     .build("nephele"));

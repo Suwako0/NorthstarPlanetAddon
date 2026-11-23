@@ -24,7 +24,7 @@ public final class ClientSetup {
 
     @SubscribeEvent
     public static void onRegisterLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
-        event.registerLayerDefinition(NepheleModel.LAYER, NepheleModel::createBodyLayer);
+        // 涅斐勒已改为 GeckoLib 模型（nephele.geo.json），不再注册 LayerDefinition
         event.registerLayerDefinition(AphroditeModel.LAYER, AphroditeModel::createBodyLayer);
         event.registerLayerDefinition(CloudRayModel.LAYER, CloudRayModel::createBodyLayer);
         event.registerLayerDefinition(AcidJellyModel.LAYER, AcidJellyModel::createBodyLayer);

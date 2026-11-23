@@ -1,123 +1,92 @@
 package com.suwako.northstarplanetaddon.venus.client.model;
 
+import com.suwako.northstarplanetaddon.NorthstarPlanetAddon;
+import com.suwako.northstarplanetaddon.venus.VenusModule;
 import com.suwako.northstarplanetaddon.venus.entity.boss.NepheleEntity;
-import net.minecraft.client.model.EntityModel;
-import net.minecraft.client.model.geom.ModelLayerLocation;
-import net.minecraft.client.model.geom.ModelPart;
-import net.minecraft.client.model.geom.PartPose;
-import net.minecraft.client.model.geom.builders.CubeListBuilder;
-import net.minecraft.client.model.geom.builders.LayerDefinition;
-import net.minecraft.client.model.geom.builders.MeshDefinition;
-import net.minecraft.client.model.geom.builders.PartDefinition;
+import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
+import software.bernie.geckolib.animation.Animation;
+import software.bernie.geckolib.loading.FileLoader;
+import software.bernie.geckolib.loading.object.BakedAnimations;
+import software.bernie.geckolib.model.GeoModel;
 
 /**
- * 涅斐勒模型：鲸形躯干 + 双鳍 + 尾部 + 背部两个气囊（弱点可视化）。
+ * 涅斐勒 · 云鲸的 GeckoLib 模型（按三视图参考图重制）。
  *
- * <p>贴图 128×128，由 {@code assets/phosphoros/textures/entity/nephele.png} 提供。</p>
+ * <p>资源（Blockbench 工程只作制作期暂存，不入库）：
+ * <ul>
+ *   <li>{@code geo/entity/nephele.geo.json} —— 25 根骨骼 / 82 个方块 / 512×512 box UV</li>
+ *   <li>{@code animations/entity/nephele.animation.json} ——
+ *       idle / fly / cloud_burst / dive / tail_sweep / summon / phase_transition / plate_break / death</li>
+ *   <li>{@code textures/entity/nephele.png} + {@code nephele_glowmask.png}（由
+ *       {@link software.bernie.geckolib.renderer.layer.AutoGlowingGeoLayer} 读取：光环、眼缝、尾端散热环）</li>
+ * </ul>
+ * 模型为 1 单位 = 1/16 格的原生比例：腹底离地 1.2 格、主体顶 4.7 格、光环顶约 5.9 格，
+ * 视觉体长 9.6 格，尾端散热环中心正好落在弱点坐标 (0, 0.8, +4.2)。渲染器不再额外缩放。</p>
+ *
+ * <h2>为什么重写 {@link #getAnimation}</h2>
+ * <p>GeckoLib 的 {@code GeoModel#getAnimation} 只查静态缓存，查不到会直接抛异常（不是返回 null）。
+ * 整合包 / Connector / 多资源包环境下这个文件可能取不到，Boss 就会一动不动。这里先照常查缓存，
+ * 失败再用 {@link FileLoader} 自读一次并缓存，两条路都失败才真正没有动画（只记一次日志）。</p>
  */
-public class NepheleModel extends EntityModel<NepheleEntity> {
+public class NepheleModel extends GeoModel<NepheleEntity> {
 
-    public static final ModelLayerLocation LAYER =
-            new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath("northstar_planet_addon", "nephele"), "main");
+    private static final ResourceLocation MODEL = VenusModule.id("geo/entity/nephele.geo.json");
+    private static final ResourceLocation TEXTURE = VenusModule.id("textures/entity/nephele.png");
+    private static final ResourceLocation ANIMATIONS = VenusModule.id("animations/entity/nephele.animation.json");
 
-    private final ModelPart root;
-    private final ModelPart body;
-    private final ModelPart head;
-    private final ModelPart tail;
-    private final ModelPart leftFin;
-    private final ModelPart rightFin;
-    private final ModelPart sacLeft;
-    private final ModelPart sacRight;
+    private static BakedAnimations fallbackAnimations;
+    private static boolean fallbackFailed;
+    private static boolean cacheMissLogged;
 
-    public NepheleModel(ModelPart root) {
-        this.root = root;
-        this.body = root.getChild("body");
-        this.head = this.body.getChild("head");
-        this.tail = this.body.getChild("tail");
-        this.leftFin = this.body.getChild("left_fin");
-        this.rightFin = this.body.getChild("right_fin");
-        this.sacLeft = this.body.getChild("sac_left");
-        this.sacRight = this.body.getChild("sac_right");
-    }
-
-    public static LayerDefinition createBodyLayer() {
-        MeshDefinition mesh = new MeshDefinition();
-        PartDefinition root = mesh.getRoot();
-
-        PartDefinition body = root.addOrReplaceChild("body",
-                CubeListBuilder.create().texOffs(0, 0)
-                        .addBox(-12.0F, -10.0F, -32.0F, 24.0F, 20.0F, 64.0F),
-                PartPose.offset(0.0F, 18.0F, 0.0F));
-
-        body.addOrReplaceChild("head",
-                CubeListBuilder.create().texOffs(0, 84)
-                        .addBox(-8.0F, -7.0F, -14.0F, 16.0F, 14.0F, 14.0F),
-                PartPose.offset(0.0F, 0.0F, -32.0F));
-
-        body.addOrReplaceChild("tail",
-                CubeListBuilder.create().texOffs(64, 84)
-                        .addBox(-6.0F, -6.0F, 0.0F, 12.0F, 12.0F, 18.0F),
-                PartPose.offset(0.0F, 0.0F, 32.0F));
-
-        body.addOrReplaceChild("left_fin",
-                CubeListBuilder.create().texOffs(176, 0)
-                        .addBox(0.0F, 0.0F, -8.0F, 18.0F, 2.0F, 16.0F),
-                PartPose.offset(12.0F, 2.0F, 0.0F));
-
-        body.addOrReplaceChild("right_fin",
-                CubeListBuilder.create().texOffs(176, 0).mirror()
-                        .addBox(-18.0F, 0.0F, -8.0F, 18.0F, 2.0F, 16.0F),
-                PartPose.offset(-12.0F, 2.0F, 0.0F));
-
-        body.addOrReplaceChild("sac_left",
-                CubeListBuilder.create().texOffs(128, 84)
-                        .addBox(-4.0F, -4.0F, -4.0F, 8.0F, 8.0F, 8.0F),
-                PartPose.offset(8.0F, 10.0F, -6.0F));
-
-        body.addOrReplaceChild("sac_right",
-                CubeListBuilder.create().texOffs(128, 84).mirror()
-                        .addBox(-4.0F, -4.0F, -4.0F, 8.0F, 8.0F, 8.0F),
-                PartPose.offset(-8.0F, 10.0F, -6.0F));
-
-        return LayerDefinition.create(mesh, 256, 128);
+    @Override
+    public ResourceLocation getModelResource(NepheleEntity animatable) {
+        return MODEL;
     }
 
     @Override
-    public void setupAnim(NepheleEntity entity, float limbSwing, float limbSwingAmount,
-                          float ageInTicks, float netHeadYaw, float headPitch) {
-        float yawRad = netHeadYaw * Mth.DEG_TO_RAD;
-        float pitchRad = headPitch * Mth.DEG_TO_RAD;
-
-        this.head.yRot = yawRad * 0.6F;
-        this.head.xRot = pitchRad * 0.6F;
-
-        this.tail.yRot = Mth.sin(ageInTicks * 0.15F) * 0.22F;
-        this.tail.xRot = Mth.sin(ageInTicks * 0.11F) * 0.12F;
-
-        float flap = Mth.cos(ageInTicks * 0.2F) * 0.35F;
-        this.leftFin.zRot = flap;
-        this.rightFin.zRot = -flap;
-
-        // 悬停起伏
-        this.body.y = 18.0F + Mth.sin(ageInTicks * 0.1F) * 0.8F;
-
-        // 过载时气囊鼓动（弱点提示）
-        float sacScale = 1.0F;
-        this.sacLeft.xScale = sacScale;
-        this.sacLeft.yScale = sacScale;
-        this.sacLeft.zScale = sacScale;
-        this.sacRight.xScale = sacScale;
-        this.sacRight.yScale = sacScale;
-        this.sacRight.zScale = sacScale;
+    public ResourceLocation getTextureResource(NepheleEntity animatable) {
+        return TEXTURE;
     }
 
     @Override
-    public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight,
-                               int packedOverlay, int color) {
-        this.root.render(poseStack, buffer, packedLight, packedOverlay, color);
+    public ResourceLocation getAnimationResource(NepheleEntity animatable) {
+        return ANIMATIONS;
+    }
+
+    @Override
+    public Animation getAnimation(NepheleEntity animatable, String name) {
+        Animation animation = null;
+        try {
+            animation = super.getAnimation(animatable, name);
+        } catch (RuntimeException exception) {
+            if (!cacheMissLogged) {
+                cacheMissLogged = true;
+                NorthstarPlanetAddon.LOGGER.warn("[nephele] GeckoLib 动画缓存里没有 {}（{}），改由模型自读动画文件",
+                        ANIMATIONS, exception.getMessage());
+            }
+        }
+        if (animation == null) {
+            BakedAnimations baked = selfLoadedAnimations();
+            animation = baked == null ? null : baked.getAnimation(name);
+        }
+        return animation;
+    }
+
+    private static synchronized BakedAnimations selfLoadedAnimations() {
+        if (fallbackAnimations != null || fallbackFailed) {
+            return fallbackAnimations;
+        }
+        try {
+            fallbackAnimations = FileLoader.loadAnimationsFile(ANIMATIONS,
+                    Minecraft.getInstance().getResourceManager());
+            NorthstarPlanetAddon.LOGGER.info("[nephele] 动画文件已由模型自行加载，共 {} 段",
+                    fallbackAnimations.animations().size());
+        } catch (Throwable throwable) {
+            fallbackFailed = true;
+            NorthstarPlanetAddon.LOGGER.error("[nephele] 自行加载动画文件失败，Boss 将没有骨骼动画：{} {}",
+                    ANIMATIONS, throwable.toString());
+        }
+        return fallbackAnimations;
     }
 }

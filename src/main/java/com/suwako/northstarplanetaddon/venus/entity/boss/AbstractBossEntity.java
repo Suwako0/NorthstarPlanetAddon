@@ -197,11 +197,39 @@ public abstract class AbstractBossEntity extends Monster {
     @Override
     protected void customServerAiStep() {
         super.customServerAiStep();
+        this.emitWeakPointMarkers();
         if (this.transitionTicks > 0) {
             this.getNavigation().stop();
             return;
         }
         this.tickBossAi();
+    }
+
+    /**
+     * 弱点可视化：每 4 tick 在每个「当前暴露」的弱点位置点一颗 END_ROD。
+     * 玩家不看模型细节也能找到该打哪儿 —— 这是「护甲板吸收伤害、只有弱点能攒过载」这套机制的必需提示。
+     */
+    private void emitWeakPointMarkers() {
+        if (!(this.level() instanceof net.minecraft.server.level.ServerLevel serverLevel)) {
+            return;
+        }
+        if (this.tickCount % 4 != 0) {
+            return;
+        }
+        double yaw = Math.toRadians(this.yBodyRot);
+        double cos = Math.cos(yaw);
+        double sin = Math.sin(yaw);
+        for (int i = 0; i < this.weakPoints.size(); i++) {
+            if (!this.isWeakPointExposed(i)) {
+                continue;
+            }
+            Vec3 local = this.weakPoints.get(i).offset();
+            serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.END_ROD,
+                    this.getX() + local.x * cos + local.z * sin,
+                    this.getY() + local.y,
+                    this.getZ() - local.x * sin + local.z * cos,
+                    1, 0.05D, 0.05D, 0.05D, 0.0D);
+        }
     }
 
     /** 阶段切换：默认进入 1.5s 无敌演出并开窗。 */
@@ -266,11 +294,26 @@ public abstract class AbstractBossEntity extends Monster {
     public float damagePlates(float amount) {
         float remaining = amount;
         for (int i = 0; i < this.plateHp.length && remaining > 0.0F; i++) {
+            if (this.plateHp[i] <= 0.0F) {
+                continue;
+            }
             float applied = Math.min(this.plateHp[i], remaining);
             this.plateHp[i] -= applied;
             remaining -= applied;
+            if (this.plateHp[i] <= 1.0E-4F) {
+                this.plateHp[i] = 0.0F;
+                this.onPlateBroken(i);
+            }
         }
         return amount - remaining;
+    }
+
+    /**
+     * 某一块护甲板被打碎时回调。默认空实现，子类覆盖它做碎甲动画与碎屑粒子。
+     *
+     * @param index 板序号（0 起），与模型上 {@code plate_1..N} 的骨骼顺序一致
+     */
+    protected void onPlateBroken(int index) {
     }
 
     public boolean isOverloaded() {
@@ -354,7 +397,16 @@ public abstract class AbstractBossEntity extends Monster {
             if (!this.isWeakPointExposed(i)) {
                 continue;
             }
-            Vec3 world = this.position().add(weakPoint.offset());
+            // 弱点偏移是「实体局部坐标」（-Z 为正面），必须按身体朝向旋转后再加世界坐标；
+            // 否则尾巴转到别的方向时命中球还停在世界 +Z 侧，看得见打不到。
+            double yaw = Math.toRadians(this.yBodyRot);
+            double cos = Math.cos(yaw);
+            double sin = Math.sin(yaw);
+            Vec3 local = weakPoint.offset();
+            Vec3 world = this.position().add(
+                    local.x * cos + local.z * sin,
+                    local.y,
+                    -local.x * sin + local.z * cos);
             double radius = Math.max(weakPoint.radius(), (double) PhosphorosConfig.WEAK_POINT_RADIUS.get());
             if (world.distanceToSqr(hitPosition) > radius * radius) {
                 continue;
@@ -373,6 +425,17 @@ public abstract class AbstractBossEntity extends Monster {
                 gain += BallisticCalibratorItem.EXTRA_OVERLOAD;
             }
             this.addOverloadPoints(gain);
+            // 命中反馈：弱点位置炸一簇粒子 + 给攻击者打一行动作条，玩家才知道「打对了」
+            if (this.level() instanceof net.minecraft.server.level.ServerLevel serverLevel) {
+                serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.CRIT,
+                        world.x, world.y, world.z, 20, 0.45D, 0.45D, 0.45D, 0.25D);
+                serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.END_ROD,
+                        world.x, world.y, world.z, 8, 0.2D, 0.2D, 0.2D, 0.05D);
+                if (attacker instanceof net.minecraft.server.level.ServerPlayer player) {
+                    player.displayClientMessage(net.minecraft.network.chat.Component.literal(
+                            "§b✦ 弱点命中 §7· " + weakPoint.id() + " §a过载 +" + String.format("%.1f", gain)), true);
+                }
+            }
             return true;
         }
         return false;

@@ -82,6 +82,11 @@ public class AresRenderer extends GeoEntityRenderer<AresEntity> {
      */
     private static final class PhaseModel extends DefaultedEntityGeoModel<AresEntity> {
 
+        private static final ResourceLocation ANIMATIONS =
+                MarsModule.id("animations/entity/ares.animation.json");
+        private static final java.util.Set<String> LOGGED = java.util.concurrent.ConcurrentHashMap.newKeySet();
+        private static boolean cacheMissLogged;
+
         PhaseModel() {
             super(MarsModule.id("ares"), true);
         }
@@ -90,6 +95,35 @@ public class AresRenderer extends GeoEntityRenderer<AresEntity> {
         public ResourceLocation getTextureResource(AresEntity animatable) {
             // phase 来自 SynchedEntityData（DATA_PHASE），客户端能拿到实时值
             return textureFor(animatable.getPhase());
+        }
+
+        /**
+         * 与 {@code HephaestusModel} 同样的兜底：整合包里 GeckoLib 的动画缓存扫不到本模组文件，
+         * {@code super.getAnimation} 会抛 {@code Unable to find animation file} —— 表现就是
+         * 「模型在、只有头会跟着玩家转（那是 lookAt，不是动画），四肢一动不动」。
+         */
+        @Override
+        public software.bernie.geckolib.animation.Animation getAnimation(AresEntity animatable, String name) {
+            software.bernie.geckolib.animation.Animation animation = null;
+            try {
+                animation = super.getAnimation(animatable, name);
+            } catch (RuntimeException exception) {
+                if (!cacheMissLogged) {
+                    cacheMissLogged = true;
+                    com.suwako.northstarplanetaddon.NorthstarPlanetAddon.LOGGER.warn(
+                            "[ares] GeckoLib 动画缓存里没有 {}（{}），改由模型自读", ANIMATIONS, exception.getMessage());
+                }
+            }
+            if (animation == null) {
+                var baked = com.suwako.northstarplanetaddon.client.GeckoSelfLoad.load(ANIMATIONS);
+                animation = baked == null ? null : baked.getAnimation(name);
+            }
+            if (LOGGED.add(name)) {
+                com.suwako.northstarplanetaddon.NorthstarPlanetAddon.LOGGER.info("[ares] 请求动画 {} → {}", name,
+                        animation == null ? "未解析"
+                                : "OK " + animation.length() + " tick / " + animation.boneAnimations().length + " 骨骼");
+            }
+            return animation;
         }
     }
 
