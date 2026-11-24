@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "active=true": { "model": "northstar_planet_addon:block/moon_spirit_altar" },
+    "active=false": { "model": "northstar_planet_addon:block/moon_spirit_altar_inactive" }
+  }
+}

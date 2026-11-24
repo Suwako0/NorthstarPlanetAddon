@@ -3,6 +3,7 @@ package com.suwako.northstarplanetaddon.moon.registry;
 import com.suwako.northstarplanetaddon.moon.MoonModule;
 import com.suwako.northstarplanetaddon.moon.item.MooncakeItem;
 import com.suwako.northstarplanetaddon.moon.item.MoonPearlItem;
+import com.suwako.northstarplanetaddon.moon.item.MoonSpiritElixirItem;
 import net.minecraft.world.food.Foods;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
@@ -23,6 +24,15 @@ public final class NMAItems {
     /** A pumpkin-pie-strength mooncake traded by a Moon Rabbit for a golden carrot. */
     public static final DeferredItem<MooncakeItem> MOONCAKE = ITEMS.registerItem("mooncake",
             MooncakeItem::new, new Item.Properties().food(Foods.PUMPKIN_PIE));
+
+    /**
+     * 月灵丹药 —— 右键进食、消耗 1 个，永久 +2 点生命上限，每个玩家只生效一次。
+     * 暂无配方（由 {@code MoonSpiritElixirItem} 自己实现进食与属性逻辑）。
+     */
+    public static final DeferredItem<MoonSpiritElixirItem> MOON_SPIRIT_ELIXIR = ITEMS.registerItem(
+            "moon_spirit_elixir",
+            MoonSpiritElixirItem::new,
+            new Item.Properties().rarity(Rarity.RARE).stacksTo(16));
 
     /** A Moon-only altar key that becomes a broken pearl after placing a Dreamsleep Altar. */
     public static final DeferredItem<MoonPearlItem> MOON_PEARL = ITEMS.registerItem("moon_pearl",
@@ -81,6 +91,8 @@ public final class NMAItems {
             ITEMS.registerSimpleBlockItem("moon_bloom", NMABlocks.MOON_BLOOM);
     public static final DeferredItem<net.minecraft.world.item.BlockItem> DREAMSLEEP_ALTAR =
             ITEMS.registerSimpleBlockItem("dreamsleep_altar", NMABlocks.DREAMSLEEP_ALTAR);
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> MOON_SPIRIT_ALTAR =
+            ITEMS.registerSimpleBlockItem("moon_spirit_altar", NMABlocks.MOON_SPIRIT_ALTAR);
 
     /**
      * 梦眠月斧 — forged from a defeated Moon Deer's antler. 10.5 attack damage (1 player base + 4.5

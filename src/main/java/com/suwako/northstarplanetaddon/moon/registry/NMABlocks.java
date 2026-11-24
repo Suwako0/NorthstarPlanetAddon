@@ -5,6 +5,7 @@ import com.suwako.northstarplanetaddon.moon.block.DreamsleepAltarBlock;
 import com.suwako.northstarplanetaddon.moon.block.DreamsleepGrassBlock;
 import com.suwako.northstarplanetaddon.moon.block.MoonBloomBlock;
 import com.suwako.northstarplanetaddon.moon.block.MoonlightSaplingBlock;
+import com.suwako.northstarplanetaddon.moon.block.MoonSpiritAltarBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.LeavesBlock;
@@ -128,6 +129,16 @@ public final class NMABlocks {
                     .strength(3.5F, 9.0F)
                     .sound(SoundType.DEEPSLATE)
                     .lightLevel(state -> 7)
+                    .noOcclusion()
+                    .requiresCorrectToolForDrops()));
+
+    /** 月灵石坛 — 把「月灵丹药」的服用次数还给你；赐福一次后永久失活。 */
+    public static final DeferredBlock<MoonSpiritAltarBlock> MOON_SPIRIT_ALTAR = BLOCKS.register("moon_spirit_altar",
+            () -> new MoonSpiritAltarBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_LIGHT_BLUE)
+                    .strength(4.0F, 12.0F)
+                    .sound(SoundType.DEEPSLATE_BRICKS)
+                    .lightLevel(state -> state.getValue(MoonSpiritAltarBlock.ACTIVE) ? 11 : 0)
                     .noOcclusion()
                     .requiresCorrectToolForDrops()));
 

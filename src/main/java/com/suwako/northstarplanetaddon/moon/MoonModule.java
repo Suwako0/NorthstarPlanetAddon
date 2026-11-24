@@ -4,6 +4,8 @@ import com.suwako.northstarplanetaddon.NorthstarPlanetAddon;
 import com.suwako.northstarplanetaddon.moon.entity.MoonRabbitEntity;
 import com.suwako.northstarplanetaddon.moon.entity.MoonShellCrabEntity;
 import com.suwako.northstarplanetaddon.moon.registry.NMABlocks;
+import com.suwako.northstarplanetaddon.moon.registry.NMAAttachments;
+import com.suwako.northstarplanetaddon.moon.registry.NMABlockEntities;
 import com.suwako.northstarplanetaddon.moon.registry.NMAEntityTypes;
 import com.suwako.northstarplanetaddon.moon.registry.NMAFeatures;
 import com.suwako.northstarplanetaddon.moon.registry.NMAFluids;
@@ -83,8 +85,10 @@ public final class MoonModule {
                 output.accept(NMAItems.MOONLIGHT_LEAVES.get());
                 output.accept(NMAItems.MOONLIGHT_SAPLING.get());
                 output.accept(NMAItems.DREAMSLEEP_ALTAR.get());
+                output.accept(NMAItems.MOON_SPIRIT_ALTAR.get());
                 output.accept(NMAItems.MOON_SHELL.get());
                 output.accept(NMAItems.MOONCAKE.get());
+                output.accept(NMAItems.MOON_SPIRIT_ELIXIR.get());
                 output.accept(NMAItems.MOON_PEARL.get());
                 output.accept(NMAItems.BROKEN_MOON_PEARL.get());
                 output.accept(NMAItems.MOON_DEER_ANTLER.get());
@@ -106,6 +110,8 @@ public final class MoonModule {
         NMAFluidTypes.register(modEventBus);
         NMAFluids.register(modEventBus);
         NMABlocks.register(modEventBus);
+        NMABlockEntities.register(modEventBus);
+        NMAAttachments.register(modEventBus);
         NMAItems.register(modEventBus);
         NMAFeatures.register(modEventBus);
         NMASounds.register(modEventBus);
@@ -122,6 +128,10 @@ public final class MoonModule {
 
         // Soaking in 温泉 regenerates health and keeps entities fed.
         NeoForge.EVENT_BUS.addListener(com.suwako.northstarplanetaddon.moon.world.HotSpringSoakHandler::onEntityTick);
+
+        // 月灵丹药的 +2 生命上限：死亡重生 / 换维度后按持久化标记重新贴上属性修饰符。
+        NeoForge.EVENT_BUS.addListener(
+                com.suwako.northstarplanetaddon.moon.item.MoonSpiritElixirItem::onPlayerClone);
 
         // One grep-able line that proves which build is actually loaded, so "the jar in mods/ is an old
         // one" is never a silent possibility again.
