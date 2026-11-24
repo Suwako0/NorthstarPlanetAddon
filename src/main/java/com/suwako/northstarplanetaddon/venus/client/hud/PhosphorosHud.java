@@ -37,16 +37,15 @@ public final class PhosphorosHud {
         }
         int width = graphics.guiWidth();
 
-        // ---------------- 气压计读数 ----------------
+        // ---------------- 气压计读数（温度 / 腐蚀 / 季风） ----------------
         if (BarometerCache.isVisible()) {
             int x = width - 152;
             int y = 8;
-            int barWidth = (int) Math.min(120.0F, BarometerCache.bar() * 15.0F);
             graphics.fill(x, y + 2, x + 120, y + 8, 0xAA000000);
-            graphics.fill(x + 1, y + 3, x + 1 + barWidth, y + 7, ICON_COLOR);
+            graphics.fill(x + 1, y + 3, x + 120, y + 7, ICON_COLOR);
             graphics.drawString(minecraft.font,
-                    String.format("%.1f bar  %.0fC  corr %d  monsoon %dd",
-                            BarometerCache.bar(), BarometerCache.temperature(),
+                    String.format("%.0fC  corr %d  monsoon %dd",
+                            BarometerCache.temperature(),
                             BarometerCache.corrosion(), BarometerCache.daysToMonsoon()),
                     x, y + 12, TEXT_COLOR, false);
         }

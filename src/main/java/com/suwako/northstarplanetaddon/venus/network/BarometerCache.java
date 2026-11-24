@@ -7,14 +7,12 @@ package com.suwako.northstarplanetaddon.venus.network;
  */
 public final class BarometerCache {
 
-    private static float bar;
     private static float temperature;
     private static int corrosion;
     private static int daysToMonsoon;
     private static long expiresAtMillis;
 
     public static void update(BarometerPayload payload) {
-        bar = payload.bar();
         temperature = payload.temperature();
         corrosion = payload.corrosion();
         daysToMonsoon = payload.daysToMonsoon();
@@ -23,10 +21,6 @@ public final class BarometerCache {
 
     public static boolean isVisible() {
         return System.currentTimeMillis() < expiresAtMillis;
-    }
-
-    public static float bar() {
-        return bar;
     }
 
     public static float temperature() {

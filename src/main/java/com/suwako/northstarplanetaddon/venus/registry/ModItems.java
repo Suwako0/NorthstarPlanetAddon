@@ -326,18 +326,6 @@ public final class ModItems {
     public static final DeferredItem<BlockItem> SULFUR_CRYSTAL_BLOCK =
             blockItem("sulfur_crystal_block", ModBlocks.SULFUR_CRYSTAL_BLOCK);
     public static final DeferredItem<BlockItem> CLOUD_STONE = blockItem("cloud_stone", ModBlocks.CLOUD_STONE);
-    public static final DeferredItem<BlockItem> PRESSURE_TANK = blockItem("pressure_tank", ModBlocks.PRESSURE_TANK);
-    public static final DeferredItem<BlockItem> COMPRESSOR = blockItem("compressor", ModBlocks.COMPRESSOR);
-    public static final DeferredItem<BlockItem> PRESSURE_COOKER =
-            blockItem("pressure_cooker", ModBlocks.PRESSURE_COOKER);
-    public static final DeferredItem<BlockItem> HIGH_PRESSURE_FURNACE =
-            blockItem("high_pressure_furnace", ModBlocks.HIGH_PRESSURE_FURNACE);
-    public static final DeferredItem<BlockItem> RADIATOR = blockItem("radiator", ModBlocks.RADIATOR);
-    public static final DeferredItem<BlockItem> FUNGUS_BED = blockItem("fungus_bed", ModBlocks.FUNGUS_BED);
-    public static final DeferredItem<BlockItem> CONDENSER = blockItem("condenser", ModBlocks.CONDENSER);
-    public static final DeferredItem<BlockItem> CLOUD_LIFT = blockItem("cloud_lift", ModBlocks.CLOUD_LIFT);
-    public static final DeferredItem<BlockItem> PNEUMATIC_MOTOR = blockItem("pneumatic_motor", ModBlocks.PNEUMATIC_MOTOR);
-    public static final DeferredItem<BlockItem> ACID_PUMP = blockItem("acid_pump", ModBlocks.ACID_PUMP);
 
 
     // ================================================================== 辅助

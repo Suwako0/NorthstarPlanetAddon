@@ -350,30 +350,33 @@ public static final String MODULE    = "moon";                      // 本内容
 
 ## 5. 金星附属（前缀 `venus`）
 
-**定位**：本模组自带维度 `northstar_planet_addon:venus_clouds` + 气动 / 压力机器体系 + 四套护甲 / 五把武器 / 四把工具 +
+**定位**：本模组自带维度 `northstar_planet_addon:venus_clouds` + 四套护甲 / 五把武器 / 四把工具 +
 三个 Boss + 「反枪械宪章」的弹道伤害管线。
 
-### 5.1 依赖策略：三层隔离
+> **2026-11-24 变更**：金星**气动 / 压力机器体系已整体移除**——10 台机器方块与方块实体、气动网络、
+> 机械功与过热、`high_pressure` 配方类型（含 3 条配方）、机器 GUI、Create 与 Northstar 的机器桥接全部删除。
+> 备份在 `.backup/industry-2026*`/（含 `MANIFEST.txt`），移除前的完整状况见 `docs/VENUS-INDUSTRY-STATUS.md`。
+
+### 5.1 依赖策略
 
 | 层 | 内容 |
 |---|---|
-| ① 主命名空间 | 只碰本模组类型；`compat/MachineEnvBridge`、`compat/MachineTickerBridge` 没有任何第三方 import |
-| ② 反射层 | `compat/create/CreateReflect`、`compat/northstar/NorthstarReflect` 先 `ModList.isLoaded` 再 `Class.forName`，`resolve()` 只跑一次，失败只打 warn 并永久降级 |
-| ③ 桥接类 | 真正引用第三方类的只有 `CreateMachineBridge`、`KineticPneumaticMotorEntity`、`NorthstarMachineBridge`，仅反射命中后才被类加载；`libs/` 缺 jar 时 `build.gradle` 用 `sourceSets.java.exclude` 排除它们，退回纯反射 |
+| ① 主命名空间 | 金星包只碰本模组类型；`compat/TaczCompat` 不 import 任何 TaCZ 类 |
+| ② libs/ 整包 jar | `libs/*.jar`（northstar / create / flywheel / ponder / Registrate / geckolib）以 `compileOnly + runtimeOnly` 上 classpath，不进发布 jar、不写进 `dependencies` 硬声明 |
+| ③ 软联动 | 现存只有 TaCZ 数据侧：`TaczCompat` 在 `ServerStartedEvent` 打印 `#northstar_planet_addon:ballistic` 解出的伤害类型条数。（原 `compat/create`、`compat/northstar` 两套机器桥接已随机器一并移除） |
 
-TaCZ 只有数据侧联动：`TaczCompat` 在 `ServerStartedEvent` 打印 `#northstar_planet_addon:ballistic` 解出的伤害类型条数，不 import 任何 TaCZ 类。
+TaCZ 只有数据侧联动，不 import 任何 TaCZ 类。
 
 ### 5.2 注册内容
 
 | 类别 | 数量 | 摘要 |
 |---|---|---|
-| 方块 | 17 | 钨块 / 硫晶块 / 云岩、压力罐、压缩机、高压锅、高压熔炉、散热器、菌床、冷凝塔、云梯、气动马达、酸泵、3 种作物、硫酸液体块 |
-| 方块实体 | 10 | 上述机器；气动马达是**条件注册**（有 Create 时换成 `KineticPneumaticMotorEntity`） |
-| 物品 | 83 | 19 材料、5 武器 + 弹道校准器、16 护甲（4 套 × 4 件）、8 食物、4 工具、3 召唤物、5 模块、3 种子、5 刷怪蛋、13 方块物品、硫酸桶 |
+| 方块 | 7 | 钨块 / 硫晶块 / 云岩、3 种作物、硫酸液体块 |
+| 方块实体 | 0 | 机器体系移除后金星线没有方块实体 |
+| 物品 | ≈73 | 19 材料、5 武器 + 弹道校准器、16 护甲（4 套 × 4 件）、8 食物、4 工具、3 召唤物、5 模块、3 种子、5 刷怪蛋、3 方块物品、硫酸桶 |
 | 实体 | 11 | 3 Boss（`nephele` 520 / `hephaestus` 800 / `aphrodite` 1000）+ 8 群系生物 |
 | 效果 / 流体 / 组件 / 材质 | 1 / 2 / 3 / 4 | 酸蚀 `acid_corrosion`（护甲 −1 每级，周期 40>>amp tick 掉血）、硫酸（density 1400、`canDrown`）、`freshness`/`corrosion`/`charge`、钨钢 / 云行者 / 熔管重甲 / 启明星 |
-| 菜单 | 1 | `northstar_planet_addon:machine`（高压锅与高压熔炉共用，4 输入 + 1 输出 + 进度 + 气压条） |
-| 配方序列化器 | 1 | `northstar_planet_addon:high_pressure`（无序多材料贪心匹配，默认 8 bar / 1200 ℃ / 400 tick） |
+| 菜单 / 配方序列化器 | 0 / 0 | 机器 GUI 与 `high_pressure` 配方类型已移除 |
 | 创造标签 | 1 | `northstar_planet_addon:venus`（按注册顺序铺满） |
 
 ### 5.3 世界生成
@@ -393,9 +396,7 @@ TaCZ 只有数据侧联动：`TaczCompat` 在 `ServerStartedEvent` 打印 `#nort
 
 | 机制 | 要点 |
 |---|---|
-| 气压模型 | `MILLIBUCKET_PER_BAR = 1000`；机器之间只认相邻的 `AbstractMachineBlockEntity`（不占 capability，避免与 Create 冲突）；压缩机摇曲柄一次产 2000 mB、每 tick 推 2000；压力罐 8000 mB 容量、每 tick 每向推 500 |
-| 机械功 | `WorkConsumer`：高压锅 / 高压熔炉在收到 ≥16 RPM 后获得 ×2 速度；气动马达 20 mB/t → 32 RPM，Create 在场时换成真正的 `KineticBlockEntity`（4 SU/RPM） |
-| 过热 | 环境温度 = 维度基础（云海 30 ℃ / `northstar:venus` 430 ℃ / 其它 20 ℃）+ 热源（熔岩 600、岩浆块 300、火 300、营火 200，最多 8 个）− 冷源（水 / 冰 / 蓝冰 / 雪块 / 有冷却剂的散热器各 −40，最多 8 个）；>400 ℃ 连续 1200 tick 停机，回落后 200 tick 恢复。北极星温度调节器在 ±16/±6 内 = 完全免过热 |
+| 环境温度（只读） | `world/AmbientTemperature`：维度基础（云海 30 ℃ / `northstar:venus` 430 ℃ / 其它 20 ℃）+ 附近热源（熔岩 600、岩浆块 300、火 300、营火 200，最多 8 个）。只供气压计显示，不再驱动任何机器 |
 | 伤害管线（R1–R5） | 唯一入口 `LivingIncomingDamageEvent` → 8 步：无敌判定 → 分类（弹道 / 爆炸 / 近战 / 酸 / 环境 / 其它，环境直接 0）→ 乘数（板 0.05/1.0/1.2/0.8/0.5，本体 0.10 起，窗口开 1.0 关 0.05）→ 单次上限（9/40/30/20）→ 每人 20 tick 滑动窗口（13/45/30）→ 先扣护甲板（溢出 ×0.30 进本体）→ 弱点命中累计过载 → 固定减伤 0.2 |
 | 板 / 弱点 / 过载 | 护甲板：涅斐勒 4×120、赫菲斯托斯 6×150、阿佛洛狄忒 4×200；弱点按阶段暴露（过载与窗口期无条件暴露），命中 +1.0（弹道）/ 0.5（近战）/ 0.7（其它）；过载到 8 点触发 120 tick 过载 + 80 tick 窗口，内部冷却 1200 tick |
 | 阶段与多人缩放 | 血量比 0.66 / 0.33 分三档（涅斐勒 0.60 / 0.25），换阶段 30 tick 无敌演出 + 开窗口；每 100 tick 按 64 格内玩家人数上调血量（每人 +50%） |
@@ -407,8 +408,9 @@ TaCZ 只有数据侧联动：`TaczCompat` 在 `ServerStartedEvent` 打印 `#nort
 
 ### 5.5 客户端
 
-5 个自建 `EntityModel` + 11 个渲染器（6 种生物复用原版渲染器）、`MachineScreen`（176×166）、
-右上角气压计条（5 秒缓存过期即消失）与左上角弱点计数、硫酸流体贴图与 tint `0xFFB7E04A`。
+5 个自建 `EntityModel` + 11 个渲染器（6 种生物复用原版渲染器）、
+右上角气压计读数条（5 秒缓存过期即消失：环境温度 / 腐蚀值 / 距下次季风天数，**气压读数已随机器移除**）
+与左上角弱点计数、硫酸流体贴图与 tint `0xFFB7E04A`。
 
 ---
 
@@ -478,17 +480,21 @@ NorthstarPlanetAddon/
 ├── gradlew(.bat) + gradle/   Gradle 9.2.1 wrapper
 ├── libs/                     开发期联调 jar（northstar / create / flywheel / ponder / Registrate / geckolib）
 ├── docs/                     逐内容线的源码级笔记（含全部数值与类名出处）与 runserver 冒烟测试日志
+│                             另含美术需求案与 AI 提示词包（装备 / Boss / 特殊建筑三套）
 ├── tools/
 │   ├── regen-module-packages.ps1   按内容线重新生成模块内容包（除入口类）
-│   └── regen-resources.ps1         重建 resources：并集写入 + 命名空间与前缀归一
+│   ├── regen-resources.ps1         重建 resources：并集写入 + 命名空间与前缀归一
+│   ├── gen-ai-prompts.py          生成装备提示词包（md + json + txt）
+│   ├── gen-structure-prompts.py   由 docs/STRUCTURE-AI-PROMPTS.md 生成建筑提示词包 json + txt
+│   └── nbt_inspect.py             读 structure/*.nbt 的尺寸与方块配比（美术需求取证用）
 └── src/main/
     ├── java/com/suwako/northstarplanetaddon/
     │   ├── NorthstarPlanetAddon.java        唯一 @Mod 入口
     │   ├── moon/       MoonModule + block/client/entity/fluid/item/mixin/registry/world
     │   ├── mercury/    MercuryModule + block/client/command/effect/entity/mixin/network/registry/world
     │   ├── mars/       MarsModule + block/client/command/effect/entity/event/item/network/registry/world
-    │   └── venus/       VenusModule + block/blockentity/client/combat/command/compat/config/effect/
-    │                    entity/event/item/machine/menu/network/registry/world
+    │   └── venus/       VenusModule + block/client/combat/command/compat/config/effect/
+    │                    entity/event/item/network/registry/world（机器体系已移除，无 blockentity/machine/menu）
     └── resources/
         ├── META-INF/neoforge.mods.toml      依赖声明 + 两个 [[mixins]]
         ├── northstar_planet_addon.moon.mixins.json

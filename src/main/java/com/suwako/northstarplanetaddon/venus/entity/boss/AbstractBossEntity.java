@@ -198,6 +198,7 @@ public abstract class AbstractBossEntity extends Monster {
     protected void customServerAiStep() {
         super.customServerAiStep();
         this.emitWeakPointMarkers();
+        this.emitWindowMarkers();
         if (this.transitionTicks > 0) {
             this.getNavigation().stop();
             return;
@@ -209,26 +210,79 @@ public abstract class AbstractBossEntity extends Monster {
      * 弱点可视化：每 4 tick 在每个「当前暴露」的弱点位置点一颗 END_ROD。
      * 玩家不看模型细节也能找到该打哪儿 —— 这是「护甲板吸收伤害、只有弱点能攒过载」这套机制的必需提示。
      */
+    /**
+     * 开窗视觉：窗口期内脚下转一圈粒子 + 内圈反向转。
+     *
+     * <p>原来「开窗」只存在于 HUD 和伤害公式里，玩家在战场上没有任何信号 —— 这是最该有视觉的一刻。
+     * 现在窗口内每 2 tick 画两圈会反向旋转的粒子：外圈半径 1.9–2.15 呼吸、内圈 0.8。
+     * 粒子类型可被子类覆盖（{@link #windowParticleType()}），阿佛洛狄忒用酸绿、其它 Boss 用白光。</p>
+     */
+    private void emitWindowMarkers() {
+        if (!(this.level() instanceof net.minecraft.server.level.ServerLevel serverLevel)) {
+            return;
+        }
+        if (!this.isWindowOpen() || this.tickCount % 2 != 0) {
+            return;
+        }
+        double base = this.getY() + 0.12D;
+        double phase = this.tickCount * 0.16D;
+        double outer = 1.9D + Math.sin(this.tickCount * 0.18D) * 0.22D;
+        net.minecraft.core.particles.SimpleParticleType particle = this.windowParticleType();
+        for (int i = 0; i < 12; i++) {
+            double a = phase + i * (Math.PI / 6.0D);
+            serverLevel.sendParticles(particle,
+                    this.getX() + Math.cos(a) * outer, base, this.getZ() + Math.sin(a) * outer,
+                    1, 0.0D, 0.02D, 0.0D, 0.0D);
+        }
+        for (int i = 0; i < 6; i++) {
+            double a = -phase * 1.7D + i * (Math.PI / 3.0D);
+            serverLevel.sendParticles(particle,
+                    this.getX() + Math.cos(a) * 0.8D, base + 0.25D, this.getZ() + Math.sin(a) * 0.8D,
+                    1, 0.0D, 0.03D, 0.0D, 0.0D);
+        }
+    }
+
+    /** 开窗粒子类型：默认白光，子类可换成主题色。 */
+    protected net.minecraft.core.particles.SimpleParticleType windowParticleType() {
+        return net.minecraft.core.particles.ParticleTypes.END_ROD;
+    }
+
+    /**
+     * 弱点可视化：每 2 tick 在每个「当前暴露」的弱点位置画一小圈会转的 END_ROD。
+     *
+     * <p>2026-11 加强：原来每 4 tick 只点 1 颗，30 格开外几乎看不见、而且和模型上的自发光糊在一起。
+     * 现在改成「中心 1 颗 + 半径 0.26 的 4 颗环绕」，旋转相位按 tick 推进，远处看到的是一个
+     * <b>在转的亮点</b>而不是随机白点 —— 这是「打得准」的前提。</p>
+     */
     private void emitWeakPointMarkers() {
         if (!(this.level() instanceof net.minecraft.server.level.ServerLevel serverLevel)) {
             return;
         }
-        if (this.tickCount % 4 != 0) {
+        if (this.tickCount % 2 != 0) {
             return;
         }
         double yaw = Math.toRadians(this.yBodyRot);
         double cos = Math.cos(yaw);
         double sin = Math.sin(yaw);
+        double phase = this.tickCount * 0.35D;
         for (int i = 0; i < this.weakPoints.size(); i++) {
             if (!this.isWeakPointExposed(i)) {
                 continue;
             }
             Vec3 local = this.weakPoints.get(i).offset();
+            double cx = this.getX() + local.x * cos + local.z * sin;
+            double cy = this.getY() + local.y;
+            double cz = this.getZ() - local.x * sin + local.z * cos;
+            // 中心
             serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.END_ROD,
-                    this.getX() + local.x * cos + local.z * sin,
-                    this.getY() + local.y,
-                    this.getZ() - local.x * sin + local.z * cos,
-                    1, 0.05D, 0.05D, 0.05D, 0.0D);
+                    cx, cy, cz, 1, 0.04D, 0.04D, 0.04D, 0.0D);
+            // 环绕 4 点：形成一个在转的小圈
+            for (int k = 0; k < 4; k++) {
+                double a = phase + k * (Math.PI / 2.0D);
+                serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.END_ROD,
+                        cx + Math.cos(a) * 0.26D, cy + Math.sin(a) * 0.26D * 0.5D, cz + Math.sin(a) * 0.26D,
+                        1, 0.0D, 0.01D, 0.0D, 0.0D);
+            }
         }
     }
 

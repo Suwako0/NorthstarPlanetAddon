@@ -8,3 +8,6 @@ logs/
 # 一次性任务脚本的产物
 __pycache__/
 *.pyc
+
+# 删除/重构前的文件备份（.backup/industry-*）
+.backup/

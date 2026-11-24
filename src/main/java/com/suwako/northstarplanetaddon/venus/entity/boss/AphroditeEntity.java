@@ -26,6 +26,18 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import software.bernie.geckolib.animatable.GeoEntity;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.animation.Animation;
+import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.animation.AnimationState;
+import software.bernie.geckolib.animation.PlayState;
+import software.bernie.geckolib.animation.RawAnimation;
+import software.bernie.geckolib.util.GeckoLibUtil;
 
 /**
  * 阿佛洛狄忒，硫之女王（设计草案 4.4 节）：熔管层 · 终局。
@@ -47,7 +59,7 @@ import net.minecraft.world.phys.Vec3;
  *       超时触发全场 999 点酸爆。</li>
  * </ul>
  */
-public class AphroditeEntity extends AbstractBossEntity {
+public class AphroditeEntity extends AbstractBossEntity implements GeoEntity {
 
     // ---------------------------------------------------------------- 数值
     private static final int ACID_WAVE_CD = 140;
@@ -72,6 +84,8 @@ public class AphroditeEntity extends AbstractBossEntity {
     private static final double SHOCKWAVE_RADIUS = 15.0D;
 
     private static final int SUMMON_CD = 300;
+    /** 召唤前摇 0.6 s：抬手 + 仰头，水母在前摇结束时出现。 */
+    private static final int SUMMON_WINDUP = 12;
     /** 茧护壁总血量：4 根硫晶柱 × 3 次重击 ≈ 240。 */
     private static final float COCOON_HEALTH = 240.0F;
     private static final int COCOON_MAX_TICKS = 400;
@@ -81,8 +95,58 @@ public class AphroditeEntity extends AbstractBossEntity {
     /** 酸位上升：每 20 tick 上升 0.5 格（= 0.5 格/秒）。 */
     private static final double ACID_RISE_PER_SECOND = 0.5D;
 
-    private int acidWaveTicks = ACID_WAVE_CD;
-    private int needleTicks = ACID_NEEDLE_CD;
+    // ------------------------------------------------------------------ 动画（GeckoLib）
+    private static final int ACTION_NONE = 0;
+    private static final int ACTION_WAVE = 1;
+    private static final int ACTION_NEEDLE = 2;
+    private static final int ACTION_RING = 3;
+    private static final int ACTION_SHOCK = 4;
+    private static final int ACTION_COCOON_IN = 5;
+    private static final int ACTION_COCOON_BREAK = 6;
+    private static final int ACTION_PHASE = 7;
+    private static final int ACTION_SUMMON = 8;
+    private static final int ACTION_PLATE = 9;
+
+    private static final RawAnimation ANIM_IDLE = RawAnimation.begin().thenLoop("idle");
+    private static final RawAnimation ANIM_FLOAT = RawAnimation.begin().thenLoop("float");
+    private static final RawAnimation ANIM_WAVE =
+            RawAnimation.begin().then("acid_wave", Animation.LoopType.PLAY_ONCE);
+    private static final RawAnimation ANIM_NEEDLE =
+            RawAnimation.begin().then("acid_needle", Animation.LoopType.PLAY_ONCE);
+    private static final RawAnimation ANIM_RING =
+            RawAnimation.begin().then("fire_ring", Animation.LoopType.PLAY_ONCE);
+    private static final RawAnimation ANIM_SHOCK =
+            RawAnimation.begin().then("shockwave", Animation.LoopType.PLAY_ONCE);
+    /** 召唤酸潮水母：双臂外展上抬 + 仰头，水母在收势时出现。 */
+    private static final RawAnimation ANIM_SUMMON =
+            RawAnimation.begin().then("summon", Animation.LoopType.PLAY_ONCE);
+    /** 碎甲：一记后仰顿挫 + 对应肩甲外翻。 */
+    private static final RawAnimation ANIM_PLATE =
+            RawAnimation.begin().then("plate_break", Animation.LoopType.PLAY_ONCE);
+    /** 结茧：停在最后一帧，破茧前一直保持茧内姿态。 */
+    private static final RawAnimation ANIM_COCOON_IN =
+            RawAnimation.begin().then("cocoon_in", Animation.LoopType.HOLD_ON_LAST_FRAME);
+    private static final RawAnimation ANIM_COCOON_BREAK =
+            RawAnimation.begin().then("cocoon_break", Animation.LoopType.PLAY_ONCE);
+    private static final RawAnimation ANIM_PHASE =
+            RawAnimation.begin().then("phase_transition", Animation.LoopType.PLAY_ONCE);
+    private static final RawAnimation ANIM_DEATH =
+            RawAnimation.begin().then("death", Animation.LoopType.HOLD_ON_LAST_FRAME);
+
+    private static final EntityDataAccessor<Integer> DATA_ACTION =
+            SynchedEntityData.defineId(AphroditeEntity.class, EntityDataSerializers.INT);
+    /** 结茧状态同步位：客户端渲染层靠它决定要不要画茧壳。 */
+    private static final EntityDataAccessor<Boolean> DATA_COCOONED =
+            SynchedEntityData.defineId(AphroditeEntity.class, EntityDataSerializers.BOOLEAN);
+    /** 茧护壁剩余值同步位：客户端用它算壳的染色（绿 → 黄 → 红）。 */
+    private static final EntityDataAccessor<Float> DATA_COCOON_HP =
+            SynchedEntityData.defineId(AphroditeEntity.class, EntityDataSerializers.FLOAT);
+
+    private final AnimatableInstanceCache animatableCache = GeckoLibUtil.createInstanceCache(this);
+    /** 一次性动作剩余 tick；<=0 表示「一直保持」（结茧）。 */
+    private int actionTicks;
+
+    private int acidWaveTicks = ACID_WAVE_CD;    private int needleTicks = ACID_NEEDLE_CD;
     private int fireRingTicks = FIRE_RING_CD;
     private int shockwaveTicks = SHOCKWAVE_CD;
     private int summonTicks = SUMMON_CD;
@@ -99,9 +163,82 @@ public class AphroditeEntity extends AbstractBossEntity {
 
     public AphroditeEntity(EntityType<? extends AphroditeEntity> type, Level level) {
         super(type, level, 4, 200.0F, BossEvent.BossBarColor.PURPLE);
-        this.addWeakPoint("sulfur_core", new Vec3(0.0D, 2.2D, -0.9D), 1.5D, WeakPoint.ALWAYS);
-        this.addWeakPoint("acid_sac_left", new Vec3(-1.2D, 1.6D, 1.0D), 1.2D, WeakPoint.PHASE_3);
-        this.addWeakPoint("acid_sac_right", new Vec3(1.2D, 1.6D, 1.0D), 1.2D, WeakPoint.PHASE_3);
+        // 腰核上移到裸腹：模型宝石中心 y=51 单位（≈3.19 格）、z=−8.8 单位，判定球跟着对齐
+        this.addWeakPoint("sulfur_core", new Vec3(0.0D, 3.2D, -0.55D), 1.5D, WeakPoint.ALWAYS);
+        // 双酸囊对齐模型 (±14, 36, 10) 单位 → (±0.875, 2.25, 0.625)
+        this.addWeakPoint("acid_sac_left", new Vec3(-0.9D, 2.25D, 0.65D), 1.2D, WeakPoint.PHASE_3);
+        this.addWeakPoint("acid_sac_right", new Vec3(0.9D, 2.25D, 0.65D), 1.2D, WeakPoint.PHASE_3);
+    }
+
+    // ------------------------------------------------------------------ GeckoLib 动画接线
+    @Override
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(DATA_ACTION, ACTION_NONE);
+        builder.define(DATA_COCOONED, false);
+        builder.define(DATA_COCOON_HP, COCOON_HEALTH);
+    }
+
+    // ------------------------------------------------------------------ 结茧状态（给渲染层）
+    /** 是否正在结茧（客户端可用：走同步位）。 */
+    public boolean isCocooned() {
+        return this.entityData.get(DATA_COCOONED);
+    }
+
+    /** 茧护壁剩余比例：1 = 满，0 = 即将破茧。客户端可用。 */
+    public float getCocoonHealthRatio() {
+        if (!this.isCocooned()) {
+            return 0.0F;
+        }
+        return Math.max(0.0F, Math.min(1.0F, this.entityData.get(DATA_COCOON_HP) / COCOON_HEALTH));
+    }
+
+    @Override
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return this.animatableCache;
+    }
+
+    @Override
+    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+        // 单控制器（多控制器会抢骨骼，见 minecraft-geckolib-animation-delivery §3）
+        controllers.add(new AnimationController<>(this, "main", 4, this::mainController));
+    }
+
+    /** 优先级：死亡 > 一次性动作 > 结茧保持 > 移动/待机。 */
+    private PlayState mainController(AnimationState<AphroditeEntity> state) {
+        if (this.isDeadOrDying()) {
+            state.getController().setAnimationSpeed(1.0D).setAnimation(ANIM_DEATH);
+            return PlayState.CONTINUE;
+        }
+        RawAnimation action = switch (this.entityData.get(DATA_ACTION)) {
+            case ACTION_WAVE -> ANIM_WAVE;
+            case ACTION_NEEDLE -> ANIM_NEEDLE;
+            case ACTION_RING -> ANIM_RING;
+            case ACTION_SHOCK -> ANIM_SHOCK;
+            case ACTION_COCOON_IN -> ANIM_COCOON_IN;
+            case ACTION_COCOON_BREAK -> ANIM_COCOON_BREAK;
+            case ACTION_PHASE -> ANIM_PHASE;
+            case ACTION_SUMMON -> ANIM_SUMMON;
+            case ACTION_PLATE -> ANIM_PLATE;
+            default -> null;
+        };
+        if (action != null) {
+            state.getController().setAnimationSpeed(1.0D).setAnimation(action);
+            return PlayState.CONTINUE;
+        }
+        boolean moving = this.getDeltaMovement().horizontalDistanceSqr() > 4.0E-4D
+                || (this.getTarget() != null && this.distanceToSqr(this.getTarget()) > 9.0D);
+        state.getController().setAnimationSpeed(1.0D)
+                .setAnimation(moving ? ANIM_FLOAT : ANIM_IDLE);
+        return PlayState.CONTINUE;
+    }
+
+    /** 触发一次性动作：只走服务端，实体数据自动同步到客户端。ticks<=0 表示保持到下一次切换。 */
+    private void playAction(int action, int ticks) {
+        if (!this.level().isClientSide) {
+            this.entityData.set(DATA_ACTION, action);
+            this.actionTicks = ticks;
+        }
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -142,10 +279,12 @@ public class AphroditeEntity extends AbstractBossEntity {
         }
         if (to == 3) {
             this.cocooned = false;
+            this.actionTicks = 0;
             this.acidLevel = 0.0D;
             this.refreshDimensions();
             this.enrageTicks = ENRAGE_TICKS;
             this.openWindow(120);
+            this.playAction(ACTION_PHASE, 30);
             if (this.level() instanceof ServerLevel serverLevel) {
                 serverLevel.sendParticles(ParticleTypes.EXPLOSION_EMITTER,
                         this.getX(), this.getY() + 4.0D, this.getZ(), 3, 2.0D, 2.0D, 2.0D, 0.0D);
@@ -162,6 +301,9 @@ public class AphroditeEntity extends AbstractBossEntity {
         this.acidBaseY = this.getY();
         this.acidLevel = 0.0D;
         this.refreshDimensions();
+        this.playAction(ACTION_COCOON_IN, 0);
+        this.entityData.set(DATA_COCOONED, true);
+        this.entityData.set(DATA_COCOON_HP, COCOON_HEALTH);
         if (this.level() instanceof ServerLevel serverLevel) {
             serverLevel.sendParticles(ParticleTypes.CLOUD, this.getX(), this.getY() + 2.0D, this.getZ(),
                     60, 2.0D, 2.0D, 2.0D, 0.02D);
@@ -185,6 +327,7 @@ public class AphroditeEntity extends AbstractBossEntity {
         float factor = com.suwako.northstarplanetaddon.venus.combat.DamageClassifier.classify(source)
                 == com.suwako.northstarplanetaddon.venus.combat.DamageKind.MELEE ? 1.0F : 0.5F;
         this.cocoonHealth -= Math.max(1.0F, amount * factor);
+        this.entityData.set(DATA_COCOON_HP, Math.max(0.0F, this.cocoonHealth));
         if (this.cocoonHealth <= 0.0F) {
             this.breakCocoon("damage");
         }
@@ -192,9 +335,12 @@ public class AphroditeEntity extends AbstractBossEntity {
 
     private void breakCocoon(String reason) {
         this.cocooned = false;
+        this.entityData.set(DATA_COCOONED, false);
+        this.entityData.set(DATA_COCOON_HP, 0.0F);
         this.cocoonHealth = 0.0F;
         this.openWindow(COCOON_BREAK_WINDOW);
         this.acidLevel = 0.0D;
+        this.playAction(ACTION_COCOON_BREAK, 40);
         if (this.level() instanceof ServerLevel serverLevel) {
             serverLevel.sendParticles(ParticleTypes.EXPLOSION_EMITTER,
                     this.getX(), this.getY() + 2.0D, this.getZ(), 2, 1.5D, 1.5D, 1.5D, 0.0D);
@@ -214,6 +360,10 @@ public class AphroditeEntity extends AbstractBossEntity {
     // ================================================================== AI
     @Override
     protected void tickBossAi() {
+        // 一次性动作计时（结茧用 0 表示保持，不在这里清）
+        if (!this.level().isClientSide && this.actionTicks > 0 && --this.actionTicks == 0) {
+            this.entityData.set(DATA_ACTION, ACTION_NONE);
+        }
         LivingEntity target = this.getTarget();
 
         if (this.cocooned) {
@@ -269,7 +419,9 @@ public class AphroditeEntity extends AbstractBossEntity {
         }
         if (this.getPhase() == 1 && --this.summonTicks <= 0) {
             this.summonTicks = SUMMON_CD;
-            this.summonJellies();
+            // 召唤也要有前摇：0.6 s 抬手，玩家能提前走位
+            this.startWindup(SUMMON_WINDUP, 4);
+            return;
         }
     }
 
@@ -316,9 +468,65 @@ public class AphroditeEntity extends AbstractBossEntity {
                 SoundSource.HOSTILE, 5.0F, 0.4F);
     }
 
+    /** 开窗粒子用酸绿（HAPPY_VILLAGER 的小绿星），和她的酸液配色一致。 */
+    @Override
+    protected net.minecraft.core.particles.SimpleParticleType windowParticleType() {
+        return ParticleTypes.HAPPY_VILLAGER;
+    }
+
+    /**
+     * 护甲板被打碎：播 `plate_break` 顿挫动作，并在对应甲片位置炸一簇碎屑 + 玻璃破碎音。
+     *
+     * <p>板序号与模型骨的对应：0/1 = 胸甲上/下段（正面 z −6），2/3 = 左/右肩甲（x ∓12）。</p>
+     */
+    @Override
+    protected void onPlateBroken(int index) {
+        super.onPlateBroken(index);
+        this.playAction(ACTION_PLATE, 12);
+        if (!(this.level() instanceof ServerLevel serverLevel)) {
+            return;
+        }
+        double localX = switch (index) {
+            case 2 -> -12.0D;
+            case 3 -> 12.0D;
+            default -> 0.0D;
+        };
+        double localY = switch (index) {
+            case 0 -> 58.0D;
+            case 1 -> 50.0D;
+            default -> 66.0D;
+        };
+        double localZ = index < 2 ? -6.0D : 0.0D;
+        double yaw = Math.toRadians(this.yBodyRot);
+        double cos = Math.cos(yaw);
+        double sin = Math.sin(yaw);
+        double wx = this.getX() + localX * cos + localZ * sin;
+        double wz = this.getZ() - localX * sin + localZ * cos;
+        double wy = this.getY() + localY;
+        serverLevel.sendParticles(ParticleTypes.CRIT, wx, wy, wz, 26, 0.7D, 0.7D, 0.7D, 0.28D);
+        serverLevel.sendParticles(ParticleTypes.END_ROD, wx, wy, wz, 12, 0.45D, 0.45D, 0.45D, 0.06D);
+        serverLevel.playSound(null, this.blockPosition(), SoundEvents.GLASS_BREAK, SoundSource.HOSTILE, 1.6F, 0.8F);
+    }
+
     private void startWindup(int ticks, int move) {
         this.windupTicks = ticks;
         this.windupMove = move;
+        // 前摇动画时长按招式给足（>= 代码前摇），动作播完再回到 idle/float
+        int action = switch (move) {
+            case 0 -> ACTION_WAVE;
+            case 1 -> ACTION_NEEDLE;
+            case 2 -> ACTION_RING;
+            case 4 -> ACTION_SUMMON;
+            default -> ACTION_SHOCK;
+        };
+        int animTicks = switch (move) {
+            case 0 -> 24;
+            case 1 -> 16;
+            case 2 -> 40;
+            case 4 -> 24;
+            default -> 60;
+        };
+        this.playAction(action, animTicks);
         if (this.level() instanceof ServerLevel serverLevel) {
             serverLevel.sendParticles(ParticleTypes.SNEEZE, this.getX(), this.getY() + 2.0D, this.getZ(),
                     12, 1.0D, 1.0D, 1.0D, 0.02D);
@@ -331,6 +539,7 @@ public class AphroditeEntity extends AbstractBossEntity {
             case 1 -> this.acidNeedles(target);
             case 2 -> this.fireRing();
             case 3 -> this.shockwave();
+            case 4 -> this.summonJellies();
             default -> {
             }
         }

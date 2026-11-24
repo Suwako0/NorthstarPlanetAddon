@@ -4,7 +4,6 @@ import com.suwako.northstarplanetaddon.NorthstarPlanetAddon;
 
 import com.suwako.northstarplanetaddon.venus.VenusModule;
 import com.suwako.northstarplanetaddon.venus.client.model.AcidJellyModel;
-import com.suwako.northstarplanetaddon.venus.client.model.AphroditeModel;
 import com.suwako.northstarplanetaddon.venus.client.model.CloudRayModel;
 import com.suwako.northstarplanetaddon.venus.client.model.NepheleModel;
 import com.suwako.northstarplanetaddon.venus.client.renderer.AcidJellyRenderer;
@@ -24,8 +23,7 @@ public final class ClientSetup {
 
     @SubscribeEvent
     public static void onRegisterLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
-        // 涅斐勒已改为 GeckoLib 模型（nephele.geo.json），不再注册 LayerDefinition
-        event.registerLayerDefinition(AphroditeModel.LAYER, AphroditeModel::createBodyLayer);
+        // 涅斐勒 / 阿佛洛狄忒已改为 GeckoLib 模型（nephele.geo.json / aphrodite.geo.json），不再注册 LayerDefinition
         event.registerLayerDefinition(CloudRayModel.LAYER, CloudRayModel::createBodyLayer);
         event.registerLayerDefinition(AcidJellyModel.LAYER, AcidJellyModel::createBodyLayer);
     }
@@ -48,11 +46,6 @@ public final class ClientSetup {
                 context -> new net.minecraft.client.renderer.entity.ThrownItemRenderer<>(context, 0.5F, false));
     }
 
-    @SubscribeEvent
-    public static void onRegisterScreens(net.neoforged.neoforge.client.event.RegisterMenuScreensEvent event) {
-        event.register(com.suwako.northstarplanetaddon.venus.registry.ModMenus.MACHINE.get(),
-                com.suwako.northstarplanetaddon.venus.client.screen.MachineScreen::new);
-    }
     private ClientSetup() {
     }
 }

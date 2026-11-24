@@ -1,20 +1,10 @@
 {
-    "values":  [
-                   "northstar_planet_addon:tungsten_block",
-                   "northstar_planet_addon:sulfur_crystal_block",
-                   "northstar_planet_addon:cloud_stone",
-                   "northstar_planet_addon:pressure_tank",
-                   "northstar_planet_addon:compressor",
-                   "northstar_planet_addon:pressure_cooker",
-                   "northstar_planet_addon:high_pressure_furnace",
-                   "northstar_planet_addon:radiator",
-                   "northstar_planet_addon:fungus_bed",
-                   "northstar_planet_addon:condenser",
-                   "northstar_planet_addon:cloud_lift",
-                   "northstar_planet_addon:giant_fungus_crop",
-                   "northstar_planet_addon:acid_vegetable_crop",
-                   "northstar_planet_addon:cloud_algae_crop",
-                   "northstar_planet_addon:pneumatic_motor",
-                   "northstar_planet_addon:acid_pump"
-               ]
+  "values": [
+    "northstar_planet_addon:tungsten_block",
+    "northstar_planet_addon:sulfur_crystal_block",
+    "northstar_planet_addon:cloud_stone",
+    "northstar_planet_addon:giant_fungus_crop",
+    "northstar_planet_addon:acid_vegetable_crop",
+    "northstar_planet_addon:cloud_algae_crop"
+  ]
 }

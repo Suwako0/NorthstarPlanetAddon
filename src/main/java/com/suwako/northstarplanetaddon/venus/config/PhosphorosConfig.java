@@ -44,14 +44,6 @@ public final class PhosphorosConfig {
     public static final ModConfigSpec.IntValue OVERLOAD_WINDOW_TICKS;
     public static final ModConfigSpec.DoubleValue OVERLOAD_PLATE_BONUS;
 
-    // ------------------------------------------------------------------ machines
-    public static final ModConfigSpec.IntValue COMPRESSOR_CRANK_AIR;
-    public static final ModConfigSpec.IntValue COMPRESSOR_OUTPUT_PER_TICK;
-    public static final ModConfigSpec.DoubleValue PRESSURE_COOKER_BAR;
-    public static final ModConfigSpec.DoubleValue OVERHEAT_TEMPERATURE;
-    public static final ModConfigSpec.IntValue OVERHEAT_TICKS;
-    public static final ModConfigSpec.IntValue OVERHEAT_COOLDOWN_TICKS;
-
     // ------------------------------------------------------------------ world
     public static final ModConfigSpec.BooleanValue ENABLE_ACID_RAIN;
     public static final ModConfigSpec.IntValue CLOUD_VOID_Y;
@@ -60,9 +52,6 @@ public final class PhosphorosConfig {
 
     // ------------------------------------------------------------------ compat
     public static final ModConfigSpec.BooleanValue TACZ_INTEGRATION;
-
-    // ------------------------------------------------------------------ balance
-    public static final ModConfigSpec.BooleanValue ENABLE_OVERHEAT;
 
     static {
         ModConfigSpec.Builder b = new ModConfigSpec.Builder();
@@ -137,28 +126,9 @@ public final class PhosphorosConfig {
                 .defineInRange("monsoonIntervalDays", 5, 1, 60);
         b.pop();
 
-        b.comment("第 8 章 气动机器（1 bar = 1000 mB）").push("machines");
-        COMPRESSOR_CRANK_AIR = b.comment("压缩机手动曲柄一次产出的压缩空气（mB）")
-                .defineInRange("compressorCrankAir", 2000, 1, 8000);
-        COMPRESSOR_OUTPUT_PER_TICK = b.comment("压缩机每 tick 向相邻压力罐输送的上限（mB）")
-                .defineInRange("compressorOutputPerTick", 2000, 1, 8000);
-        PRESSURE_COOKER_BAR = b.comment("高压锅开工所需气压（bar）")
-                .defineInRange("pressureCookerBar", 8.0D, 0.0D, 8.0D);
-        OVERHEAT_TEMPERATURE = b.comment("过热阈值（°C）：环境温度高于它且机器在工作时开始累积过热")
-                .defineInRange("overheatTemperature", 400.0D, 0.0D, 2000.0D);
-        OVERHEAT_TICKS = b.comment("连续工作多少 tick 后停机（默认 1200 = 60s）")
-                .defineInRange("overheatTicks", 1200, 20, 24000);
-        OVERHEAT_COOLDOWN_TICKS = b.comment("温度回落多少 tick 后恢复（默认 200 = 10s）")
-                .defineInRange("overheatCooldownTicks", 200, 0, 24000);
-        b.pop();
-
         b.comment("联动").push("compat");
         TACZ_INTEGRATION = b.comment("启用 TaCZ 弹道伤害标签识别（反射，不硬依赖）")
                 .define("taczIntegration", true);
-        b.pop();
-
-        b.comment("平衡").push("balance");
-        ENABLE_OVERHEAT = b.comment("地表机器过热停机（M3 机器落地后生效）").define("enableOverheat", true);
         b.pop();
 
         SPEC = b.build();

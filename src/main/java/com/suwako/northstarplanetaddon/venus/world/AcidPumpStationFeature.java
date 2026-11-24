@@ -13,8 +13,10 @@ import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConf
 /**
  * 酸泵站（设计草案 10 章 #2：24×16×24，酸潮滩，可修复为酸泵）。
  *
- * <p>当前版本：9×9 云岩地基 + 环形围墙 + 中央「泵体」（压力罐方块代替酸泵）+
- * 3 个战利品箱。修复玩法（投入耐酸合金板换酸泵）等酸泵机器落地后接。</p>
+ * <p>当前版本：9×9 云岩地基 + 环形围墙 + 中央「泵体」+ 3 个战利品箱。
+ * 泵体原先是 {@code pressure_tank} 方块，**压力机器体系移除后改用磨制深板岩**，
+ * 只作为"废弃泵站"的视觉占位。修复玩法（投入耐酸合金板换酸泵）随机器一起作废，
+ * 若将来重做工业线，需要重新设计抽取装置。</p>
  */
 public class AcidPumpStationFeature extends Feature<NoneFeatureConfiguration> {
 
@@ -32,7 +34,8 @@ public class AcidPumpStationFeature extends Feature<NoneFeatureConfiguration> {
 
         var stone = RuinPalette.FLOOR;
         var metal = RuinPalette.CASE;
-        var pump = ModBlocks.PRESSURE_TANK.get().defaultBlockState();
+        // 泵体：气动压力机器体系已移除，这里用磨制深板岩表现"被遗弃的立式泵"占位。
+        var pump = RuinPalette.CASE_DARK;
 
         RuinBuilder.platform(level, origin, RADIUS, 3, stone);
         RuinBuilder.wallRing(level, origin, RADIUS, 4, metal, Blocks.AIR.defaultBlockState());

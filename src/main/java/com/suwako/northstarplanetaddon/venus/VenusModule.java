@@ -7,14 +7,12 @@ import com.suwako.northstarplanetaddon.venus.config.PhosphorosConfig;
 import com.suwako.northstarplanetaddon.venus.event.CombatEvents;
 import com.suwako.northstarplanetaddon.venus.event.PlayerEvents;
 import com.suwako.northstarplanetaddon.venus.registry.ModArmorMaterials;
-import com.suwako.northstarplanetaddon.venus.registry.ModBlockEntities;
 import com.suwako.northstarplanetaddon.venus.registry.ModBlocks;
 import com.suwako.northstarplanetaddon.venus.registry.ModComponents;
 import com.suwako.northstarplanetaddon.venus.registry.ModEffects;
 import com.suwako.northstarplanetaddon.venus.registry.ModEntities;
 import com.suwako.northstarplanetaddon.venus.registry.ModItems;
 import com.suwako.northstarplanetaddon.venus.registry.ModFluids;
-import com.suwako.northstarplanetaddon.venus.registry.ModMenus;
 import com.suwako.northstarplanetaddon.venus.registry.ModTabs;
 import com.suwako.northstarplanetaddon.venus.world.ModFeatures;
 import net.minecraft.resources.ResourceLocation;
@@ -26,10 +24,14 @@ import org.slf4j.Logger;
 
 /**
  * 北极星金星附属（合并后的金星模块，原「机械动力：启明星 / Create: Phosphoros」）——
- * 云海维度、气动压力机器、四套护甲、5 把武器、4 把工具、5 个群系、8 个结构与 3 个 Boss，
+ * 云海维度、四套护甲、5 把武器、4 把工具、5 个群系、8 个结构与 3 个 Boss，
  * 以及「反枪械宪章」的弹道伤害管线。
  *
- * <p>与 Create / Northstar / TaCZ 的联动全部走注册名、标签与反射，<b>编译期不依赖它们</b>，
+ * <p><b>气动 / 压力机器体系已按需求整体移除</b>（10 台机器方块与方块实体、气动网络、
+ * 过热、`high_pressure` 配方类型、Create 与 Northstar 的机器桥接）。移除前的实现见
+ * {@code .backup/industry-2026*}/ 与历史报告 {@code docs/VENUS-INDUSTRY-STATUS.md}。</p>
+ *
+ * <p>与 Create / TaCZ 的联动全部走注册名、标签与反射，<b>编译期不依赖它们</b>，
  * 因此本模块可以独立构建。</p>
  *
  * <p>合并进「北极星星球附属」后，本类不再是模组入口（入口是
@@ -60,24 +62,18 @@ public final class VenusModule {
         // ---------------------------------------------------------- 注册表
         ModBlocks.BLOCKS.register(modBus);
         ModItems.ITEMS.register(modBus);
-        ModBlockEntities.BLOCK_ENTITY_TYPES.register(modBus);
         ModArmorMaterials.ARMOR_MATERIALS.register(modBus);
         ModComponents.DATA_COMPONENTS.register(modBus);
         ModEffects.MOB_EFFECTS.register(modBus);
         ModEntities.ENTITY_TYPES.register(modBus);
         ModTabs.CREATIVE_MODE_TABS.register(modBus);
         ModFeatures.FEATURES.register(modBus);
-        com.suwako.northstarplanetaddon.venus.machine.ModRecipes.RECIPE_TYPES.register(modBus);
-        com.suwako.northstarplanetaddon.venus.machine.ModRecipes.RECIPE_SERIALIZERS.register(modBus);
         ModFluids.FLUID_TYPES.register(modBus);
         ModFluids.FLUIDS.register(modBus);
         com.suwako.northstarplanetaddon.venus.world.ModWorldgen.BIOME_SOURCES.register(modBus);
-        ModMenus.MENU_TYPES.register(modBus);
 
         // 生物属性：EntityAttributeCreationEvent 属于 mod bus
         modBus.addListener(ModEntities::registerAttributes);
-        // 机器槽位的 capability（漏斗 / 管道）
-        modBus.addListener(com.suwako.northstarplanetaddon.venus.event.ModCapabilities::register);
 
         // ---------------------------------------------------------- 配置
         // 文件名带模块前缀，四个星球共用同一个 config/ 目录时不打架。
@@ -91,6 +87,7 @@ public final class VenusModule {
         NeoForge.EVENT_BUS.addListener(TaczCompat::onServerStarted);
 
         LOGGER.info("[venus] 北极星金星附属：护甲板 / 弱点 / 弹道伤害管线已装载（反枪械宪章 R1–R5）");
+        LOGGER.info("[venus] 气动压力机器体系已移除：仅保留维度、群系、结构、护甲、武器、工具与 Boss");
     }
 
     public static ResourceLocation id(String path) {

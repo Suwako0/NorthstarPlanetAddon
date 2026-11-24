@@ -1,7 +1,0 @@
-{
-  "variants": {
-    "axis=y": { "model": "northstar_planet_addon:block/pneumatic_motor" },
-    "axis=x": { "model": "northstar_planet_addon:block/pneumatic_motor", "x": 90, "y": 90, "uvlock": true },
-    "axis=z": { "model": "northstar_planet_addon:block/pneumatic_motor", "x": 90, "y": 180, "uvlock": true }
-  }
-}
