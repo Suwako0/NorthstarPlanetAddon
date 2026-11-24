@@ -480,7 +480,8 @@ NorthstarPlanetAddon/
 ├── gradlew(.bat) + gradle/   Gradle 9.2.1 wrapper
 ├── libs/                     开发期联调 jar（northstar / create / flywheel / ponder / Registrate / geckolib）
 ├── docs/                     逐内容线的源码级笔记（含全部数值与类名出处）与 runserver 冒烟测试日志
-│                             另含美术需求案与 AI 提示词包（装备 / Boss / 特殊建筑三套）
+│                             另含美术需求案与 AI 提示词包（装备 / Boss / 特殊建筑三套），
+│                             装备另有三视图需求 + MOSS-Image 提示词（EQUIPMENT-TURNAROUND-MOSS.md）
 ├── tools/
 │   ├── regen-module-packages.ps1   按内容线重新生成模块内容包（除入口类）
 │   ├── regen-resources.ps1         重建 resources：并集写入 + 命名空间与前缀归一
