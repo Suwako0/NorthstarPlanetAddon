@@ -126,7 +126,7 @@ public class MoonRabbitModel extends HierarchicalModel<MoonRabbitEntity> {
 
         // The golden-carrot reaction and moon-gazing pose replace idle rather than stacking on top
         // of it, so their upright silhouettes stay clean. The cute action is resource-loaded from
-        // animations/moon_rabbit/golden_carrot_cute.json and can therefore be replaced by a resource pack.
+        // entity_animations/moon_rabbit/golden_carrot_cute.json and can therefore be replaced by a resource pack.
         AnimationDefinition goldenCarrotEat = NMAAnimationResources.get(NMAAnimationResources.MOON_RABBIT_GOLDEN_CARROT_EAT);
         AnimationDefinition goldenCarrotCute = NMAAnimationResources.get(NMAAnimationResources.MOON_RABBIT_GOLDEN_CARROT);
         if (entity.goldenCarrotEatAnimationState.isStarted() && goldenCarrotEat != null) {

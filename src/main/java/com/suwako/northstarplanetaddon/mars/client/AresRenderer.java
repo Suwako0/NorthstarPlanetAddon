@@ -99,31 +99,12 @@ public class AresRenderer extends GeoEntityRenderer<AresEntity> {
 
         /**
          * 与 {@code HephaestusModel} 同样的兜底：整合包里 GeckoLib 的动画缓存扫不到本模组文件，
-         * {@code super.getAnimation} 会抛 {@code Unable to find animation file} —— 表现就是
-         * 「模型在、只有头会跟着玩家转（那是 lookAt，不是动画），四肢一动不动」。
+         * {@code super.getAnimation} 会<b>先打印调用栈再抛</b>异常（渲染线程每帧一次，能刷出 GB 级日志）。
+         * 所以这里不调用那个会抛的实现，直接用 {@link GeckoSelfLoad#resolve} 读缓存表 + 自读兜底。
          */
         @Override
         public software.bernie.geckolib.animation.Animation getAnimation(AresEntity animatable, String name) {
-            software.bernie.geckolib.animation.Animation animation = null;
-            try {
-                animation = super.getAnimation(animatable, name);
-            } catch (RuntimeException exception) {
-                if (!cacheMissLogged) {
-                    cacheMissLogged = true;
-                    com.suwako.northstarplanetaddon.NorthstarPlanetAddon.LOGGER.warn(
-                            "[ares] GeckoLib 动画缓存里没有 {}（{}），改由模型自读", ANIMATIONS, exception.getMessage());
-                }
-            }
-            if (animation == null) {
-                var baked = com.suwako.northstarplanetaddon.client.GeckoSelfLoad.load(ANIMATIONS);
-                animation = baked == null ? null : baked.getAnimation(name);
-            }
-            if (LOGGED.add(name)) {
-                com.suwako.northstarplanetaddon.NorthstarPlanetAddon.LOGGER.info("[ares] 请求动画 {} → {}", name,
-                        animation == null ? "未解析"
-                                : "OK " + animation.length() + " tick / " + animation.boneAnimations().length + " 骨骼");
-            }
-            return animation;
+            return com.suwako.northstarplanetaddon.client.GeckoSelfLoad.resolve(ANIMATIONS, name);
         }
     }
 

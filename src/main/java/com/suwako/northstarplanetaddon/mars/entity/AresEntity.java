@@ -409,6 +409,50 @@ public class AresEntity extends IronGolem implements GeoEntity {
         return this.entityData.get(DATA_PHASE);
     }
 
+    // ------------------------------------------------------------------ DPS 上限（补 AbstractBossEntity 的能力）
+
+    /** 每个玩家的 DPS 窗口。 */
+    private static final class DpsWindow {
+        long startedAt = -1L;
+        float spent;
+    }
+
+    private final java.util.Map<java.util.UUID, DpsWindow> dpsWindows = new java.util.concurrent.ConcurrentHashMap<>();
+
+    /**
+     * 按 {@code DamageKind.perPlayerDpsCap()} 与 {@code PhosphorosConfig.DPS_WINDOW_TICKS} 截断单次伤害。
+     *
+     * <p>阿瑞斯继承 {@code IronGolem}、不是 {@code AbstractBossEntity}，而 {@code CombatEvents}
+     * 只在 {@code AbstractBossEntity} 上跑 {@code BossDamagePipeline} —— 所以它的 per-player DPS
+     * 上限从来没生效过（玩家可以一轮爆发把 Boss 灌死）。这里是那段逻辑的最小等价实现：
+     * 同一窗口内同一玩家的累计伤害不超过上限，弹道类随阶段 ×1.15；非玩家来源不受限。</p>
+     */
+    private float applyDpsCap(net.minecraft.world.damagesource.DamageSource source, float amount) {
+        if (!(source.getEntity() instanceof net.minecraft.world.entity.player.Player player) || amount <= 0.0F) {
+            return amount;
+        }
+        com.suwako.northstarplanetaddon.venus.combat.DamageKind kind =
+                com.suwako.northstarplanetaddon.venus.combat.DamageClassifier.classify(source);
+        float cap = kind.perPlayerDpsCap();
+        if (cap <= 0.0F) {
+            return amount;
+        }
+        if (kind != com.suwako.northstarplanetaddon.venus.combat.DamageKind.MELEE) {
+            cap *= 1.0F + 0.15F * Math.max(0, this.getPhase() - 1);
+        }
+        int windowTicks = com.suwako.northstarplanetaddon.venus.config.PhosphorosConfig.DPS_WINDOW_TICKS.get();
+        long now = this.level().getGameTime();
+        DpsWindow window = this.dpsWindows.computeIfAbsent(player.getUUID(), id -> new DpsWindow());
+        if (window.startedAt < 0L || now - window.startedAt >= windowTicks) {
+            window.startedAt = now;
+            window.spent = 0.0F;
+        }
+        float allowed = Math.max(0.0F, cap - window.spent);
+        float applied = Math.min(amount, allowed);
+        window.spent += applied;
+        return applied;
+    }
+
     /** 客户端动画用：是否处于升空的风暴形态。 */
     public boolean isHovering() {
         return this.entityData.get(DATA_HOVERING);
@@ -1494,6 +1538,9 @@ public class AresEntity extends IronGolem implements GeoEntity {
         //     被无敌 / 免疫 / 已死挡掉的也都返回 false —— 放在返回之后，一次命中只加一次，
         //     且不会给「没打中」的攻击白送温度；
         //  ③ 出伤流程里只有这一处入口，AresEntity 的其它代码（技能 AoE）都不 hurt 自己。
+        // 阿瑞斯不是 AbstractBossEntity，CombatEvents 的 BossDamagePipeline 不会跑在它身上，
+        // 所以 per-player DPS 上限在这里补上（否则玩家可以瞬间倾泻伤害把 Boss 秒掉）。
+        modified = this.applyDpsCap(source, modified);
         boolean landed = super.hurt(source, modified);
         if (landed) {
             this.setCoreTemperature(this.coreTemperature + HEAT_PER_HIT);

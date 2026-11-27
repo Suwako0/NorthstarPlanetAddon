@@ -23,9 +23,15 @@ import java.util.Map;
  * Client resource loader for the mod's editable entity-animation JSON files.
  * <p>
  * Minecraft's native {@link AnimationDefinition} is a Java object and does not automatically load
- * JSON files. This listener turns JSON files below {@code assets/<namespace>/animations} into the
- * same animation definitions consumed by {@code HierarchicalModel#animate}, so resource packs and F3+T
- * can replace the cute rabbit action without code changes.
+ * JSON files. This listener turns JSON files below {@code assets/<namespace>/entity_animations}
+ * into the same animation definitions consumed by {@code HierarchicalModel#animate}, so resource
+ * packs and F3+T can replace the cute rabbit action without code changes.
+ *
+ * <h2>为什么目录叫 {@code entity_animations} 而不是 {@code animations}</h2>
+ * <p>GeckoLib 会扫描 {@code animations/} 下所有文件并按照自己的命名规范烘焙；本模组这套
+ * 原生 {@code AnimationDefinition} 格式的文件放在里面，每次资源重载都会让 GeckoLib 刷
+ * 「Found animation file with improper file name format」。两套系统共用同一个目录只会互相干扰，
+ * 所以本加载器独占 {@code entity_animations/}，{@code animations/} 完整留给 GeckoLib。</p>
  */
 public final class NMAAnimationResources extends SimpleJsonResourceReloadListener {
 
@@ -37,7 +43,7 @@ public final class NMAAnimationResources extends SimpleJsonResourceReloadListene
     private static volatile Map<ResourceLocation, AnimationDefinition> animations = Map.of();
 
     public NMAAnimationResources() {
-        super(new Gson(), "animations");
+        super(new Gson(), "entity_animations");
     }
 
     public static AnimationDefinition get(ResourceLocation id) {

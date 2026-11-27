@@ -51,13 +51,13 @@ public class MoonRabbitEntity extends Animal {
 
     /** A player holding a golden carrot within this radius makes the rabbit perform its cute pose. */
     private static final double GOLDEN_CARROT_RADIUS = 8.0D;
-    /** 2.8 seconds, exactly matching {@code animations/moon_rabbit/golden_carrot_cute.json}. */
+    /** 2.8 seconds, exactly matching {@code entity_animations/moon_rabbit/golden_carrot_cute.json}. */
     private static final int GOLDEN_CARROT_ACTION_TICKS = 56;
     /** Prevents a nearby player from restarting the action every tick. */
     private static final int GOLDEN_CARROT_COOLDOWN_TICKS = 80;
     private static final EntityDataAccessor<Boolean> GOLDEN_CARROT_CUTE = SynchedEntityData.defineId(
             MoonRabbitEntity.class, EntityDataSerializers.BOOLEAN);
-    /** 2.4 seconds, exactly matching {@code animations/moon_rabbit/golden_carrot_eat.json}. */
+    /** 2.4 seconds, exactly matching {@code entity_animations/moon_rabbit/golden_carrot_eat.json}. */
     private static final int GOLDEN_CARROT_EAT_TICKS = 48;
     private static final EntityDataAccessor<Boolean> EATING_GOLDEN_CARROT = SynchedEntityData.defineId(
             MoonRabbitEntity.class, EntityDataSerializers.BOOLEAN);

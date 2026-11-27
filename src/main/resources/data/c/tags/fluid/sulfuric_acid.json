@@ -1,0 +1,10 @@
+{
+  "values": [
+    "northstar_planet_addon:sulfuric_acid",
+    "northstar_planet_addon:flowing_sulfuric_acid",
+    {
+      "id": "northstar:sulfuric_acid",
+      "required": false
+    }
+  ]
+}

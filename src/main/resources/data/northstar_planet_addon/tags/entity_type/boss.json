@@ -1,7 +1,8 @@
 {
-    "values":  [
+  "values":  [
                    "northstar_planet_addon:nephele",
                    "northstar_planet_addon:hephaestus",
-                   "northstar_planet_addon:aphrodite"
+                   "northstar_planet_addon:aphrodite",
+                   "northstar_planet_addon:ares"
                ]
 }
